@@ -1,0 +1,164 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h3 {
+    color: #333;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.divisation{
+    max-width: 100%;
+    margin: 0 auto;
+    background-color: #8b8484;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 40px 35px;
+    border: 40px;
+    border-color: #b12c2c;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .containers {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+    background: #776e6e;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(233, 229, 229, 0.322);
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(233, 229, 229, 0.589);
+}
+.input-group {
+    margin-bottom: 15px;
+}
+label {
+    display: block;
+    font-weight: bold;
+}
+select{
+    width: 75%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+}
+
+.input-box{
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 5px;
+}
+
+input {
+    width: 70%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+.row .input-group {
+    width: 48%;
+}
+
+.buttons{
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.button {
+    background-color: #252523f5;
+    color: white;
+    padding: 15px 35px;
+    justify-items: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.button:hover {
+    background-color: #ddeb8f;
+}
+
+
+
+@media (max-width: 600px) {
+    .row {
+        flex-direction: column;
+    }
+    .row .input-group {
+        width: 100%;
+    }
+    select, input {
+        width: 100%;
+    }
+}
+
+
+/* <div class="container" id="showteam-2"></div>
+<div class="container" id="showteam-3"></div>
+<div class="container" id="showteam-4"></div>
+<div class="container" id="showteam-5"></div>
+<div class="container" id="showteam-6"></div>
+<div class="container" id="showteam-7"></div>
+<div class="container" id="showteam-8"></div>
+<div class="container" id="showteam-9"></div>
+<div class="container" id="showteam-10"></div>
+<div class="container" id="showteam-11"></div>
+<div class="container" id="showteam-12"></div>
+<div class="container" id="showteam-13"></div>
+<div class="container" id="showteam-14"></div>
+<div class="container" id="showteam-15"></div>
+<div class="container" id="showteam-16"></div>
+<div class="container" id="showteam-17"></div>
+<div class="container" id="showteam-18"></div>
+<div class="container" id="showteam-19"></div>
+<div class="container" id="showteam-20"></div>
+<div class="container" id="showteam-21"></div>
+<div class="container" id="showteam-22"></div>
+<div class="container" id="showteam-23"></div>
+<div class="container" id="showteam-24"></div>
+<div class="container" id="showteam-25"></div>
+<div class="container" id="showteam-26"></div>
+<div class="container" id="showteam-27"></div>
+<div class="container" id="showteam-28"></div>
+<div class="container" id="showteam-29"></div>
+<div class="container" id="showteam-30"></div>
+<div class="container" id="showteam-31"></div>
+<div class="container" id="showteam-32"></div>
+<div class="container" id="showteam-33"></div>
+<div class="container" id="showteam-34"></div>
+<div class="container" id="showteam-35"></div>
+<div class="container" id="showteam-36"></div>
+<div class="container" id="showteam-37"></div>
+<div class="container" id="showteam-38"></div>
+<div class="container" id="showteam-39"></div>
+<div class="container" id="showteam-40"></div>
+<div class="container" id="showteam-41"></div>
+<div class="container" id="showteam-42"></div> */
