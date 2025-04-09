@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prize Number Extractor</title>
+  <link rel="stylesheet" href="">
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f4f4;
+}
+.container {
+  text-align: center;
+}
+#output {
+  margin-top: 20px;
+  text-align: left;
+}
+    
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Prize Number Extractor</h1>
+    <input type="file" id="pdfUpload" accept="application/pdf">
+    <button onclick="uploadFile()">Upload PDF</button>
+    <div id="output"></div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <script src="">
+      function uploadFile() {
+  const fileInput = document.getElementById('pdfUpload');
+  const file = fileInput.files[0];
+  if (file && file.type === 'application/pdf') {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const typedarray = new Uint8Array(e.target.result);
+      pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
+        let textContent = '';
+        const numPages = pdf.numPages;
+        let count = 0;
+        for (let i = 1; i <= numPages; i++) {
+          pdf.getPage(i).then(function(page) {
+            page.getTextContent().then(function(text) {
+              text.items.forEach(function(item) {
+                textContent += item.str + ' ';
+              });
+              count++;
+              if (count === numPages) {
+                extractPrizeNumbers(textContent);
+              }
+            });
+          });
+        }
+      });
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    alert('Please upload a valid PDF file.');
+  }
+}
+
+function extractPrizeNumbers(text) {
+  const prizeNumberRegex = /\d+/g;
+  const prizeNumbers = text.match(prizeNumberRegex);
+  if (prizeNumbers) {
+    displayPrizeNumbers(prizeNumbers);
+    saveToGoogleSheets(prizeNumbers);
+  } else {
+    document.getElementById('output').innerText = 'No prize numbers found.';
+  }
+}
+
+function displayPrizeNumbers(prizeNumbers) {
+  const output = document.getElementById('output');
+  output.innerHTML = '<h2>Extracted Prize Numbers:</h2>';
+  prizeNumbers.forEach(function(number) {
+    output.innerHTML += `<p>${number}</p>`;
+  });
+}
+
+function saveToGoogleSheets(prizeNumbers) {
+  const url = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
+  prizeNumbers.forEach(function(number) {
+    fetch(url, {
+      method: 'POST',
+      contentType: 'application/json',
+      body: JSON.stringify({ prizeNumber: number })
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Data saved:', data);
+    })
+    .catch(error => {
+      console.error('Error saving data:', error);
+    });
+  });
+}
+
+  </script>
+</body>
+</html>
