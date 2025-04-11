@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Sheets CRUD</title>
+    <style>
+        /* Simple Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            padding-top: 60px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Google Sheets Data</h2>
+<table border="1" id="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Shift</th>
+            <th>Value 1</th>
+            <th>Value 2</th>
+            <th>Value 3</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<!-- Popup Form Modal -->
+<div id="formModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h3>Add/Edit Data</h3>
+        <form id="data-form">
+            <input type="hidden" id="id">
+            <input type="text" id="shift" placeholder="Shift" required><br><br>
+            <input type="number" id="value1" placeholder="Value 1" required><br><br>
+            <input type="number" id="value2" placeholder="Value 2" required><br><br>
+            <input type="number" id="value3" placeholder="Value 3" required><br><br>
+            <input type="number" id="value1" placeholder="Value 4" required><br><br>
+            <input type="number" id="value2" placeholder="Value 5" required><br><br>
+            <input type="number" id="value3" placeholder="Value 6" required><br><br>
+            <button type="submit">Save</button>
+            <button type="button" onclick="closeModal()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbyqj4rpTRXJsONKTpN624sshoR4OqkRVSl4iHmFb4RGxo3Sev6a6J99pzNKq2k8N8zN/exec";
+
+// Load data
+function loadData() {
+    fetch(API_URL)
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.querySelector("#data-table tbody");
+            tbody.innerHTML = "";
+           
+            data.forEach(row => {
+    tbody.innerHTML += `
+        <tr>
+            <td>${row.id}</td>
+            <td>${row.date}</td>
+            <td>${row.time}</td>
+            <td>${row.selectShift}</td>
+            <td>${row.value1}</td>
+            <td>${row.value2}</td>
+            <td>${row.value3}</td>
+            <td>
+                <button class="edit-btn" 
+                    data-id="${row.id}" 
+                    data-shift="${row.selectShift}" 
+                    data-value1="${row.value1}" 
+                    data-value2="${row.value2}" 
+                    data-value3="${row.value3}">
+                    Edit
+                </button>
+                <button onclick="deleteData(${row.id})">Delete</button>
+            </td>
+        </tr>
+    `;
+});
+
+        });
+}
+// Delegate edit button click
+document.querySelector("#data-table").addEventListener("click", function(e) {
+    if (e.target.classList.contains("edit-btn")) {
+        const btn = e.target;
+        editData(
+            btn.dataset.id,
+            btn.dataset.shift,
+            btn.dataset.value1,
+            btn.dataset.value2,
+            btn.dataset.value3
+        );
+    }
+});
+
+
+// Submit form
+document.querySelector("#data-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const id = document.querySelector("#id").value;
+    const selectShift = document.querySelector("#shift").value;
+    const value1 = document.querySelector("#value1").value;
+    const value2 = document.querySelector("#value2").value;
+    const value3 = document.querySelector("#value3").value;
+
+    const action = id ? "update" : "insert";
+    fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({ action, id, selectShift, value1, value2, value3 })
+    })
+    .then(response => response.text())
+    .then(() => {
+        loadData();
+        closeModal(); // Close after submit
+    });
+});
+
+// Show form in modal for editing
+function editData(id, shift, value1, value2, value3) {
+    document.querySelector("#id").value = id;
+    document.querySelector("#shift").value = shift;
+    document.querySelector("#value1").value = value1;
+    document.querySelector("#value2").value = value2;
+    document.querySelector("#value3").value = value3;
+
+    document.getElementById("formModal").style.display = "block";
+}
+
+// Delete entry
+function deleteData(id) {
+    fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "delete", id })
+    }).then(response => response.text())
+      .then(() => loadData());
+}
+
+// Close modal
+function closeModal() {
+    document.getElementById("formModal").style.display = "none";
+    document.querySelector("#data-form").reset();
+    document.querySelector("#id").value = "";
+}
+
+// Load on page
+loadData();
+</script>
+
+</body>
+</html>
