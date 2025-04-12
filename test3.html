@@ -164,7 +164,7 @@ function loadData() {
             <td>
                 <button class="edit-btn" 
                     data-id="${row.id}" 
-                    data-id="${row.value0}</td>
+                    data-id="${row.value0}"
                     data-id="${row.value1}"
                     data-id="${row.value2}"
                     data-id="${row.value3}"
@@ -188,7 +188,7 @@ function loadData() {
                     Edit
                 </button>
                 <button onclick="deleteData(${row.id})">Delete</button>
-                <button onclick="editData(1, 'val0', 'val1', 'val2', ..., 'val20')">Edit</button>
+                <button class="edit-btn" onclick="editData(1, 'val0', 'val1', 'val2', ..., 'val20')">Edit</button>
                 
             </td>
         </tr>
