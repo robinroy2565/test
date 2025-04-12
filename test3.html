@@ -187,8 +187,6 @@ function loadData() {
                     data-id="${row.value20}">
                     Edit
                 </button>
-                </td>
-                <td>
                 <button onclick="deleteData(${row.id})">Delete</button>
                 </td>
                 <td>
@@ -267,7 +265,7 @@ document.querySelector("#data-form").addEventListener("submit", function (e) {
     })
     .then(response => response.text())
     .then(() => {
-        loadData();
+        reloadData();
         closeModal(); // Close after submit
     });
 });
