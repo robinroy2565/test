@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Sheets CRUD</title>
+</head>
+<body>
+
+<h2>Google Sheets Data</h2>
+<table border="1" id="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Shift</th>
+            <th>Value 1</th>
+            <th>Value 2</th>
+            <th>Value 3</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<h3>Add/Edit Data</h3>
+<form id="data-form">
+    <input type="hidden" id="id">
+    <input type="text" id="shift" placeholder="Shift" required>
+    <input type="number" id="value1" placeholder="Value 1" required>
+    <input type="number" id="value2" placeholder="Value 2" required>
+    <input type="number" id="value3" placeholder="Value 3" required>
+    <button type="submit">Save</button>
+</form>
+
+<script>
+//const API_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+  const API_URL   = "https://script.google.com/macros/s/AKfycbzfaYnClV8eUrQh4e48iWrYfZtn-cs4QZEgQHqbkL3fvBlICSONdLH6o4jGLVSVOSXd/exec";
+
+// Fetch and display data
+function loadData() {
+    fetch(API_URL)
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.querySelector("#data-table tbody");
+            tbody.innerHTML = "";
+            data.forEach(row => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${row.id}</td>
+                        <td>${row.date}</td>
+                        <td>${row.time}</td>
+                        <td>${row.selectShift}</td>
+                        <td>${row.value1}</td>
+                        <td>${row.value2}</td>
+                        <td>${row.value3}</td>
+                        <td>
+                            <button onclick="editData(${row.id}, '${row.selectShift}', ${row.value1}, ${row.value2}, ${row.value3})">Edit</button>
+                            <button onclick="deleteData(${row.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        });
+}
+
+// Insert or Update data
+document.querySelector("#data-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const id = document.querySelector("#id").value;
+    const selectShift = document.querySelector("#shift").value;
+    const value1 = document.querySelector("#value1").value;
+    const value2 = document.querySelector("#value2").value;
+    const value3 = document.querySelector("#value3").value;
+    
+    const action = id ? "update" : "insert";
+    fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({ action, id, selectShift, value1, value2, value3 })
+    }).then(response => response.text())
+      .then(() => {
+          loadData();
+          document.querySelector("#data-form").reset();
+      });
+});
+
+// Edit data (populate form)
+function editData(id, shift, value1, value2, value3) {
+    document.querySelector("#id").value = id;
+    document.querySelector("#shift").value = shift;
+    document.querySelector("#value1").value = value1;
+    document.querySelector("#value2").value = value2;
+    document.querySelector("#value3").value = value3;
+}
+
+// Delete data
+function deleteData(id) {
+    fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "delete", id })
+    }).then(response => response.text())
+      .then(() => loadData());
+}
+
+// Load data on page load
+loadData();
+</script>
+
+</body>
+</html>
