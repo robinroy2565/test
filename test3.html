@@ -3,6 +3,35 @@
 <head>
     <title>Google Sheets CRUD</title>
     <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #e9f08b;
+            color: rgb(33, 31, 31);
+        }
+        .btn {
+            padding: 8px 12px;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-insert { background-color: #e8ed4b; color: white; }
+        .btn-update { background-color: #ffc107; color: black; }
+        .btn-delete { background-color: #dc3545; color: white; }
+    
         /* Simple Modal Styles */
         .modal {
             display: none;
@@ -43,10 +72,13 @@
             <th>ID</th>
             <th>Date</th>
             <th>Time</th>
-            <th>Shift</th>
+            <th>value 0</th>
             <th>Value 1</th>
             <th>Value 2</th>
             <th>Value 3</th>
+            <th>Value 4</th>
+            <th>Value 5</th>
+            <th>Value 6</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -91,17 +123,52 @@ function loadData() {
             <td>${row.id}</td>
             <td>${row.date}</td>
             <td>${row.time}</td>
-            <td>${row.selectShift}</td>
+            <td>${row.value0}</td>
             <td>${row.value1}</td>
             <td>${row.value2}</td>
             <td>${row.value3}</td>
+            <td>${row.value4}</td>
+            <td>${row.value5}</td>
+            <td>${row.value6}</td>
+            <td>${row.value7}</td>
+            <td>${row.value8}</td>
+            <td>${row.value9}</td>
+            <td>${row.value10}</td>
+            <td>${row.value11}</td>
+            <td>${row.value12}</td>
+            <td>${row.value13}</td>
+            <td>${row.value14}</td>
+            <td>${row.value15}</td>
+            <td>${row.value16}</td>
+            <td>${row.value17}</td>
+            <td>${row.value18}</td>
+            <td>${row.value19}</td>
+            <td>${row.value20}</td>
+            
             <td>
                 <button class="edit-btn" 
                     data-id="${row.id}" 
-                    data-shift="${row.selectShift}" 
-                    data-value1="${row.value1}" 
-                    data-value2="${row.value2}" 
-                    data-value3="${row.value3}">
+                    data-id="${row.value0}</td>
+                    data-id="${row.value1}"
+                    data-id="${row.value2}"
+                    data-id="${row.value3}"
+                    data-id="${row.value4}"
+                    data-id="${row.value5}"
+                    data-id="${row.value6}"
+                    data-id="${row.value7}"
+                    data-id="${row.value8}"
+                    data-id="${row.value9}"
+                    data-id="${row.value10}"
+                    data-id="${row.value11}"
+                    data-id="${row.value12}"
+                    data-id="${row.value13}"
+                    data-id="${row.value14}"
+                    data-id="${row.value15}"
+                    data-id="${row.value16}"
+                    data-id="${row.value17}"
+                    data-id="${row.value18}"
+                    data-id="${row.value19}"
+                    data-id="${row.value20}">
                     Edit
                 </button>
                 <button onclick="deleteData(${row.id})">Delete</button>
@@ -118,10 +185,27 @@ document.querySelector("#data-table").addEventListener("click", function(e) {
         const btn = e.target;
         editData(
             btn.dataset.id,
-            btn.dataset.shift,
+            btn.dataset.value0,
             btn.dataset.value1,
             btn.dataset.value2,
-            btn.dataset.value3
+            btn.dataset.value3,
+            btn.dataset.value4,
+            btn.dataset.value5,
+            btn.dataset.value6,
+            btn.dataset.value7,
+            btn.dataset.value8,
+            btn.dataset.value9,
+            btn.dataset.value10,
+            btn.dataset.value11,
+            btn.dataset.value12,
+            btn.dataset.value13,
+            btn.dataset.value14,
+            btn.dataset.value15,
+            btn.dataset.value16,
+            btn.dataset.value17,
+            btn.dataset.value18,
+            btn.dataset.value19,
+            btn.dataset.value20
         );
     }
 });
@@ -131,15 +215,32 @@ document.querySelector("#data-table").addEventListener("click", function(e) {
 document.querySelector("#data-form").addEventListener("submit", function (e) {
     e.preventDefault();
     const id = document.querySelector("#id").value;
-    const selectShift = document.querySelector("#shift").value;
+    const value0 = document.querySelector("#value0").value;
     const value1 = document.querySelector("#value1").value;
     const value2 = document.querySelector("#value2").value;
     const value3 = document.querySelector("#value3").value;
+    const value4 = document.querySelector("#value4").value;
+    const value5 = document.querySelector("#value5").value;
+    const value6 = document.querySelector("#value6").value;
+    const value7 = document.querySelector("#value7").value;
+    const value8 = document.querySelector("#value8").value;
+    const value9 = document.querySelector("#value9").value;
+    const value10 = document.querySelector("#value10").value;
+    const value11 = document.querySelector("#value11").value;
+    const value12 = document.querySelector("#value12").value;
+    const value13 = document.querySelector("#value13").value;
+    const value14 = document.querySelector("#value14").value;
+    const value15 = document.querySelector("#value15").value;
+    const value16 = document.querySelector("#value16").value;
+    const value17 = document.querySelector("#value17").value;
+    const value18 = document.querySelector("#value18").value;
+    const value19 = document.querySelector("#value19").value;
+    const value20 = document.querySelector("#value20").value;
 
     const action = id ? "update" : "insert";
     fetch(API_URL, {
         method: "POST",
-        body: JSON.stringify({ action, id, selectShift, value1, value2, value3 })
+        body: JSON.stringify({ action, id, value0, value1, value2, value3, value4, value5, value6, value7 , value8, value9, value10, value11, value12, value13, value14, value15, value16, value17 , value18, value19, value20 })
     })
     .then(response => response.text())
     .then(() => {
@@ -149,12 +250,29 @@ document.querySelector("#data-form").addEventListener("submit", function (e) {
 });
 
 // Show form in modal for editing
-function editData(id, shift, value1, value2, value3) {
+function editData(id,  value0, value1, value2, value3, value4, value5, value6, value7 , value8, value9, value10, value11, value12, value13, value14, value15, value16, value17 , value18, value19, value20 ) {
     document.querySelector("#id").value = id;
-    document.querySelector("#shift").value = shift;
+    document.querySelector("#value0").value = value0;
     document.querySelector("#value1").value = value1;
     document.querySelector("#value2").value = value2;
     document.querySelector("#value3").value = value3;
+    document.querySelector("#value4").value = value4;
+    document.querySelector("#value5").value = value5;
+    document.querySelector("#value6").value = value6;
+    document.querySelector("#value7").value = value7;
+    document.querySelector("#value8").value = value8;
+    document.querySelector("#value9").value = value9;
+    document.querySelector("#value10").value = value10;
+    document.querySelector("#value11").value = value11;
+    document.querySelector("#value12").value = value12;
+    document.querySelector("#value13").value = value13;
+    document.querySelector("#value14").value = value14;
+    document.querySelector("#value15").value = value15;
+    document.querySelector("#value16").value = value16;
+    document.querySelector("#value17").value = value17;
+    document.querySelector("#value18").value = value18;
+    document.querySelector("#value19").value = value19;
+    document.querySelector("#value20").value = value20;
 
     document.getElementById("formModal").style.display = "block";
 }
