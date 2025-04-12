@@ -187,8 +187,12 @@ function loadData() {
                     data-id="${row.value20}">
                     Edit
                 </button>
+                </td>
+                <td>
                 <button onclick="deleteData(${row.id})">Delete</button>
-                <button class="edit-btn" onclick="editData(1, 'val0', 'val1', 'val2', ..., 'val20')">Edit</button>
+                </td>
+                <td>
+                <button class="edit-btn" (1, 'val0', 'val1', 'val2', ..., 'val20')">Edit</button>
                 
             </td>
         </tr>
@@ -223,7 +227,7 @@ document.querySelector("#data-table").addEventListener("click", function(e) {
             btn.dataset.value17,
             btn.dataset.value18,
             btn.dataset.value19,
-            btn.dataset.value20
+            btn.dataset.value20,
         );
     }
 });
@@ -296,7 +300,7 @@ document.querySelector("#data-form").addEventListener("submit", function (e) {
     //}
     function editData(data) {
     document.querySelector("#id").value = data.id;
-    for (let i = 0; i <= 20; i++) {
+    for (let i = 0; i <= 21; i++) {
         document.querySelector(`#value${i}`).value = data[`value${i}`];
     }
     document.getElementById("formModal").style.display = "block";
