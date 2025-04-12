@@ -265,45 +265,45 @@ document.querySelector("#data-form").addEventListener("submit", function (e) {
     })
     .then(response => response.text())
     .then(() => {
-        reloadData();
+        loadData();
         closeModal(); // Close after submit
     });
 });
 
 // Show form in modal for editing
-//function editData(id,  value0, value1, value2, value3, value4, value5, value6, value7 , value8, value9, value10, value11, value12, value13, value14, value15, value16, value17 , value18, value19, value20 ) {
-   // document.querySelector("#id").value = id;
-   // document.querySelector("#value0").value = value0;
-  //  document.querySelector("#value1").value = value1;
-   // document.querySelector("#value2").value = value2;
-   // document.querySelector("#value3").value = value3;
-  //  document.querySelector("#value4").value = value4;
-  //  document.querySelector("#value5").value = value5;
-   // document.querySelector("#value6").value = value6;
-  //  document.querySelector("#value7").value = value7;
-  //  document.querySelector("#value8").value = value8;
-   // document.querySelector("#value9").value = value9;
-   // document.querySelector("#value10").value = value10;
-  //  document.querySelector("#value11").value = value11;
-  //  document.querySelector("#value12").value = value12;
-   // document.querySelector("#value13").value = value13;
-   // document.querySelector("#value14").value = value14;
-   // document.querySelector("#value15").value = value15;
-   // document.querySelector("#value16").value = value16;
-   // document.querySelector("#value17").value = value17;
-   // document.querySelector("#value18").value = value18;
-   // document.querySelector("#value19").value = value19;
-    //document.querySelector("#value20").value = value20;
+function editData(id,  value0, value1, value2, value3, value4, value5, value6, value7 , value8, value9, value10, value11, value12, value13, value14, value15, value16, value17 , value18, value19, value20 ) {
+    document.querySelector("#id").value = id;
+    document.querySelector("#value0").value = value0;
+    document.querySelector("#value1").value = value1;
+    document.querySelector("#value2").value = value2;
+    document.querySelector("#value3").value = value3;
+    document.querySelector("#value4").value = value4;
+    document.querySelector("#value5").value = value5;
+    document.querySelector("#value6").value = value6;
+    document.querySelector("#value7").value = value7;
+    document.querySelector("#value8").value = value8;
+    document.querySelector("#value9").value = value9;
+    document.querySelector("#value10").value = value10;
+    document.querySelector("#value11").value = value11;
+    document.querySelector("#value12").value = value12;
+    document.querySelector("#value13").value = value13;
+    document.querySelector("#value14").value = value14;
+ document.querySelector("#value15").value = value15;
+    document.querySelector("#value16").value = value16;
+    document.querySelector("#value17").value = value17;
+   document.querySelector("#value18").value = value18;
+   document.querySelector("#value19").value = value19;
+    document.querySelector("#value20").value = value20;
 
-   // document.getElementById("formModal").style.display = "block";
-    //}
-    function editData(data) {
-    document.querySelector("#id").value = data.id;
-    for (let i = 0; i <= 21; i++) {
-        document.querySelector(`#value${i}`).value = data[`value${i}`];
-    }
     document.getElementById("formModal").style.display = "block";
     }
+    //function editData(data) {
+    //document.querySelector("#id").value = data.id;
+   // for (let i = 0; i <= 21; i++) {
+        //document.querySelector(`#value${i}`).value = data[`value${i}`];
+    //}
+    //document.getElementById("formModal").style.display = "block";
+   // }
 
 
 // Delete entry
