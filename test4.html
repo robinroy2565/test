@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image to QR Code Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    input, button {
+      margin: 15px;
+      padding: 10px;
+    }
+    #qrCode {
+      margin-top: 20px;
+    }
+    img.preview {
+      max-width: 200px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Image to QR Code Generator</h2>
+
+  <input type="file" id="imageInput" accept="image/*"><br>
+  <img id="preview" class="preview" src="#" alt="Image Preview" style="display:none;"><br>
+  <button onclick="generateQR()">Generate QR Code</button>
+
+  <div id="qrCode"></div>
+  <button id="downloadBtn" style="display:none;">Download QR Code</button>
+
+  <!-- QR Code Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+    let imageDataURL = "";
+
+    document.getElementById("imageInput").addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imageDataURL = e.target.result;
+          const preview = document.getElementById("preview");
+          preview.src = imageDataURL;
+          preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function generateQR() {
+      if (!imageDataURL) {
+        alert("Please upload an image first.");
+        return;
+      }
+
+      // Clear previous QR
+      document.getElementById("qrCode").innerHTML = "";
+
+      // Generate QR
+      const qr = new QRCode(document.getElementById("qrCode"), {
+        text: imageDataURL,
+        width: 200,
+        height: 200,
+      });
+
+      // Show download button
+      setTimeout(() => {
+        const qrCanvas = document.querySelector('#qrCode canvas');
+        const qrDataURL = qrCanvas.toDataURL("image/png");
+
+        const downloadBtn = document.getElementById("downloadBtn");
+        downloadBtn.style.display = "inline-block";
+        downloadBtn.onclick = () => {
+          const a = document.createElement('a');
+          a.href = qrDataURL;
+          a.download = "qr-code.png";
+          a.click();
+        };
+      }, 500);
+    }
+  </script>
+
+</body>
+</html>
