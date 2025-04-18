@@ -1,162 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Isotope Reaction Simulator</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
       padding: 20px;
-      background-color: #f4f4f4;
     }
-
-    h1, h2, h3 {
-      color: #333;
+    .container {
+      max-width: 600px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin: auto;
     }
-
-    label {
-      display: block;
-      margin-top: 15px;
-    }
-
     select, button {
-      width: 100%;
       padding: 10px;
-      margin-top: 5px;
       font-size: 16px;
-    }
-
-    button {
-      margin-top: 15px;
-      background-color: #0066cc;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #0052a3;
-    }
-
-    #output, #reactionChain, .media {
-      margin-top: 30px;
-    }
-
-    .media img, .media video {
+      margin-top: 10px;
       width: 100%;
-      max-width: 400px;
-      display: block;
-      margin-top: 15px;
-      border: 1px solid #ccc;
     }
-
-    #reactionChain {
-      font-family: monospace;
-      white-space: pre-line;
-      background-color: #e9f7ff;
+    #result {
+      margin-top: 20px;
       padding: 15px;
+      background-color: #e6f7ff;
+      border: 1px solid #91d5ff;
       border-radius: 5px;
-      border-left: 4px solid #007acc;
     }
   </style>
 </head>
 <body>
 
-  <h1>Isotope Reaction Simulator</h1>
-
-  <label for="elementSelect">Select Element:</label>
-  <select id="elementSelect">
-    <option value="">-- Choose Element --</option>
-    <option value="Hydrogen">Hydrogen</option>
-    <option value="Carbon">Carbon</option>
-    <option value="Uranium">Uranium</option>
+<div class="container">
+  <h2>Isotope Reaction Simulator</h2>
+  <label for="isotope">Choose an Isotope:</label>
+  <select id="isotope">
+    <option value="Uranium-238">Uranium-238</option>
+    <option value="Carbon-14">Carbon-14</option>
+    <option value="Radon-222">Radon-222</option>
   </select>
+  <button onclick="simulateReaction()">Simulate Reaction</button>
 
-  <label for="isotopeSelect">Select Isotope(s):</label>
-  <select id="isotopeSelect" multiple size="5"></select>
+  <div id="result"></div>
+</div>
 
-  <button onclick="selectAllIsotopes()">Select All Isotopes</button>  
-  <button onclick="runReaction()">Run Reaction</button>
+<script>
+  function simulateReaction() {
+    const isotope = document.getElementById("isotope").value;
+    let reaction = "";
+    let result = "";
 
-  <div id="output"></div>
-
-  <div id="reactionChain"></div>
-
-  <div class="media">
-    <h2>3D Animation</h2>
-    <img id="animationImg" src="" alt="3D Animation Placeholder" />
-
-    <h2>Reaction Video (Chain)</h2>
-    <video id="reactionVideo" controls>
-      <source src="" type="video/mp4" />
-      Your browser does not support HTML5 video.
-    </video>
-  </div>
-
-  <script>
-    const isotopeData = {
-      Hydrogen: ['Protium (H-1)', 'Deuterium (H-2)', 'Tritium (H-3)'],
-      Carbon: ['Carbon-12', 'Carbon-13', 'Carbon-14'],
-      Uranium: ['Uranium-235', 'Uranium-238']
-    };
-
-    const elementSelect = document.getElementById('elementSelect');
-    const isotopeSelect = document.getElementById('isotopeSelect');
-    const animationImg = document.getElementById('animationImg');
-    const reactionVideo = document.getElementById('reactionVideo');
-    const output = document.getElementById('output');
-    const reactionChain = document.getElementById('reactionChain');
-
-    elementSelect.addEventListener('change', function () {
-      const selectedElement = this.value;
-      isotopeSelect.innerHTML = '';
-      if (isotopeData[selectedElement]) {
-        isotopeData[selectedElement].forEach(iso => {
-          const option = document.createElement('option');
-          option.value = iso;
-          option.textContent = iso;
-          isotopeSelect.appendChild(option);
-        });
-      }
-    });
-
-    function selectAllIsotopes() {
-      for (let i = 0; i < isotopeSelect.options.length; i++) {
-        isotopeSelect.options[i].selected = true;
-      }
+    if (isotope === "Uranium-238") {
+      reaction = "U-238 → Th-234 + α (alpha decay)";
+      result = "Thorium-234";
+    } else if (isotope === "Carbon-14") {
+      reaction = "C-14 → N-14 + β⁻ (beta decay)";
+      result = "Nitrogen-14";
+    } else if (isotope === "Radon-222") {
+      reaction = "Rn-222 → Po-218 + α (alpha decay)";
+      result = "Polonium-218";
     }
 
-    function runReaction() {
-      const selectedIsotopes = Array.from(isotopeSelect.selectedOptions).map(opt => opt.value);
-      if (selectedIsotopes.length === 0) {
-        output.innerHTML = `<p style="color: red;">Please select at least one isotope.</p>`;
-        reactionChain.innerHTML = '';
-        return;
-      }
-
-      // Simulated reaction
-      output.innerHTML = `<strong>Simulated Reaction:</strong> ${selectedIsotopes.join(' + ')} → Energy + Byproducts`;
-
-      // Simulated chain reaction details
-      reactionChain.innerHTML = `
-Chain Reaction Example:
-------------------------
-1. ${selectedIsotopes[0]} absorbs neutron
-2. Splits into fragments + energy
-3. Releases 2 or 3 neutrons
-4. These neutrons hit other isotopes
-5. Chain continues...
-
-Energy output increases exponentially!
-`;
-
-      // Simulated media
-      animationImg.src = "https://via.placeholder.com/400x250.png?text=3D+Isotope+Animation";
-      reactionVideo.querySelector('source').src = "https://www.w3schools.com/html/mov_bbb.mp4"; // Replace with your 3D chain video
-      reactionVideo.load();
-    }
-  </script>
+    document.getElementById("result").innerHTML = `
+      <strong>Reaction:</strong> ${reaction}<br>
+      <strong>Resulting Isotope:</strong> ${result}
+    `;
+  }
+</script>
 
 </body>
 </html>
