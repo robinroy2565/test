@@ -11,7 +11,7 @@
       background-color: #f4f4f4;
     }
 
-    h1, h2 {
+    h1, h2, h3 {
       color: #333;
     }
 
@@ -39,7 +39,7 @@
       background-color: #0052a3;
     }
 
-    #output, .media {
+    #output, #reactionChain, .media {
       margin-top: 30px;
     }
 
@@ -48,6 +48,16 @@
       max-width: 400px;
       display: block;
       margin-top: 15px;
+      border: 1px solid #ccc;
+    }
+
+    #reactionChain {
+      font-family: monospace;
+      white-space: pre-line;
+      background-color: #e9f7ff;
+      padding: 15px;
+      border-radius: 5px;
+      border-left: 4px solid #007acc;
     }
   </style>
 </head>
@@ -66,16 +76,18 @@
   <label for="isotopeSelect">Select Isotope(s):</label>
   <select id="isotopeSelect" multiple size="5"></select>
 
-  <button onclick="selectAllIsotopes()">Select All Isotopes</button>
+  <button onclick="selectAllIsotopes()">Select All Isotopes</button>  
   <button onclick="runReaction()">Run Reaction</button>
 
   <div id="output"></div>
+
+  <div id="reactionChain"></div>
 
   <div class="media">
     <h2>3D Animation</h2>
     <img id="animationImg" src="" alt="3D Animation Placeholder" />
 
-    <h2>Reaction Video</h2>
+    <h2>Reaction Video (Chain)</h2>
     <video id="reactionVideo" controls>
       <source src="" type="video/mp4" />
       Your browser does not support HTML5 video.
@@ -94,6 +106,7 @@
     const animationImg = document.getElementById('animationImg');
     const reactionVideo = document.getElementById('reactionVideo');
     const output = document.getElementById('output');
+    const reactionChain = document.getElementById('reactionChain');
 
     elementSelect.addEventListener('change', function () {
       const selectedElement = this.value;
@@ -118,14 +131,29 @@
       const selectedIsotopes = Array.from(isotopeSelect.selectedOptions).map(opt => opt.value);
       if (selectedIsotopes.length === 0) {
         output.innerHTML = `<p style="color: red;">Please select at least one isotope.</p>`;
+        reactionChain.innerHTML = '';
         return;
       }
 
-      output.innerHTML = `<strong>Simulated Reaction:</strong> ${selectedIsotopes.join(' + ')} → Products`;
+      // Simulated reaction
+      output.innerHTML = `<strong>Simulated Reaction:</strong> ${selectedIsotopes.join(' + ')} → Energy + Byproducts`;
 
-      // Set dummy animation and video (replace with actual 3D renders or videos if needed)
+      // Simulated chain reaction details
+      reactionChain.innerHTML = `
+Chain Reaction Example:
+------------------------
+1. ${selectedIsotopes[0]} absorbs neutron
+2. Splits into fragments + energy
+3. Releases 2 or 3 neutrons
+4. These neutrons hit other isotopes
+5. Chain continues...
+
+Energy output increases exponentially!
+`;
+
+      // Simulated media
       animationImg.src = "https://via.placeholder.com/400x250.png?text=3D+Isotope+Animation";
-      reactionVideo.querySelector('source').src = "https://www.w3schools.com/html/mov_bbb.mp4";
+      reactionVideo.querySelector('source').src = "https://www.w3schools.com/html/mov_bbb.mp4"; // Replace with your 3D chain video
       reactionVideo.load();
     }
   </script>
