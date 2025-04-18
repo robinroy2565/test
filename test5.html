@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Isotope Reactions</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    select, button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    #output {
+      margin-top: 20px;
+    }
+    .media-container {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Select Element and Isotope</h2>
+
+  <label for="element">Element:</label>
+  <select id="element">
+    <option value="">--Select Element--</option>
+    <option value="Hydrogen">Hydrogen</option>
+    <option value="Carbon">Carbon</option>
+    <option value="Uranium">Uranium</option>
+  </select>
+
+  <label for="isotope">Isotope:</label>
+  <select id="isotope" multiple size="4"></select>
+  <br>
+  <button onclick="selectAllIsotopes()">Select All Isotopes</button>
+  <button onclick="showReaction()">Show Reaction</button>
+
+  <div id="output"></div>
+
+  <div class="media-container">
+    <h3>3D Animation & Video</h3>
+    <img id="animation" src="" alt="3D Animation" width="300"/>
+    <video id="reactionVideo" width="320" height="240" controls>
+      <source src="" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <script>
+    const isotopesData = {
+      Hydrogen: ['Protium (H-1)', 'Deuterium (H-2)', 'Tritium (H-3)'],
+      Carbon: ['C-12', 'C-13', 'C-14'],
+      Uranium: ['U-235', 'U-238']
+    };
+
+    const elementSelect = document.getElementById("element");
+    const isotopeSelect = document.getElementById("isotope");
+
+    elementSelect.addEventListener("change", function () {
+      const selectedElement = this.value;
+      isotopeSelect.innerHTML = "";
+      if (isotopesData[selectedElement]) {
+        isotopesData[selectedElement].forEach(isotope => {
+          const option = document.createElement("option");
+          option.value = isotope;
+          option.textContent = isotope;
+          isotopeSelect.appendChild(option);
+        });
+      }
+    });
+
+    function selectAllIsotopes() {
+      for (let i = 0; i < isotopeSelect.options.length; i++) {
+        isotopeSelect.options[i].selected = true;
+      }
+    }
+
+    function showReaction() {
+      const selectedIsotopes = Array.from(isotopeSelect.selectedOptions).map(opt => opt.value);
+      const outputDiv = document.getElementById("output");
+      outputDiv.innerHTML = `<strong>Reaction:</strong> ${selectedIsotopes.join(" + ")} → Product`;
+
+      // Example 3D animation and video loading (use real links for production)
+      document.getElementById("animation").src = "https://via.placeholder.com/300x200.png?text=3D+Animation";
+      document.getElementById("reactionVideo").querySelector('source').src = "https://www.w3schools.com/html/mov_bbb.mp4";
+      document.getElementById("reactionVideo").load();
+    }
+  </script>
+
+</body>
+</html>
