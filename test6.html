@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Isotope Reaction Simulator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    h1, h2 {
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      font-size: 16px;
+    }
+
+    button {
+      margin-top: 15px;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0052a3;
+    }
+
+    #output, .media {
+      margin-top: 30px;
+    }
+
+    .media img, .media video {
+      width: 100%;
+      max-width: 400px;
+      display: block;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Isotope Reaction Simulator</h1>
+
+  <label for="elementSelect">Select Element:</label>
+  <select id="elementSelect">
+    <option value="">-- Choose Element --</option>
+    <option value="Hydrogen">Hydrogen</option>
+    <option value="Carbon">Carbon</option>
+    <option value="Uranium">Uranium</option>
+  </select>
+
+  <label for="isotopeSelect">Select Isotope(s):</label>
+  <select id="isotopeSelect" multiple size="5"></select>
+
+  <button onclick="selectAllIsotopes()">Select All Isotopes</button>
+  <button onclick="runReaction()">Run Reaction</button>
+
+  <div id="output"></div>
+
+  <div class="media">
+    <h2>3D Animation</h2>
+    <img id="animationImg" src="" alt="3D Animation Placeholder" />
+
+    <h2>Reaction Video</h2>
+    <video id="reactionVideo" controls>
+      <source src="" type="video/mp4" />
+      Your browser does not support HTML5 video.
+    </video>
+  </div>
+
+  <script>
+    const isotopeData = {
+      Hydrogen: ['Protium (H-1)', 'Deuterium (H-2)', 'Tritium (H-3)'],
+      Carbon: ['Carbon-12', 'Carbon-13', 'Carbon-14'],
+      Uranium: ['Uranium-235', 'Uranium-238']
+    };
+
+    const elementSelect = document.getElementById('elementSelect');
+    const isotopeSelect = document.getElementById('isotopeSelect');
+    const animationImg = document.getElementById('animationImg');
+    const reactionVideo = document.getElementById('reactionVideo');
+    const output = document.getElementById('output');
+
+    elementSelect.addEventListener('change', function () {
+      const selectedElement = this.value;
+      isotopeSelect.innerHTML = '';
+      if (isotopeData[selectedElement]) {
+        isotopeData[selectedElement].forEach(iso => {
+          const option = document.createElement('option');
+          option.value = iso;
+          option.textContent = iso;
+          isotopeSelect.appendChild(option);
+        });
+      }
+    });
+
+    function selectAllIsotopes() {
+      for (let i = 0; i < isotopeSelect.options.length; i++) {
+        isotopeSelect.options[i].selected = true;
+      }
+    }
+
+    function runReaction() {
+      const selectedIsotopes = Array.from(isotopeSelect.selectedOptions).map(opt => opt.value);
+      if (selectedIsotopes.length === 0) {
+        output.innerHTML = `<p style="color: red;">Please select at least one isotope.</p>`;
+        return;
+      }
+
+      output.innerHTML = `<strong>Simulated Reaction:</strong> ${selectedIsotopes.join(' + ')} → Products`;
+
+      // Set dummy animation and video (replace with actual 3D renders or videos if needed)
+      animationImg.src = "https://via.placeholder.com/400x250.png?text=3D+Isotope+Animation";
+      reactionVideo.querySelector('source').src = "https://www.w3schools.com/html/mov_bbb.mp4";
+      reactionVideo.load();
+    }
+  </script>
+
+</body>
+</html>
