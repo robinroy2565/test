@@ -3,23 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Quiz Exam</title>
+  <title>Quiz App</title>
   <link rel="stylesheet" href="#" />
   <style>
     body {
-  font-family: Arial, sans-serif;
-  background: #f5f5f5;
-  margin: 0;
-  padding: 0;
+  font-family: sans-serif;
+  background: #f0f0f0;
+  padding: 20px;
 }
 
 .container {
-  width: 90%;
-  max-width: 800px;
+  max-width: 700px;
+  background: #fff;
   margin: auto;
   padding: 20px;
-  background: white;
-  margin-top: 30px;
   border-radius: 10px;
 }
 
@@ -27,114 +24,78 @@ h1 {
   text-align: center;
 }
 
-.settings {
-  text-align: center;
+.question {
   margin-bottom: 20px;
 }
 
-.quiz {
-  display: none;
+.options label {
+  display: block;
+  margin: 5px 0;
 }
 
-.question-block {
-  margin-bottom: 20px;
-}
-
-.result {
-  font-weight: bold;
-  text-align: center;
+#result {
   margin-top: 20px;
+  font-weight: bold;
 }
 
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Quiz Exam</h1>
-
-    <div class="settings">
-      <label for="question-count">Number of Questions:</label>
-      <select id="question-count">
-        <option value="10">10</option>
-        <option value="20">20</option>
-        <option value="30">30</option>
-        <option value="40">40</option>
-        <option value="50">50</option>
-        <option value="60">60</option>
-        <option value="70">70</option>
-        <option value="80">80</option>
-        <option value="90">90</option>
-        <option value="100">100</option>
-        <option value="110">110</option>
-      </select>
-      <button onclick="startExam()">Start Exam</button>
-    </div>
-
-    <form id="quiz-form" class="quiz" onsubmit="submitQuiz(event)"></form>
-    <div id="result" class="result"></div>
+    <h1>Quiz App</h1>
+    <div id="quiz"></div>
+    <button id="submit-btn">Submit</button>
+    <div id="result"></div>
   </div>
-
   <script src="#"></script>
   <script>
-    const quizForm = document.getElementById("quiz-form");
-const resultDiv = document.getElementById("result");
+    async function loadQuestions() {
+  const res = await fetch('questions/questions.json');
+  const data = await res.json();
+  return data;
+}
 
-function generateQuestion(id) {
-  const correctAnswer = "A";
-  const questionBlock = document.createElement("div");
-  questionBlock.className = "question-block";
+function renderQuiz(questions) {
+  const quizDiv = document.getElementById('quiz');
+  quizDiv.innerHTML = '';
 
-  const question = document.createElement("p");
-  question.textContent = `Question ${id + 1}: What is the correct answer?`;
+  questions.forEach((q, index) => {
+    const qDiv = document.createElement('div');
+    qDiv.className = 'question';
+    qDiv.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
 
-  questionBlock.appendChild(question);
+    q.options.forEach(opt => {
+      const label = document.createElement('label');
+      label.innerHTML = `
+        <input type="radio" name="q${index}" value="${opt}" required />
+        ${opt}
+      `;
+      qDiv.appendChild(label);
+    });
 
-  ["A", "B", "C", "D"].forEach((option) => {
-    const label = document.createElement("label");
-    label.innerHTML = `
-      <input type="radio" name="q${id}" value="${option}" required />
-      ${option}
-    `;
-    questionBlock.appendChild(label);
-    questionBlock.appendChild(document.createElement("br"));
+    quizDiv.appendChild(qDiv);
   });
-
-  // Store correct answer for grading
-  questionBlock.dataset.correct = correctAnswer;
-
-  return questionBlock;
 }
 
-function startExam() {
-  quizForm.innerHTML = "";
-  resultDiv.innerHTML = "";
-  const count = parseInt(document.getElementById("question-count").value);
-
-  for (let i = 0; i < count; i++) {
-    const question = generateQuestion(i);
-    quizForm.appendChild(question);
-  }
-
-  const submitBtn = document.createElement("button");
-  submitBtn.type = "submit";
-  submitBtn.textContent = "Submit Exam";
-  quizForm.appendChild(submitBtn);
-  quizForm.style.display = "block";
-}
-
-function submitQuiz(event) {
-  event.preventDefault();
-  const questions = document.querySelectorAll(".question-block");
+function checkAnswers(questions) {
   let score = 0;
-
-  questions.forEach((q, i) => {
-    const correct = q.dataset.correct;
-    const selected = quizForm[`q${i}`].value;
-    if (selected === correct) score++;
+  questions.forEach((q, index) => {
+    const selected = document.querySelector(`input[name="q${index}"]:checked`);
+    if (selected && selected.value === q.answer) {
+      score++;
+    }
   });
-
-  resultDiv.textContent = `You scored ${score} out of ${questions.length}`;
+  return score;
 }
+
+document.getElementById('submit-btn').addEventListener('click', async () => {
+  const questions = await loadQuestions();
+  const score = checkAnswers(questions);
+  document.getElementById('result').textContent = `Your score: ${score} / ${questions.length}`;
+});
+
+// Load on start
+loadQuestions().then(renderQuiz);
 
   </script>
 </body>
