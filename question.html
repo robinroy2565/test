@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz Exam</title>
+  <link rel="stylesheet" href="#" />
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  background: #f0f2f5;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 900px;
+  margin: 30px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.settings {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.settings label {
+  margin: 0 5px;
+}
+
+.quiz {
+  display: none;
+}
+
+.question-block {
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.timer {
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  margin-top: 10px;
+  color: red;
+}
+
+.result {
+  font-size: 18px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Quiz Exam</h1>
+
+    <div class="settings">
+      <label for="question-count">Questions:</label>
+      <select id="question-count">
+        <option>10</option><option>20</option><option>30</option><option>40</option>
+        <option>50</option><option>60</option><option>70</option><option>80</option>
+        <option>90</option><option>100</option><option>110</option>
+      </select>
+
+      <label for="time-limit">Time:</label>
+      <select id="time-limit">
+        <option value="90">90 min</option>
+        <option value="60">60 min</option>
+        <option value="110">110 min</option>
+      </select>
+
+      <label for="total-marks">Marks:</label>
+      <select id="total-marks">
+        <option>25</option><option>45</option><option>60</option><option>75</option>
+        <option>90</option><option>100</option><option>110</option>
+      </select>
+
+      <button onclick="startExam()">Start Exam</button>
+    </div>
+
+    <div id="timer" class="timer"></div>
+
+    <form id="quiz-form" class="quiz" onsubmit="submitQuiz(event)"></form>
+    <div id="result" class="result"></div>
+  </div>
+
+  <script src="#"></script>
+  <script>
+    const quizForm = document.getElementById("quiz-form");
+const resultDiv = document.getElementById("result");
+const timerDiv = document.getElementById("timer");
+
+let countdown;
+let correctAnswers = [];
+
+function generateQuestion(index) {
+  const correct = "A"; // Default correct answer
+  correctAnswers.push(correct);
+
+  const div = document.createElement("div");
+  div.className = "question-block";
+  const q = document.createElement("p");
+  q.textContent = `Q${index + 1}: What is the correct answer?`;
+
+  div.appendChild(q);
+
+  ["A", "B", "C", "D"].forEach(opt => {
+    const label = document.createElement("label");
+    label.innerHTML = `
+      <input type="radio" name="q${index}" value="${opt}" required />
+      ${opt}
+    `;
+    div.appendChild(label);
+    div.appendChild(document.createElement("br"));
+  });
+
+  return div;
+}
+
+function startExam() {
+  quizForm.innerHTML = "";
+  resultDiv.innerHTML = "";
+  correctAnswers = [];
+
+  const questionCount = parseInt(document.getElementById("question-count").value);
+  const timeLimit = parseInt(document.getElementById("time-limit").value);
+  const totalMarks = parseInt(document.getElementById("total-marks").value);
+
+  for (let i = 0; i < questionCount; i++) {
+    quizForm.appendChild(generateQuestion(i));
+  }
+
+  const btn = document.createElement("button");
+  btn.type = "submit";
+  btn.textContent = "Submit Exam";
+  quizForm.appendChild(btn);
+  quizForm.style.display = "block";
+
+  startTimer(timeLimit);
+}
+
+function startTimer(minutes) {
+  clearInterval(countdown);
+  let time = minutes * 60;
+  updateTimer(time);
+  countdown = setInterval(() => {
+    time--;
+    updateTimer(time);
+    if (time <= 0) {
+      clearInterval(countdown);
+      submitQuiz(null); // auto-submit
+    }
+  }, 1000);
+}
+
+function updateTimer(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  timerDiv.textContent = `Time Left: ${mins}:${secs < 10 ? "0" : ""}${secs}`;
+}
+
+function submitQuiz(e) {
+  if (e) e.preventDefault();
+  clearInterval(countdown);
+
+  const questions = document.querySelectorAll(".question-block");
+  let score = 0;
+
+  questions.forEach((q, i) => {
+    const selected = quizForm[`q${i}`].value;
+    if (selected === correctAnswers[i]) score++;
+  });
+
+  const totalQuestions = questions.length;
+  resultDiv.textContent = `You scored ${score} out of ${totalQuestions}`;
+}
+
+  </script>
+  
+</body>
+</html>
