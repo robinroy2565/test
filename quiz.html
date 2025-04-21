@@ -1,48 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Question Entry Form</title>
+  <title>Question Entry</title>
 </head>
 <body>
-  <h2>Enter a New Question</h2>
+  <h2>Add a Question</h2>
 
-  <label for="subject">Subject:</label>
+  <label>Subject:</label>
   <select id="subject">
     <option value="Math">Math</option>
     <option value="Science">Science</option>
     <option value="History">History</option>
-  </select>
-  <br><br>
+  </select><br><br>
 
-  <label for="question">Question:</label>
-  <input type="text" id="question" placeholder="Enter your question here">
-  <br><br>
+  <label>Question:</label>
+  <input type="text" id="question"><br><br>
 
   <label>Option A:</label>
-  <input type="text" id="optionA">
-  <br><br>
-
+  <input type="text" id="optionA"><br>
   <label>Option B:</label>
-  <input type="text" id="optionB">
-  <br><br>
-
+  <input type="text" id="optionB"><br>
   <label>Option C:</label>
-  <input type="text" id="optionC">
-  <br><br>
-
+  <input type="text" id="optionC"><br>
   <label>Option D:</label>
-  <input type="text" id="optionD">
-  <br><br>
+  <input type="text" id="optionD"><br><br>
 
-  <label for="answer">Correct Answer (A/B/C/D):</label>
-  <input type="text" id="answer" maxlength="1">
-  <br><br>
+  <label>Correct Answer (A/B/C/D):</label>
+  <input type="text" id="answer" maxlength="1"><br><br>
 
-  <button onclick="submitData()">Submit</button>
+  <button onclick="submitQuestion()">Submit</button>
+
+  <h2>Saved Questions</h2>
+  <div id="questions"></div>
 
   <script>
-    function submitData() {
-      const data = {
+    function submitQuestion() {
+      const questionData = {
         subject: document.getElementById('subject').value,
         question: document.getElementById('question').value,
         options: {
@@ -54,11 +47,38 @@
         answer: document.getElementById('answer').value.toUpperCase()
       };
 
-      console.log("Question Submitted:", data);
-      alert("Question submitted successfully!");
-
-      // Optional: You can save to localStorage or send to a server here
+      fetch('http://localhost:3000/api/questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(questionData)
+      })
+      .then(res => res.json())
+      .then(() => {
+        alert('Question submitted!');
+        loadQuestions(); // reload the list
+      });
     }
+
+    function loadQuestions() {
+      fetch('http://localhost:3000/api/questions')
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById('questions');
+          container.innerHTML = '';
+          data.forEach((q, index) => {
+            container.innerHTML += `
+              <div>
+                <strong>${index + 1}. ${q.subject}</strong> - ${q.question}<br>
+                A: ${q.options.A}, B: ${q.options.B}, C: ${q.options.C}, D: ${q.options.D}<br>
+                <b>Answer:</b> ${q.answer}<hr>
+              </div>
+            `;
+          });
+        });
+    }
+
+    // Load on page load
+    loadQuestions();
   </script>
 </body>
 </html>
