@@ -1,102 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Quiz App</title>
-  <link rel="stylesheet" href="#" />
-  <style>
-    body {
-  font-family: sans-serif;
-  background: #f0f0f0;
-  padding: 20px;
-}
-
-.container {
-  max-width: 700px;
-  background: #fff;
-  margin: auto;
-  padding: 20px;
-  border-radius: 10px;
-}
-
-h1 {
-  text-align: center;
-}
-
-.question {
-  margin-bottom: 20px;
-}
-
-.options label {
-  display: block;
-  margin: 5px 0;
-}
-
-#result {
-  margin-top: 20px;
-  font-weight: bold;
-}
-
-  </style>
+  <title>Question Entry Form</title>
 </head>
 <body>
-  <div class="container">
-    <h1>Quiz App</h1>
-    <div id="quiz"></div>
-    <button id="submit-btn">Submit</button>
-    <div id="result"></div>
-  </div>
-  <script src="#"></script>
+  <h2>Enter a New Question</h2>
+
+  <label for="subject">Subject:</label>
+  <select id="subject">
+    <option value="Math">Math</option>
+    <option value="Science">Science</option>
+    <option value="History">History</option>
+  </select>
+  <br><br>
+
+  <label for="question">Question:</label>
+  <input type="text" id="question" placeholder="Enter your question here">
+  <br><br>
+
+  <label>Option A:</label>
+  <input type="text" id="optionA">
+  <br><br>
+
+  <label>Option B:</label>
+  <input type="text" id="optionB">
+  <br><br>
+
+  <label>Option C:</label>
+  <input type="text" id="optionC">
+  <br><br>
+
+  <label>Option D:</label>
+  <input type="text" id="optionD">
+  <br><br>
+
+  <label for="answer">Correct Answer (A/B/C/D):</label>
+  <input type="text" id="answer" maxlength="1">
+  <br><br>
+
+  <button onclick="submitData()">Submit</button>
+
   <script>
-    async function loadQuestions() {
-  const res = await fetch('questions/questions.json');
-  const data = await res.json();
-  return data;
-}
+    function submitData() {
+      const data = {
+        subject: document.getElementById('subject').value,
+        question: document.getElementById('question').value,
+        options: {
+          A: document.getElementById('optionA').value,
+          B: document.getElementById('optionB').value,
+          C: document.getElementById('optionC').value,
+          D: document.getElementById('optionD').value
+        },
+        answer: document.getElementById('answer').value.toUpperCase()
+      };
 
-function renderQuiz(questions) {
-  const quizDiv = document.getElementById('quiz');
-  quizDiv.innerHTML = '';
+      console.log("Question Submitted:", data);
+      alert("Question submitted successfully!");
 
-  questions.forEach((q, index) => {
-    const qDiv = document.createElement('div');
-    qDiv.className = 'question';
-    qDiv.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
-
-    q.options.forEach(opt => {
-      const label = document.createElement('label');
-      label.innerHTML = `
-        <input type="radio" name="q${index}" value="${opt}" required />
-        ${opt}
-      `;
-      qDiv.appendChild(label);
-    });
-
-    quizDiv.appendChild(qDiv);
-  });
-}
-
-function checkAnswers(questions) {
-  let score = 0;
-  questions.forEach((q, index) => {
-    const selected = document.querySelector(`input[name="q${index}"]:checked`);
-    if (selected && selected.value === q.answer) {
-      score++;
+      // Optional: You can save to localStorage or send to a server here
     }
-  });
-  return score;
-}
-
-document.getElementById('submit-btn').addEventListener('click', async () => {
-  const questions = await loadQuestions();
-  const score = checkAnswers(questions);
-  document.getElementById('result').textContent = `Your score: ${score} / ${questions.length}`;
-});
-
-// Load on start
-loadQuestions().then(renderQuiz);
-
   </script>
 </body>
 </html>
