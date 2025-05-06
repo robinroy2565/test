@@ -1,0 +1,835 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+	<title>Loan Application</title>
+	<meta content="" name="description">
+	<meta content="" name="keywords">
+
+	<!-- Favicons -->
+	<link href="assets/img/favicon.png" rel="icon">
+	<link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+	<!-- Vendor CSS Files -->
+	<link href="assets/vendor/aos/aos.css" rel="stylesheet">
+	<link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+	
+
+	<!-- Template Main CSS File -->
+	<link href="assets/css/style.css" rel="stylesheet">
+	<link href="assets/css/style.css" rel="stylesheet">
+		<style>
+				body {
+						font-family: Arial, sans-serif;
+						margin: 20px;
+						text-align: center;
+					}
+					.custommodal{
+					position:fixed;
+					top:0;
+					z-index: 10;
+					height:100% !important;
+					overflow:scroll !important;
+					width:100%;
+					display:none;
+				}
+				table {
+						width: 100%;
+						border-collapse: collapse;
+						margin-top: 20px;
+				}
+				th, td {
+						border: 1px solid #ddd;
+						padding: 8px;
+				}
+				th {
+						background-color: #e9f08b;
+						color: rgb(33, 31, 31);
+				}
+				.btn {
+						padding: 8px 12px;
+						margin: 5px;
+						border: none;
+						cursor: pointer;
+				}
+				.edit-btn {
+					background-color: #09a9e9 !important; /* Green */
+					color: white;
+					border: none;
+					padding: 8px 12px;
+					border-radius: 5px;
+					cursor: pointer;
+				}
+			
+				.edit-btn:hover {
+					background-color: #0ebcf1 !important;
+				}
+			
+				.delete-btn {
+					background-color: #f44336 !important; /* Red */
+					color: white;
+					border: none;
+					padding: 8px 12px;
+					border-radius: 5px;
+					cursor: pointer;
+				}
+			
+				.delete-btn:hover {
+					background-color: #e21713 !important;
+				}
+				/* .btn-insert { background-color: #e8ed4b; color: white; }
+				.btn-update { background-color: #ffc107; color: black; }
+				.btn-delete { background-color: #dc3545; color: white; } */
+				 /* Simple Modal Styles */
+				
+		
+						.close {
+								color: #aaa;
+								float: right;
+								font-size: 24px;
+								font-weight: bold;
+								cursor: pointer;
+						}
+						
+					 
+						.add-btn {
+							width: 200px;
+							margin: 0 auto;
+							display: block;
+							font-weight: 500;
+							transition: background-color 0.3s;
+						}
+						
+						.add-btn:hover {
+							background-color: #28a745cc;
+						}
+						
+						.search-box {
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							margin: 20px auto;
+							max-width: 500px;
+							gap: 10px;
+						}
+						
+						.search-box input[type="text"] {
+							padding: 12px 30px;
+							border: 2px solid #007bff;
+							border-radius: 5px;
+							outline: none;
+							width: 100%;
+							font-size: 18px;
+							transition: 0.3s;
+						}
+						
+						.search-box input[type="text"]:focus {
+							border-color: #0056b3;
+						}
+						
+						.search-box button {
+							padding: 12px 20px;
+							background-color: #007bff;
+							color: white;
+							border: none;
+							margin-left: 0%;
+							border-radius: 5px;
+							font-size: 18px;
+							cursor: pointer;
+							transition: background 0.3s;
+						}
+						
+						.search-box button:hover {
+							background-color: #0056b3;
+						}
+		</style>
+
+</head>
+<body>
+
+	<!-- ======= Header ======= -->
+	<header id="header" class="fixed-top ">
+		<div class="container d-flex align-items-center justify-content-between position-relative">
+
+			<div class="logo">
+				<h1 class="text-light"><a href="index.html"><span>login name</span></a></h1>
+				<!-- Uncomment below if you prefer to use an image logo -->
+				<!-- <a href="index.html"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+			</div>
+
+			<nav id="navbar" class="navbar">
+				<ul>
+					<li><a class="nav-link scrollto " href="index.html">Home</a></li>
+					<li class="dropdown"><a href="#"><span>Application</span> <i class="bi bi-chevron-down"></i></a>
+						<ul>
+							<li><a href="/membership-application">Membership Application</a></li>
+							<li><a href="/account-opening-application">Account Opening Application</a></li>
+							<li><a href="/loan-application">Loan Application</a></li>
+							<li><a href="#"></a></li>
+						</ul>
+					</li>
+					<li class="dropdown"><a href="#"><span>FieldOfficer</span> <i class="bi bi-chevron-down"></i></a>
+						<ul>
+							<li class="dropdown"><a href="#"><span>Application</span> <i class="bi bi-chevron-right"></i></a>
+								<ul>
+									<li><a href="/membership-application">Membership Application</a></li>
+									<li><a href="/account-opening-application">Account Opening Application</a></li>
+									<li><a href="/loan-application">Loan Application</a></li>
+									<li><a href="/account-closing-application">Account Closing</a></li>
+									<li><a href="#"></a></li>
+								</ul>
+							</li>
+							<li class="dropdown"><a href="#"><span>Official Action</span> <i class="bi bi-chevron-right"></i></a>
+								<ul>
+									<li><a href="/day-calection">Collection Application</a></li>
+									<li><a href="/member-account-statement-check-">Account Balance Check</a></li>
+									<li><a href="/member-account-statement">Account Statement</a></li>
+									<li><a href="/member-profile">Member Profile</a></li>
+									<li><a href="#"></a></li>
+								</ul>
+							</li>
+							<li><a href="#"></a></li>
+							<li><a href="#"></a></li>
+						</ul>
+					</li>
+					<li class="dropdown"><a href="#"><span>DeskOfficer</span> <i class="bi bi-chevron-down"></i></a>
+						<ul>
+							<li class="dropdown"><a href="#"><span>Application</span> <i class="bi bi-chevron-right"></i></a>
+								<ul>
+									<li><a href="/membership-application">Membership Application</a></li>
+									<li><a href="/account-opening-application">Account Opening Application</a></li>
+									<li><a href="/loan-application">Loan Application</a></li>
+									<li><a href="/account-closing-application">Account Closing</a></li>
+									<li><a href="#"></a></li>
+								</ul>
+							</li>
+							<li class="dropdown"><a href="#"><span>Official Action</span> <i class="bi bi-chevron-right"></i></a>
+								<ul>
+									<li><a href="/day-calection">Collection Application</a></li>
+									<li><a href="/payment">Payment Application</a></li>
+									<li><a href="/employee-attendance-register">Staff Attendance</a></li>
+									<li><a href="/official-expenditure">Offiical Expenditure Application</a></li>
+									<li><a href="/member-account-statement-check">Account Balance Check</a></li>
+									<li><a href="/member-account-statement">Account Statement</a></li>
+									<li><a href="/member-profile">Member Profile</a></li>
+									<li><a href="#"></a></li>
+								</ul>
+							</li>
+							<li class="dropdown"><a href="#"><span>Deep</span> <i class="bi bi-chevron-right"></i></a>
+								<ul>
+									<li><a href="#">1</a></li>
+									<li><a href="#"></a></li>
+								</ul>
+							</li>
+							<li><a href="#"></a></li>
+							<li><a href="#"></a></li>
+							<li><a href="#"></a></li>
+						</ul>
+					</li>
+					<li class="dropdown"><a href="#"><span>UnitOffice</span> <i class="bi bi-chevron-down"></i></a>
+						<ul>
+							<li class="dropdown"><a href="#"><span>Application</span> <i class="bi bi-chevron-right"></i></a>
+								<ul>
+									<li><a href="/membership-application">Membership Application</a></li>
+									<li><a href="/account-opening-application">Account Opening Application</a></li>
+									<li><a href="/loan-application">Loan Application</a></li>
+									<li><a href="/account-closing-application">Account Closing</a></li>
+									<li><a href="#"></a></li>
+								</ul>
+							</li>
+							<li class="dropdown"><a href="#"><span>Application Show List</span> <i class="bi bi-chevron-right"></i></a>
+								<ul>
+									<li><a href="/show-membership">Membership Application Show</a></li>
+									<li><a href="/account-opening-application-show">Account Opening Application Show</a></li>
+									<li><a href="/loan-application-show">Loan Application Show</a></li>
+									<li><a href="/account-closing-application-show">Account Closing Application Show</a></li>
+									<li><a href="#"></a></li>
+								</ul>
+							</li>
+							<li class="dropdown"><a href="#"><span>Official Action</span> <i class="bi bi-chevron-right"></i></a>
+								<ul>
+									<li><a href="/day-calection">Collection Application</a></li>
+									<li><a href="/payment">Payment Application</a></li>
+									<li><a href="/employee-attendance-register">Staff Attendance</a></li>
+									<li><a href="/official-expenditure">Offiical Expenditure Application</a></li>
+									<li><a href="/member-account-statement-check">Account Balance Check</a></li>
+									<li><a href="/member-account-statement">Account Statement</a></li>
+									<li><a href="/member-profile">Member Profile</a></li>
+									<li><a href="#"></a></li>
+								</ul>
+							</li>
+							<li class="dropdown"><a href="#"><span>Statement Show List</span> <i class="bi bi-chevron-right"></i></a>
+								<ul>
+									<li><a href="/daily-field-staff-statement">Staff Collection Statement</a></li>
+									<li><a href="/daily-field-staff-statement-show">Field Collection Statement</a></li>
+									<li><a href="/show-payment">Payment Statement</a></li>
+									<li><a href="/day-calection-show">Collection Statement</a></li>
+									<li><a href="#">Collection Statement</a></li>
+								</ul>
+							</li>
+							<li><a href="#"></a></li>
+							<li><a href="#"></a></li>
+							<li><a href="#"></a></li>
+						</ul>
+					</li>
+					<li class="dropdown"><a href="#"><span>ChiefOfficer</span> <i class="bi bi-chevron-down"></i></a>
+						<ul>
+							<li class="dropdown"><a href="#"><span>Application</span> <i class="bi bi-chevron-right"></i></a>
+								<ul>
+									<li><a href="/membership-application">Membership Application</a></li>
+									<li><a href="/account-opening-application">Account Opening Application</a></li>
+									<li><a href="/loan-application">Loan Application</a></li>
+									<li><a href="/account-closing-application">Account Closing Application</a></li>
+									<li><a href="#"></a></li>
+								</ul>
+							</li>
+							<li class="dropdown"><a href="#"><span>Application Show List</span> <i class="bi bi-chevron-right"></i></a>
+								<ul>
+									<li><a href="/show-membership">Membership Application Show</a></li>
+									<li><a href="/account-opening-application-show">Account Opening Application Show</a></li>
+									<li><a href="/loan-application-show">Loan Application Show</a></li>
+									<li><a href="/account-closing-application-show">Account Closing Application Show</a></li>
+									<li><a href="#"></a></li>
+								</ul>
+							</li>
+							<li class="dropdown"><a href="#"><span>Official Action</span> <i class="bi bi-chevron-right"></i></a>
+								<ul>
+									<li><a href="/day-calection">Collection Application</a></li>
+									<li><a href="/payment">Payment Application</a></li>
+									<li><a href="/employee-attendance-register">Staff Attendance</a></li>
+									<li><a href="/official-expenditure">Offiical Expenditure Application</a></li>
+									<li><a href="/member-account-statement-check">Account Balance Check</a></li>
+									<li><a href="/member-account-statement">Account Statement</a></li>
+									<li><a href="/member-profile">Member Profile</a></li>
+									<li><a href="#"></a></li>
+								</ul>
+							</li>
+							<li class="dropdown"><a href="#"><span>Statement Show List</span> <i class="bi bi-chevron-right"></i></a>
+								<ul>
+									<li><a href="/daily-field-staff-statement">Staff Collection Statement</a></li>
+									<li><a href="/daily-field-staff-statement-show">Field Collection Statement</a></li>
+									<li><a href="/show-payment">Payment Statement</a></li>
+									<li><a href="/cashbook">Cashbook Statement Show</a></li>
+									<li><a href="/official-expenditure-statement-show">Official Expenditure Statement</a></li>
+									<li><a href="/employee-attendance-register-show">Staff Attendance Show </a></li>
+									<li><a href="#"></a></li>
+								</ul>
+							</li>
+							<li><a href="#"></a></li>
+							<li><a href="#"></a></li>
+							<li><a href="#"></a></li>
+						</ul>
+					</li>
+					<li class="dropdown megamenu"><a href="#"><span> Menu</span> <i class="bi bi-chevron-down"></i></a>
+						<ul>
+							<li>
+								<strong>NADIA</strong>
+								<a href="#">Head Office</a>
+								<a href="#">Baranberiya</a>
+								<a href="#">Asannagar</a>
+							</li>
+							<li>
+								<strong>NORTH 24 PARGANA</strong>
+								<a href="#"> </a>
+								<a href="#"> </a>
+								<a href="#">  </a>
+							</li>
+							<li>
+								<strong>SOUTH 24 PARGANA</strong>
+								<a href="#"> </a>
+								<a href="#"> </a>
+								<a href="#"> </a>
+							</li>
+							<li>
+								<strong>MALDA</strong>
+								<a href="#"> </a>
+								<a href="#"> </a>
+								<a href="#"> </a>
+							</li>
+							<li>
+								<strong>NEW JALPAIGURI</strong>
+								<a href="#"> </a>
+								<a href="#"> </a>
+								<a href="#"> </a>
+							</li>
+						</ul>
+					</li>
+					<li><a class="nav-link scrollto" href="/logout">Logout</a></li>
+				</ul>
+				<i class="bi bi-list mobile-nav-toggle"></i>
+			</nav><!-- .navbar -->
+
+		</div>
+	</header><!-- End Header -->
+
+	<main id="main">
+		
+		<div class="divisation" >
+			<div class="search-box">
+					<input type="text" id="searchbox" placeholder="Search here..." onkeyup="filterTable()" />
+					<button class="btn-primary" type="submit" onclick="filterTable()" type="button">
+						<i class="fa fa-search"></i> Search
+					</button>
+				</div>
+				
+			<button class="btn btn-success add-btn" onclick="openModal()">Add New</button>
+			</div>
+			<h2>Google Sheets Data</h2>
+			<table border="1" id="data-table">
+					<thead>
+							<tr>
+									<th>ID</th>
+									<th>Date</th>
+									<th>Membership Number</th>
+									<th>Full Name</th>
+									<th>Type of Account</th>
+									<th>Account Number</th>
+									<th>Payment Amount</th>
+									<th>Amount In word</th>
+									<th>Field Name</th>
+									<th>Employees Desk ID</th>
+									<th>Actions</th>
+									<th>Actions</th>
+							</tr>
+					</thead>
+					<tbody></tbody>
+			</table>
+
+<!-- Add New Button -->
+
+
+<!-- Modal for Add/Edit Form -->
+<div  class="divisation">
+
+				<div id="formModal" class="custommodal">
+						<section class="containers">
+								<span class="close" onclick="closeModal()">&times;</span>
+								<h3>Add/Edit Data</h3>	
+								<h1>Collection Application</h1>
+								<label><p>*** Field Collection Receipt ***</p></label>
+										<form id="data-form" class="form">
+										
+										<input type="hidden" id="id">
+											<div class="column">
+														<div class="input-box">
+																	<label>Membership Number</label>
+																	<input name="Membership Number" id="mid" type="text" placeholder="Membership Number"  required />
+																</div>
+														<div class="input-box">
+																	<label>Members Name</label>
+																	<input name="Members Name" id="name" type="text" placeholder="Enter full name" required />
+																</div>
+										  </div>
+										<div class="column">
+															<div class="input-box">
+																	<label>Type of Account</label>
+																 <input type="text" id="TypeAccount" name="Type of Account" type="number" placeholder="Account Number" required />
+															</div>
+															<div class="input-box">
+																		<label>Account Number</label>
+																	 <input name="Account Number" id="AccountNumber" type="number" placeholder="Account Number" required />
+															</div>
+												</div>
+												<div class="column">
+														<div class="input-box">
+																	<label>Payment Amount</label>
+																	<input id="PaymentAmount" name="Payment Amount" type="number" placeholder="Payment Amount" required />
+																</div>
+														<div class="input-box">
+																	<label>Amount In word</label>
+																	<input name="Amount In word" id="AmountInword" type="text" placeholder="" required />
+																</div>
+												</div>
+												<div class="column">
+													      <div class="input-box">
+													      	<label>Field Name</label>
+													      	<input name="Field Name" id="FieldName" type="text" placeholder="Field Name" required />
+													      </div>
+																<div class="input-box">
+																	<label>Employees Desk ID</label>
+																	<input name="Employees Desk ID" id="FieldOfficerId" type="number" placeholder="Employees Identification No." required />
+																</div>
+												</div>
+										<button type="submit" id="submit-btn">submit</button>
+								</form>
+						</section>
+				</div>
+</div>
+<script>
+	function numberToWords(n) {
+	  const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+				 "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", 
+				 "Eighteen", "Nineteen"],
+			b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+	
+	  const segment = (num, unit) => num ? numberToWords(num) + " " + unit + " " : "";
+	
+	  if (n === 0) return "Zero";
+	
+	  if (n < 20) return a[n];
+	  if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
+	  if (n < 1000) return a[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " and " + numberToWords(n % 100) : "");
+	
+	  return segment(Math.floor(n / 10000000), "Crore") +
+			 segment(Math.floor((n % 10000000) / 100000), "Lakh") +
+			 segment(Math.floor((n % 100000) / 1000), "Thousand") +
+			 segment(Math.floor((n % 1000) / 100), "Hundred") +
+			 ((n % 100 >= 1 && n > 100) ? "and " : "") +
+			 numberToWords(n % 100).trim();
+	}
+	
+	window.onload = function () {
+	  const paymentAmount = document.getElementById("PaymentAmount");
+	  const amountInWords = document.getElementById("AmountInword");
+	
+	  paymentAmount.addEventListener("input", function () {
+		const value = parseInt(this.value);
+		amountInWords.value = !isNaN(value) ? numberToWords(value) + " Rupees Only" : "";
+	  });
+	};
+	</script>
+	
+
+
+<script>
+	//const API_URL = "https://script.google.com/macros/s/AKfycbzJNChc9seqFaX6T6UuBhdM7HikCg1x6yksc5fVA8YybI3ohlOxx7BVqeWAVz7aqC1t/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxPMcUElTvDhMCsU26078TFrzYmR_nkKYwdJ2JsvNOasWqqY_BaW0c7m7F3C34_1ltw/exec";
+// Fetch and display data
+function loadData() {
+		fetch(API_URL)
+				.then(response => response.json())
+				.then(data => {
+						const tbody = document.querySelector("#data-table tbody");
+						tbody.innerHTML = "";
+						data.forEach(row => {
+								tbody.innerHTML += `
+										<tr>
+												<td>${row.id}</td>
+												<td>${row.date}</td>
+												<td>${row.mid}</td>
+												<td>${row.name}</td>
+												<td>${row.typeAccount}</td>
+												<td>${row.accountNumber}</td>
+												<td>${row.paymentAmount}</td> 
+												<td>${row.amountInword}</td> 
+												<td>${row.fieldName}</td> 
+												<td>${row.fieldOfficerId}</td>
+												<td>
+														<button class="edit-btn" onclick="editData(
+																'${row.id}', 
+																'${row.date}', 
+																'${row.mid}', 
+																'${row.name}', 
+																'${row.typeAccount}',
+																'${row.accountNumber}',
+																'${row.paymentAmount}', 
+																'${row.amountInword}', 
+																'${row.fieldName}', 
+																'${row.fieldOfficerId}'
+														)">Edit</button>
+														</td>
+														<td>
+														<button class="delete-btn" onclick="deleteData('${row.id}')">Delete</button>
+												</td>
+										</tr>
+								`;
+
+						});
+				});
+}
+
+
+document.querySelector("#data-form").addEventListener("submit", function (e) {
+		e.preventDefault();
+
+		const submitBtn = document.querySelector("#submit-btn");
+		const id = document.querySelector("#id").value;
+		const mid = document.querySelector("#mid").value;
+		const name = document.querySelector("#name").value;
+		const typeAccount = document.querySelector("#TypeAccount").value;
+		const accountNumber = document.querySelector("#AccountNumber").value;
+		const paymentAmount = document.querySelector("#PaymentAmount").value;
+		const amountInword = document.querySelector("#AmountInword").value;
+		const fieldName = document.querySelector("#FieldName").value;
+		const fieldOfficerId = document.querySelector("#FieldOfficerId").value;
+		
+		// Insert or Update data
+		const action = id ? "update" : "insert";
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = action === "update" ? "Updating..." : "Submitting...";
+		submitBtn.disabled = true;
+
+		fetch(API_URL, {
+				method: "POST",
+				mode:"no-cors",
+				body: JSON.stringify({ action, id, mid, name, typeAccount,accountNumber,paymentAmount ,amountInword ,fieldName,fieldOfficerId })
+		})
+		.then(response => response.text())
+		.then(() => {
+			alert(action === "update" ? "Data updated successfully!" : "Data submitted successfully!");
+			loadData();
+				document.querySelector("#data-form").reset();
+				closeModal(); // Optional: close modal if using one
+		})
+		.catch(error => {
+				console.error("Error:", error);
+				alert("Something went wrong. Please try again.");
+		})
+		.finally(() => {
+				submitBtn.textContent = originalText;
+				submitBtn.disabled = false;
+		});
+});
+
+// document.querySelector("#data-form").addEventListener("submit", function (e) {
+// 	e.preventDefault();
+
+// 	const submitBtn = document.querySelector("#submit-btn");
+// 	const id = document.querySelector("#id").value;
+// 	const mid = document.querySelector("#mid").value;
+// 	const name = document.querySelector("#name").value;
+// 	const typeAccount = document.querySelector("#TypeAccount").value;
+// 	const accountNumber = document.querySelector("#AccountNumber").value;
+// 	const paymentAmount = document.querySelector("#PaymentAmount").value;
+// 	const amountInword = document.querySelector("#AmountInword").value;
+// 	const fieldName = document.querySelector("#FieldName").value;
+// 	const fieldOfficerId = document.querySelector("#FieldOfficerId").value;
+
+// 	// Determine action
+// 	const action = id ? "update" : "insert";
+// 	const originalText = submitBtn.textContent;
+// 	submitBtn.textContent = action === "update" ? "Updating..." : "Submitting...";
+// 	submitBtn.disabled = true;
+
+// 	fetch(API_URL, {
+// 		method: "POST",
+// 		headers: {
+// 			"Content-Type": "application/json"
+// 		},
+// 		body: JSON.stringify({
+// 			action,
+// 			id,
+// 			mid,
+// 			name,
+// 			typeAccount,
+// 			accountNumber,
+// 			paymentAmount,
+// 			amountInword,
+// 			fieldName,
+// 			fieldOfficerId
+// 		})
+// 	})
+// 	.then(response => response.text())
+// 	.then(() => {
+// 		alert(action === "update" ? "Data updated successfully!" : "Data submitted successfully!");
+// 		loadData();
+// 		document.querySelector("#data-form").reset();
+// 		closeModal(); // Optional if modal is being used
+// 	})
+// 	.catch(error => {
+// 		console.error("Error:", error);
+// 		alert("Something went wrong. Please try again.");
+// 	})
+// 	.finally(() => {
+// 		submitBtn.textContent = originalText;
+// 		submitBtn.disabled = false;
+// 	});
+// });
+
+
+// Edit data (populate form)
+function editData(id,shift, mid,name,typeAccount,accountNumber,paymentAmount,amountInword,fieldName,fieldOfficerId) {
+		document.querySelector("#id").value = id;
+		document.querySelector("#mid").value = mid;
+		document.querySelector("#name").value = name;
+		document.querySelector("#TypeAccount").value = typeAccount;
+		document.querySelector("#AccountNumber").value = accountNumber;
+		document.querySelector("#PaymentAmount").value = paymentAmount;
+		document.querySelector("#AmountInword").value = amountInword;
+		document.querySelector("#FieldName").value = fieldName;
+		document.querySelector("#FieldOfficerId").value = fieldOfficerId;
+		
+		document.getElementById("formModal").style.display = "block";
+}
+
+// Delete data
+function deleteData(id) {
+		fetch(API_URL, {
+				method: "POST",
+				mode:"no-cors",
+				body: JSON.stringify({ action: "delete", id })
+		}).then(response => response.text())
+		.then(() =>{
+				alert("Data deleted successfully!");
+				loadData();
+				document.querySelector("data-form").reset();
+		});
+}
+
+
+//Delete data
+// function deleteData(id) {
+//   if (!confirm("Are you sure you want to delete this entry?")) return;
+
+//   fetch(API_URL, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify({ action: "delete", id }),
+//   })
+//     .then((response) => response.text())
+//     .then(() => {
+//       alert("Data deleted successfully!");
+//       loadData();
+//       document.querySelector("#data-form").reset(); // 🔧 FIXED: added '#' for the ID selector
+//     })
+//     .catch((error) => {
+//       console.error("Error deleting data:", error);
+//       alert("Something went wrong while deleting.");
+//     });
+// }
+
+
+// Open the modal
+function openModal() {
+		document.getElementById("formModal").style.display = "block";
+		document.getElementById("data-form").reset();
+		document.getElementById("id").value = ""; // Clear ID for new entries
+}
+
+// Close the modal
+function closeModal() {
+		document.getElementById("formModal").style.display = "none";
+}
+
+// Close modal if clicked outside the form
+window.onclick = function(event) {
+		const modal = document.getElementById("formModal");
+		if (event.target === modal) {
+				modal.style.display = "none";
+		}
+}
+
+// Load data on page load
+loadData();
+</script>
+<script> 
+
+function filterTable() {
+		const input = document.querySelector("#searchbox");
+		const filterValue = input.value.trim().toLowerCase();
+		const table = document.getElementById('data-table').getElementsByTagName('tbody')[0];
+		const rows = table.getElementsByTagName('tr');
+
+		for (let i = 0; i < rows.length; i++) {
+				const cells = rows[i].getElementsByTagName('td');
+				let showRow = false;
+
+				for (let j = 0; j < cells.length; j++) {
+						const cellText = cells[j].textContent.trim().toLowerCase();
+						if (cellText.includes(filterValue)) {
+								showRow = true;
+								break;
+						}
+				}
+
+				rows[i].style.display = showRow ? '' : 'none';
+		}
+}
+
+
+</script>
+
+</main><!-- End #main -->
+
+<!-- ======= Footer ======= -->
+<footer id="footer">
+	<div class="footer-top">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-4 col-md-6">
+					<div class="footer-info">
+						<h3>Susangati Nidhi Limited</h3>
+						<p class="pb-3"><em>Address</em></p>
+						<p>
+							KANTAKHALI<br> HANSKHALI, NADIA<br> W.B, 741505<br> India<br><br>
+							<strong>Phone:</strong>+919144495402  &amp;
+							<br>
+							<br>
+							<strong>Email:</strong> susangatinidhiltd@gmail.com &amp; memberscare@susangati.in<br>
+						</p>
+						<div class="social-links mt-3">
+							<a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
+							<a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
+							<a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
+							<a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
+							<a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-lg-2 col-md-6 footer-links">
+					<h4>Useful Links</h4>
+					<ul>
+						<li><i class="bx bx-chevron-right"></i> <a href="index.html">Home</a></li>
+						<li><i class="bx bx-chevron-right"></i> <a href="About.html">About us</a></li>
+						<li><i class="bx bx-chevron-right"></i> <a href="services.html">Services</a></li>
+						<li><i class="bx bx-chevron-right"></i> <a href="terms and conditions.html">Terms & Conditions</a></li>
+						<li><i class="bx bx-chevron-right"></i> <a href="Scheme Policy.html">Scheme Policy</a></li>
+					</ul>
+				</div>
+
+				<div class="col-lg-4 col-md-6 footer-newsletter">
+					<h4>Our Newsletter</h4>
+					<p>Our Team and We'll Response to you Sortly</p>
+					<form action="" method="post">
+						<input type="email" name="email"><input type="submit" value="Subscribe">
+					</form>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="copyright">
+			&copy; Copyright <strong><span>Susangati Nidhi Limited</span></strong>. All Rights Reserved
+		</div>
+		<div class="credits">
+			<!-- All the links in the footer should remain intact. -->
+			<!-- Licensing information: https://bootstrapmade.com/license/ -->
+			Designed by <a href="#">A</a>
+		</div>
+	</div>
+</footer><!-- End Footer -->
+<div id="google_translate_element"></div>
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+<!-- Vendor JS Files -->
+<script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+<script src="assets/vendor/aos/aos.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+<script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+<script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+<!-- Template Main JS File -->
+<script src="assets/js/main.js"></script>
+
+
+</body>
+</html>
