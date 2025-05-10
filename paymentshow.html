@@ -430,12 +430,22 @@
 																	<label>Members Name</label>
 																	<input name="Members Name" id="name" type="text" placeholder="Enter full name" required />
 																</div>
-										  </div>
+										</div>
 										<div class="column">
-															<div class="input-box">
-																	<label>Type of Account</label>
-																 <input type="text" id="TypeAccount" name="Type of Account" type="number" placeholder="Account Number" required />
-															</div>
+															
+                                                     		<div class="select-box">
+                                                                   <label>Type of Account </label>
+                                                                       <select type="text" id="TypeAccount" name="Type of Account" type="number" placeholder="Account Number" class="form-control" onchange="getAccount(this.value)" required>
+                                                                           <option hidden>Type of Account</option>
+                                                                           <option value="Daily Recurring Deposit (DRD)">Daily Recurring Deposit (DRD)</option>
+                                                                           <option value="Weekly Recurring Deposit (WRD)">Weekly Recurring Deposit (WRD)</option>
+                                                                           <option value="Monthly Recurring Deposit (MRD)">Monthly Recurring Deposit (MRD)</option>
+                                                                           <option value="Saving Account (SB)">Saving Account (SB)</option>
+                                                                           <option value="Loan Account (LOAN)">Loan Account (LOAN)</option>
+                                                     		               <option value="Monthly Saving Investment(MIS)">Monthly Investment Saving (MIS)</option>
+                                                     		               <option value="Fixed Deposit (FD)">Fixed Deposit (FD)</option>
+                                                                       </select>
+                                                            </div>
 															<div class="input-box">
 																		<label>Account Number</label>
 																	 <input name="Account Number" id="AccountNumber" type="number" placeholder="Account Number" required />
@@ -452,38 +462,37 @@
 																</div>
 												</div>
 												<div class="column">
-													     
-													
-														<div class="input-box">
-          <label>Field Name</label>
-              <select  name="Field Name" id="FieldName" type="text" placeholder="Field Name" class="form-control" required>
-                <option value="" hidden>Field Name</option>
-		<option value="Head Office">Head Office</option>
-                          <option value="Baguala-I">Baguala-I</option>
-                          <option value="Bagulai-II">Bagulai-II</option>
-                          <option value="Bagulai-III">Bagulai-III</option>
-                          <option value="Muragacha-I">Muragacha-I</option>
-                          <option value="Muragacha-II">Muragacha-II</option>
-                          <option value="Muragacha-III">Muragacha-III</option>
-                          <option value="Hanskhali-I">Hanskhali-I</option>
-                          <option value="Hanskhali-II">Hanskhali-II</option>
-                          <option value="Hanskhali-III">Hanskhali-III</option>
-                          <option value="Gayes">Gayes</option>
-                          <option value="Benali">Benali</option>
-		          <option value="Asannagar Branch office">Asannagar Branch office</option>
-		          <option value="Asannagar-I">Asannagar-I</option>
-		          <option value="Asannagar-II">Asannagar-II</option>
-		          <option value="Kulgachi-I">Kulgachi-I</option>
-		          <option value="Kulgachi-II">Kulgachi-II</option>
-		          <option value="Majdia-I">Majdia-I</option>
-                          <option value="Majdia-II">Majdia-II</option>
-		          <option value=""></option>
-		          <option value=""></option>
-              </select>
-            </div>		<div class="input-box">
-																	<label>Employees Desk ID</label>
-																	<input name="Employees Desk ID" id="FieldOfficerId" type="number" placeholder="Employees Identification No." required />
-																</div>
+													<div class="select-box">
+                                                    <label>Field Name</label>
+                                                        <select  name="Field Name" id="FieldName" type="text" placeholder="Field Name" class="form-control" required>
+                                                            <option value="" hidden>Field Name</option>
+	                                          	            <option value="Head Office">Head Office</option>
+                                                            <option value="Baguala-I">Baguala-I</option>
+                                                            <option value="Bagulai-II">Bagulai-II</option>
+                                                            <option value="Bagulai-III">Bagulai-III</option>
+                                                            <option value="Muragacha-I">Muragacha-I</option>
+                                                            <option value="Muragacha-II">Muragacha-II</option>
+                                                            <option value="Muragacha-III">Muragacha-III</option>
+                                                            <option value="Hanskhali-I">Hanskhali-I</option>
+                                                            <option value="Hanskhali-II">Hanskhali-II</option>
+                                                            <option value="Hanskhali-III">Hanskhali-III</option>
+                                                            <option value="Gayes">Gayes</option>
+                                                            <option value="Benali">Benali</option>
+	                                          	            <option value="Asannagar Branch office">Asannagar Branch office</option>
+	                                          	            <option value="Asannagar-I">Asannagar-I</option>
+	                                          	            <option value="Asannagar-II">Asannagar-II</option>
+	                                          	            <option value="Kulgachi-I">Kulgachi-I</option>
+	                                          	            <option value="Kulgachi-II">Kulgachi-II</option>
+	                                          	            <option value="Majdia-I">Majdia-I</option>
+                                                            <option value="Majdia-II">Majdia-II</option>
+	                                          	            <option value=""></option>
+	                                          	            <option value=""></option>
+                                                        </select>
+                                                    </div>		
+													<div class="input-box">
+														<label>Employees Desk ID</label>
+														<input name="Employees Desk ID" id="FieldOfficerId" type="number" placeholder="Employees Identification No." required />
+													</div>
 												</div>
 										<button type="submit" id="submit-btn">submit</button>
 								</form>
