@@ -18,6 +18,20 @@
 
     label {
       font-size: 18px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    #search-input {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: none;
+      background: #222;
+      color: #fff;
     }
 
     select {
@@ -25,8 +39,6 @@
       max-width: 400px;
       padding: 10px;
       font-size: 16px;
-      margin-top: 10px;
-      margin-bottom: 20px;
       border-radius: 5px;
       border: none;
       background: #222;
@@ -41,36 +53,49 @@
 </head>
 <body>
   <h1>Select a Cryptocurrency</h1>
-  <label for="crypto-select">Choose:</label>
+
+  <label for="search-input">Search Cryptocurrency:</label>
+  <input type="text" id="search-input" placeholder="Type to filter...">
+
   <select id="crypto-select">
     <option>Loading...</option>
   </select>
 
   <script>
     const select = document.getElementById('crypto-select');
+    const searchInput = document.getElementById('search-input');
+    let allCoins = [];
 
     async function populateCryptoList() {
       try {
         const res = await fetch('https://api.coingecko.com/api/v3/coins/list');
         const coins = await res.json();
 
-        // Clear loading option
-        select.innerHTML = '';
-
-        // Sort alphabetically
-        coins.sort((a, b) => a.name.localeCompare(b.name));
-
-        // Limit to 500 if needed: coins.slice(0, 500).forEach(...)
-        coins.forEach(coin => {
-          const option = document.createElement('option');
-          option.value = coin.id;
-          option.textContent = `${coin.name} (${coin.symbol.toUpperCase()})`;
-          select.appendChild(option);
-        });
+        allCoins = coins.sort((a, b) => a.name.localeCompare(b.name));
+        renderOptions(allCoins);
       } catch (err) {
         select.innerHTML = '<option>Error loading data</option>';
       }
     }
+
+    function renderOptions(filteredCoins) {
+      select.innerHTML = '';
+      filteredCoins.forEach(coin => {
+        const option = document.createElement('option');
+        option.value = coin.id;
+        option.textContent = `${coin.name} (${coin.symbol.toUpperCase()})`;
+        select.appendChild(option);
+      });
+    }
+
+    searchInput.addEventListener('input', () => {
+      const keyword = searchInput.value.toLowerCase();
+      const filtered = allCoins.filter(coin =>
+        coin.name.toLowerCase().includes(keyword) ||
+        coin.symbol.toLowerCase().includes(keyword)
+      );
+      renderOptions(filtered);
+    });
 
     populateCryptoList();
   </script>
