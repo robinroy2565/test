@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select Cryptocurrency</title>
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #00ffcc;
+    }
+
+    label {
+      font-size: 18px;
+    }
+
+    select {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      border: none;
+      background: #222;
+      color: #fff;
+    }
+
+    option {
+      background: #222;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Select a Cryptocurrency</h1>
+  <label for="crypto-select">Choose:</label>
+  <select id="crypto-select">
+    <option>Loading...</option>
+  </select>
+
+  <script>
+    const select = document.getElementById('crypto-select');
+
+    async function populateCryptoList() {
+      try {
+        const res = await fetch('https://api.coingecko.com/api/v3/coins/list');
+        const coins = await res.json();
+
+        // Clear loading option
+        select.innerHTML = '';
+
+        // Sort alphabetically
+        coins.sort((a, b) => a.name.localeCompare(b.name));
+
+        // Limit to 500 if needed: coins.slice(0, 500).forEach(...)
+        coins.forEach(coin => {
+          const option = document.createElement('option');
+          option.value = coin.id;
+          option.textContent = `${coin.name} (${coin.symbol.toUpperCase()})`;
+          select.appendChild(option);
+        });
+      } catch (err) {
+        select.innerHTML = '<option>Error loading data</option>';
+      }
+    }
+
+    populateCryptoList();
+  </script>
+</body>
+</html>
