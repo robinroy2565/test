@@ -117,9 +117,9 @@
     });
 
     async function fetchCryptoData(coin = "bitcoin") {
-      const response = await fetch(`https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?convert=USD&ids=${coin}`);
+      const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coin}`);
       const data = await response.json();
-//https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd
+
 
       const infoDiv = document.getElementById("crypto-info");
       infoDiv.innerHTML = '';
