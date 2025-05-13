@@ -1,57 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Media Player</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #f4f4f4;
-      padding: 20px;
-    }
-    video, audio {
-      margin: 20px 0;
-      width: 100%;
-      max-width: 600px;
-    }
-    .download-btn {
-      display: inline-block;
-      margin: 10px;
-      padding: 10px 20px;
-      background-color: #2c3e50;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-    }
-    .download-btn:hover {
-      background-color: #34495e;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JioSaavn Clone</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+      * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+body {
+    background: #121212;
+    color: white;
+    display: flex;
+}
+.container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+.sidebar {
+    background: #1db954;
+    width: 200px;
+    padding: 20px;
+}
+.sidebar h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+.sidebar ul {
+    list-style: none;
+}
+.sidebar li {
+    margin: 15px 0;
+    cursor: pointer;
+}
+.main-content {
+    flex: 1;
+    padding: 30px;
+    background: #181818;
+}
+.song-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+.song {
+    background: #333;
+    padding: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.song:hover {
+    background: #444;
+}
+.player {
+    background: #222;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+    </style>
 </head>
 <body>
-  <h1>Media Player</h1>
+    <div class="container">
+        <aside class="sidebar">
+            <h1>JioSaavn</h1>
+            <nav>
+                <ul>
+                    <li>Home</li>
+                    <li>Browse</li>
+                    <li>Library</li>
+                </ul>
+            </nav>
+        </aside>
 
-  <!-- Video Player -->
-  <h2>Video Player</h2>
-  <video controls>
-    <source src="media/sample-video.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
-  </video>
+        <main class="main-content">
+            <h2>Top Picks</h2>
+            <div class="song-list">
+                <div class="song" data-src="songs/song1.mp3">Song 1 - Artist A</div>
+                <div class="song" data-src="songs/song2.mp3">Song 2 - Artist B</div>
+                <div class="song" data-src="songs/song3.mp3">Song 3 - Artist C</div>
+            </div>
 
-  <!-- MP3 Player -->
-  <h2>MP3 Music Player</h2>
-  <audio controls>
-    <source src="media/sample-audio.mp3" type="audio/mp3" />
-    Your browser does not support the audio tag.
-  </audio>
+            <div class="player">
+                <p id="now-playing">Select a song to play</p>
+                <audio id="audio" controls></audio>
+            </div>
+        </main>
+    </div>
 
-  <!-- Download Buttons -->
-  <h2>Download Music</h2>
-  <a href="media/sample-audio.mp3" download class="download-btn">Download MP3</a>
+    <script>
+      const songs = document.querySelectorAll('.song');
+const audio = document.getElementById('audio');
+const nowPlaying = document.getElementById('now-playing');
 
-  <!-- Optional Offline Note -->
-  <p><strong>Note:</strong> This player works offline if the media files are stored locally in a "media" folder.</p>
+songs.forEach(song => {
+    song.addEventListener('click', () => {
+        const src = song.getAttribute('data-src');
+        audio.src = src;
+        audio.play();
+        nowPlaying.textContent = `Now Playing: ${song.textContent}`;
+    });
+});
+
+    </script>
 </body>
 </html>
