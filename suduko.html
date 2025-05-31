@@ -4,82 +4,79 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sudoku Game</title>
-  <link rel="stylesheet" href="#">
   <style>
     body {
-  font-family: Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-}
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
 
-#sudoku-board {
-  display: grid;
-  grid-template-columns: repeat(9, 40px);
-  grid-template-rows: repeat(9, 40px);
-  gap: 2px;
-}
+    #sudoku-board {
+      display: grid;
+      grid-template-columns: repeat(9, 40px);
+      grid-template-rows: repeat(9, 40px);
+      gap: 2px;
+    }
 
-input {
-  width: 38px;
-  height: 38px;
-  text-align: center;
-  font-size: 18px;
-  border: 1px solid #ccc;
-}
+    input {
+      width: 38px;
+      height: 38px;
+      text-align: center;
+      font-size: 18px;
+      border: 1px solid #ccc;
+    }
 
-input:focus {
-  outline: none;
-  border-color: #007BFF;
-}
+    input:focus {
+      outline: none;
+      border-color: #007BFF;
+    }
 
-input:nth-child(3n) {
-  border-right: 2px solid black;
-}
+    input:nth-child(3n) {
+      border-right: 2px solid black;
+    }
 
-input:nth-child(n+19):nth-child(-n+27),
-input:nth-child(n+46):nth-child(-n+54) {
-  border-bottom: 2px solid black;
-}
+    input:nth-child(n+19):nth-child(-n+27),
+    input:nth-child(n+46):nth-child(-n+54) {
+      border-bottom: 2px solid black;
+    }
 
-button {
-  margin-top: 15px;
-  padding: 10px 20px;
-}
-    
-    </style>
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+    }
+  </style>
 </head>
 <body>
   <h1>Sudoku</h1>
   <div id="sudoku-board"></div>
   <button onclick="clearBoard()">Clear Board</button>
 
-  <script src="#">
+  <!-- ✅ Inline script, no src attribute -->
+  <script>
     const board = document.getElementById('sudoku-board');
 
-function createBoard() {
-  for (let i = 0; i < 81; i++) {
-    const input = document.createElement('input');
-    input.setAttribute('type', 'text');
-    input.setAttribute('maxlength', '1');
-    input.setAttribute('pattern', '[1-9]');
-    input.addEventListener('input', () => {
-      if (!/^[1-9]?$/.test(input.value)) {
-        input.value = '';
+    function createBoard() {
+      for (let i = 0; i < 81; i++) {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'text');
+        input.setAttribute('maxlength', '1');
+        input.addEventListener('input', () => {
+          if (!/^[1-9]?$/.test(input.value)) {
+            input.value = '';
+          }
+        });
+        board.appendChild(input);
       }
-    });
-    board.appendChild(input);
-  }
-}
+    }
 
-function clearBoard() {
-  const inputs = board.querySelectorAll('input');
-  inputs.forEach(input => input.value = '');
-}
+    function clearBoard() {
+      const inputs = board.querySelectorAll('input');
+      inputs.forEach(input => input.value = '');
+    }
 
-createBoard();
-
+    createBoard();
   </script>
 </body>
 </html>
