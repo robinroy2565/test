@@ -585,14 +585,14 @@
 </div>
 <script>
     // Enforce 5-digit max for second prize
-    document.querySelectorAll('input[type="number"][min="10000"]').forEach(input => {
+    document.querySelectorAll('input[type="number"][min="00000"]').forEach(input => {
       input.addEventListener('input', () => {
         if (input.value.length > 5) input.value = input.value.slice(0, 5);
       });
     });
   
     // Enforce 4-digit max for 3rd, 4th, 5th prizes
-    document.querySelectorAll('input[type="number"][min="1000"]').forEach(input => {
+    document.querySelectorAll('input[type="number"][min="0000"]').forEach(input => {
       input.addEventListener('input', () => {
         if (input.value.length > 4) input.value = input.value.slice(0, 4);
       });
