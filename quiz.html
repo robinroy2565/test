@@ -5,6 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Quiz Application</title>
+   <link href="style.css" rel="stylesheet">
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
     .table { margin-top: 20px; }
@@ -66,21 +67,59 @@
       <span class="close" onclick="closeModal()">&times;</span>
       <h2 id="modalTitle">Add/Edit Quiz</h2>
       <form id="quizForm">
+      <h2>Quiz Settings</h2>
         <input type="hidden" id="quizId">
-        <label>Subject: <input type="text" id="subject" required></label><br>
-        <label>Question: <input type="text" id="question" required></label><br>
-        <label>Option A: <input type="text" id="optionA" required></label>
-        <label>Option B: <input type="text" id="optionB" required></label><br>
-        <label>Option C: <input type="text" id="optionC" required></label>
-        <label>Option D: <input type="text" id="optionD" required></label><br>
-        <label>Answer (A/B/C/D): <input type="text" id="answer" maxlength="1" required></label><br>
-        <label>Year: <input type="text" id="year"></label><br>
-        <button type="submit">Save</button>
-      </form>
+      <div class="column">
+        <label for="subject">Subject:
+          <select id="subject">
+            <option value="">Select Subject</option>
+            <option value="english">English</option>
+            <option value="bengali">Bengali</option>
+            <option value="mathematics">Mathematics</option>
+            <option value="science">Science</option>
+          </select>
+        </label>
+        <label for="chapter" id="chapter-div" style="display:none;">Chapter:
+          <select id="chapter"></select>
+        </label>
+      </div>
+      <label>Question: <input type="text" id="question" placeholder="Enter question"></label>
+      <div class="column">
+        <label>Option A: <input type="text" id="optionA"></label>
+        <label>Option B: <input type="text" id="optionB"></label>
+      </div>
+      <div class="column">
+        <label>Option C: <input type="text" id="optionC"></label>
+        <label>Option D: <input type="text" id="optionD"></label>
+      </div>
+      <label>Answer: <input type="text" id="answer"></label>
+      <button type="submit">Save</button>
+    </form>
+     
     </div>
   </div>
 
   <script>
+    const chapters = {
+  english: ["All Chapters", "Chapter 1", "Chapter 2"],
+  bengali: ["All Chapters", "Chapter 1", "Chapter 2"],
+  mathematics: ["All Chapters", "Chapter 1", "Chapter 2"],
+  science: ["All Chapters", "Physics", "Chemistry"]
+};
+
+document.getElementById('subject').addEventListener('change', function() {
+  const chapterDiv = document.getElementById('chapter-div');
+  const chapterSelect = document.getElementById('chapter');
+  chapterSelect.innerHTML = '';
+  if (chapters[this.value]) {
+    chapterDiv.style.display = 'block';
+    chapters[this.value].forEach(ch => {
+      chapterSelect.innerHTML += `<option value="${ch}">${ch}</option>`;
+    });
+  } else {
+    chapterDiv.style.display = 'none';
+  }
+});
     const apiUrl = "https://script.google.com/macros/s/AKfycbwFNB6oGPsvz5Hn4DHse84by3d2IAfqmpRGx1hc7DxqYtwB7gwnnBnnSrshmByJmkwl/exec";
 
     const modal = document.getElementById("quizModal");
