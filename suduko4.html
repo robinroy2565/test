@@ -125,17 +125,39 @@ input:nth-child(2n) {
     const board = document.getElementById('sudoku-board');
     const inputs = [];
 
-    function createBoard() {
-      for (let i = 0; i < 81; i++) {
-        const input = document.createElement('input');
-        input.setAttribute('type', 'number');
-        input.setAttribute('maxlength', '1');
-        input.dataset.index = i;
-        input.addEventListener('input', validateBoard);
-        inputs.push(input);
-        board.appendChild(input);
+    // function createBoard() {
+    //   for (let i = 0; i < 81; i++) {
+    //     const input = document.createElement('input');
+    //     input.setAttribute('type', 'number');
+    //     input.setAttribute('maxlength', '1');
+    //     input.dataset.index = i;
+    //     input.addEventListener('input', validateBoard);
+    //     inputs.push(input);
+    //     board.appendChild(input);
+    //   }
+    // }
+function createBoard() {
+  for (let i = 0; i < 81; i++) {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'tel'); // better mobile keypad
+    input.setAttribute('inputmode', 'numeric'); // hints numeric keypad
+    input.setAttribute('maxlength', '1'); // limits to 1 digit
+    input.dataset.index = i;
+
+    // Only allow 1–9
+    input.addEventListener('input', (e) => {
+      const val = e.target.value;
+      if (!/^[1-9]$/.test(val)) {
+        e.target.value = '';
       }
-    }
+      validateBoard();
+    });
+
+    inputs.push(input);
+    board.appendChild(input);
+  }
+}
+
 
     function clearBoard() {
       inputs.forEach(input => {
