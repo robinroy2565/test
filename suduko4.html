@@ -128,7 +128,7 @@ input:nth-child(2n) {
     function createBoard() {
       for (let i = 0; i < 81; i++) {
         const input = document.createElement('input');
-        input.setAttribute('type', 'text');
+        input.setAttribute('type', 'number');
         input.setAttribute('maxlength', '1');
         input.dataset.index = i;
         input.addEventListener('input', validateBoard);
