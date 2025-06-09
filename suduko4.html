@@ -61,6 +61,57 @@ input:nth-child(2n) {
       margin: 5px;
       padding: 10px 20px;
     }
+
+    #sudoku-board input {
+  width: 38px;
+  height: 38px;
+  text-align: center;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+#sudoku-board input:focus {
+  outline: none;
+  border-color: #007BFF;
+}
+
+#sudoku-board input.readonly {
+  background-color: #eee;
+  font-weight: bold;
+}
+
+#sudoku-board input.invalid {
+  background-color: #ffcccc;
+}
+
+/* 3x3 grid border styling */
+#sudoku-board input {
+  border: 1px solid #ccc;
+}
+
+#sudoku-board input:nth-child(3n) {
+  border-right: 2px solid black; /* Every 3rd column */
+}
+
+#sudoku-board input:nth-child(n+19):nth-child(-n+27),
+#sudoku-board input:nth-child(n+46):nth-child(-n+54),
+#sudoku-board input:nth-child(n+73):nth-child(-n+81) {
+  border-bottom: 2px solid black; /* Every 3rd row */
+}
+
+/* First column of each 3x3 box */
+#sudoku-board input:nth-child(9n+1),
+#sudoku-board input:nth-child(9n+4),
+#sudoku-board input:nth-child(9n+7) {
+  border-left: 2px solid black;
+}
+
+/* First row (1–9), 4–6, 7–9 to get top borders */
+#sudoku-board input:nth-child(-n+9) {
+  border-top: 2px solid black;
+}
+
   </style>
 </head>
 <body>
