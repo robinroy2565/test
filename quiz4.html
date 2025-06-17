@@ -1,0 +1,219 @@
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Management System</title>
+  <link href="style2.css" rel="stylesheet">
+</head>
+<body>
+  <div class="settings">
+    <form id="quizForm">
+      <h2>Quiz Settings</h2>
+      <div class="column">
+        <label for="subject">Subject:
+          <select id="subject">
+            <option value="">Select Subject</option>
+            <option value="english">English</option>
+            <option value="bengali">Bengali</option>
+            <option value="mathematics">Mathematics</option>
+            <option value="science">Science</option>
+          </select>
+        </label>
+        <label for="chapter" id="chapter-div" style="display:none;">Chapter:
+          <select id="chapter"></select>
+        </label>
+      </div>
+      <label>Question: <input type="text" id="question" placeholder="Enter question"></label>
+      <div class="column">
+        <label>Option A: <input type="text" id="optionA"></label>
+        <label>Option B: <input type="text" id="optionB"></label>
+      </div>
+      <div class="column">
+        <label>Option C: <input type="text" id="optionC"></label>
+        <label>Option D: <input type="text" id="optionD"></label>
+      </div>
+      <label>Answer: <input type="text" id="answer"></label>
+      <button type="button" onclick="submitData()">Submit</button>
+    </form>
+  </div>
+
+  <div class="settings">
+    <h2>Quiz Questions</h2>
+    <table id="quizTable" border="1" cellpadding="8" style="width:100%; text-align:left;">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Chapter</th>
+          <th>Question</th>
+          <th>Options</th>
+          <th>Answer</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+<script>
+const chapters = {
+      english: ["all", "Chapter 1", "Chapter 2", "Chapter 3", "Chapter 4"],
+      bengali: ["all", "Chapter 1", "Chapter 2", "Chapter 3", "Chapter 4"],
+      mathematics: ["all", "Time and Distance", "Number", "Time and Work", "Simple and Compound Interest"],
+      science: ["all", "Physics", "Chemistry", "Biology"],
+      geography: ["all"], "general knowledge": ["all"],
+      history: ["all"],
+      sanskrit: ["all"],
+      inventions: ["all"]
+};
+
+document.getElementById('subject').addEventListener('change', function() {
+  const chapterDiv = document.getElementById('chapter-div');
+  const chapterSelect = document.getElementById('chapter');
+  chapterSelect.innerHTML = '';
+  if (chapters[this.value]) {
+    chapterDiv.style.display = 'block';
+    chapters[this.value].forEach(ch => {
+      chapterSelect.innerHTML += `<option value="${ch}">${ch}</option>`;
+    });
+  } else {
+    chapterDiv.style.display = 'none';
+  }
+});
+
+// function submitData() {
+//   const data = {
+//     subject: document.getElementById('subject').value,
+//     chapters: document.getElementById('chapter').value,
+//     question: document.getElementById('question').value,
+//     optionsA: document.getElementById('optionA').value,
+//     optionsB: document.getElementById('optionB').value,
+//     optionsC: document.getElementById('optionC').value,
+//     optionsD: document.getElementById('optionD').value,
+//     answer: document.getElementById('answer').value
+//   };
+
+//   let saved = JSON.parse(localStorage.getItem('quizData') || '[]');
+//   saved.push(data);
+//   localStorage.setItem('quizData', JSON.stringify(saved));
+// }
+
+
+// function submitData() {
+//   const data = {
+//     subject: document.getElementById('subject').value,
+//     chapter: document.getElementById('chapter').value,
+//     question: document.getElementById('question').value,
+//     optionA: document.getElementById('optionA').value,
+//     optionB: document.getElementById('optionB').value,
+//     optionC: document.getElementById('optionC').value,
+//     optionD: document.getElementById('optionD').value,
+//     answer: document.getElementById('answer').value
+//   };
+
+//   fetch('https://script.google.com/macros/s/AKfycbw98jl2_NonxRjzLrz0RElz-BWlBKw9soPIiflOHQgIrszB64ptz0qSKEO8_GISa3qR/exec', {
+//     method: 'POST',
+//     mode:"no-cors",
+//     body: JSON.stringify(data),
+//     headers: {
+//       'Content-Type': 'application/json'
+//     }
+//   })
+//   .then(res => res.json())
+//   .then(response => {
+//     if (response.status === "success") {
+//       alert("Question submitted successfully!");
+//       document.getElementById("quizForm").reset();
+//       document.getElementById("chapter-div").style.display = "none";
+//     } else {
+//       alert("Failed to submit.");
+//     }
+//   })
+//   .catch(error => {
+//     alert("Error: " + error.message);
+//   });
+// }
+</script>
+<script>
+function submitData() {
+  const subject = document.getElementById('subject').value;
+  const chapters = document.getElementById('chapter').value;
+  const question = document.getElementById('question').value;
+  const optionsA = document.getElementById('optionA').value;
+  const optionsB = document.getElementById('optionB').value;
+  const optionsC = document.getElementById('optionC').value;
+  const optionsD = document.getElementById('optionD').value;
+  const answer = document.getElementById('answer').value;
+
+  const newQuestion = {
+    subject,
+    chapters,
+    question,
+    optionsA,
+    optionsB,
+    optionsC,
+    optionsD,
+    answer
+  };
+
+  fetch('http://localhost:3000/add-question', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newQuestion)
+  })
+  .then(res => res.json())
+  .then(response => {
+    alert('Question saved successfully!');
+  })
+  .catch(error => {
+    alert('Failed to save question.');
+    console.error(error);
+  });
+}
+</script>
+
+<!-- <script>
+function submitData() {
+  const data = {
+    subject: document.getElementById('subject').value,
+    chapter: document.getElementById('chapter').value,
+    question: document.getElementById('question').value,
+    optionA: document.getElementById('optionA').value,
+    optionB: document.getElementById('optionB').value,
+    optionC: document.getElementById('optionC').value,
+    optionD: document.getElementById('optionD').value,
+    answer: document.getElementById('answer').value
+  };
+
+  fetch('/submit', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then(response => {
+    if (response.status === "success") {
+      alert("Question saved to data.js!");
+      document.getElementById("quizForm").reset();
+      document.getElementById("chapter-div").style.display = "none";
+    } else {
+      alert("Failed to save question.");
+    }
+  })
+  .catch(error => {
+    alert("Error: " + error.message);
+  });
+}
+</script> -->
+
+
+</body>
+</html>
