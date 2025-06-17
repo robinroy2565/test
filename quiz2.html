@@ -1,0 +1,243 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quiz App</title>
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <div class="settings">
+    <h2>Quiz Settings</h2>
+    <label>Name: <input type="text" id="student-name" placeholder="Your name"></label><br><br>
+    
+    <div class="column">
+      <label for="subject">Subject:
+        <select id="subject">
+          <option value="">Select Subject</option>
+          <option value="english">English</option>
+          <option value="bengali">Bengali</option>
+          <option value="mathematics">Mathematics</option>
+          <option value="science">Science</option>
+          <option value="geography">Geography</option>
+          <option value="general knowledge">General Knowledge</option>
+          <option value="history">History</option>
+          <option value="sanskrit">Sanskrit</option>
+          <option value="inventions">Inventions</option>
+        </select>
+      </label>
+      <label for="chapter" id="chapter-div" style="display:none;">Chapter:
+        <select id="chapter"></select>
+      </label>
+    </div>
+
+    <div class="column">
+      <label for="question-count">Questions:
+        <select id="question-count">
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="40">40</option>
+          <option value="50">50</option>
+        </select>
+      </label><br><br>
+
+      <label for="total-marks">Marks:
+        <select id="total-marks">
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="40">40</option>
+          <option value="50">50</option>
+        </select>
+      </label><br><br>
+
+      <label for="time-limit">Time:
+        <select id="time-limit">
+          <option value="1">1 min</option>
+          <option value="5">5 min</option>
+          <option value="10">10 min</option>
+          <option value="30">30 min</option>
+        </select>
+      </label><br><br>
+
+      <button type="button" onclick="startExam()">Start Exam</button>
+    </div>
+  </div>
+
+  <!-- ✅ Only ONE timer element -->
+  <div id="timer" class="timer" style="font-weight: bold; color: red;"></div>
+
+  <!-- ✅ Quiz form -->
+  <form id="quiz-form" class="quiz" style="display: none;"></form>
+
+  <script type="module">
+    import { quizQuestions } from './data.js';
+
+    let quizData = [];
+    let currentQuestion = 0;
+    let score = 0;
+    let timerInterval;
+    let remainingTime = 0;
+
+    const chapterSelect = document.getElementById('chapter');
+    const chapterDiv = document.getElementById('chapter-div');
+
+    const chapters = {
+      english: ["all", "Chapter 1", "Chapter 2", "Chapter 3", "Chapter 4"],
+      bengali: ["all", "Chapter 1", "Chapter 2", "Chapter 3", "Chapter 4"],
+      mathematics: ["all", "Time and Distance", "Number", "Time and Work", "Simple and Compound Interest"],
+      science: ["all", "Physics", "Chemistry", "Biology"],
+      geography: ["all"],
+      "general knowledge": ["all"],
+      history: ["all"],
+      sanskrit: ["all"],
+      inventions: ["all"]
+    };
+
+    document.getElementById('subject').addEventListener('change', function () {
+      const selectedSubject = this.value;
+      chapterSelect.innerHTML = "";
+      if (chapters[selectedSubject]) {
+        chapterDiv.style.display = 'block';
+        chapters[selectedSubject].forEach(chap => {
+          const option = document.createElement('option');
+          option.value = chap.toLowerCase().replace(/\s+/g, '-');
+          option.textContent = chap;
+          chapterSelect.appendChild(option);
+        });
+      } else {
+        chapterDiv.style.display = 'none';
+      }
+    });
+
+    window.startExam = function () {
+      const name = document.getElementById('student-name').value.trim();
+      const subject = document.getElementById('subject').value;
+      const chapter = document.getElementById('chapter').value;
+      const questionCount = parseInt(document.getElementById('question-count').value);
+      const totalMarks = parseInt(document.getElementById('total-marks').value);
+      const timeLimit = parseInt(document.getElementById('time-limit').value);
+
+      if (!name || !subject || !chapter || !questionCount || !totalMarks || !timeLimit) {
+        alert("Please fill in all fields before starting the exam!");
+        return;
+      }
+
+      quizData = shuffleArray(
+        quizQuestions.filter(q => q.subject === subject && (chapter === "all" || q.chapters === chapter))
+      ).slice(0, questionCount);
+
+      if (quizData.length === 0) {
+        alert("No questions available for selected subject/chapter.");
+        return;
+      }
+
+      currentQuestion = 0;
+      score = 0;
+
+      document.querySelector('.settings').style.display = 'none';
+      document.getElementById('quiz-form').style.display = 'block';
+
+      startTimer(timeLimit * 60);
+      loadQuestion();
+    };
+
+    function startTimer(duration) {
+      remainingTime = duration;
+      const timerDisplay = document.getElementById('timer');
+
+      function updateTimer() {
+        const minutes = Math.floor(remainingTime / 60);
+        const seconds = remainingTime % 60;
+        timerDisplay.textContent = `Time Left: ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        if (remainingTime <= 0) {
+          clearInterval(timerInterval);
+          finishExam();
+        } else {
+          remainingTime--;
+        }
+      }
+
+      updateTimer();
+      timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    function loadQuestion() {
+      const quizForm = document.getElementById('quiz-form');
+      quizForm.innerHTML = "";
+
+      if (currentQuestion >= quizData.length) {
+        finishExam();
+        return;
+      }
+
+      const q = quizData[currentQuestion];
+      const questionHTML = `<h3>${currentQuestion + 1}. ${q.question}</h3>`;
+      const options = {
+        A: q.optionsA,
+        B: q.optionsB,
+        C: q.optionsC,
+        D: q.optionsD,
+      };
+
+      let optionsHTML = "";
+      for (let key in options) {
+        optionsHTML += `
+          <label><input type="radio" name="answer" value="${key}"> (${key}) ${options[key]}</label><br>`;
+      }
+
+      quizForm.innerHTML = questionHTML + optionsHTML +
+        `<button type="button" onclick="submitAnswer()">Submit Answer</button>`;
+    }
+
+    window.submitAnswer = function () {
+      const selected = document.querySelector('input[name="answer"]:checked');
+      if (!selected) {
+        alert("Please select an answer!");
+        return;
+      }
+
+      if (selected.value === quizData[currentQuestion].answer) {
+        score++;
+      }
+
+      currentQuestion++;
+      loadQuestion();
+    };
+
+    function finishExam() {
+      clearInterval(timerInterval);
+      const quizForm = document.getElementById('quiz-form');
+      const total = quizData.length;
+      const percentage = Math.round((score / total) * 100);
+      const grade = getGrade(percentage);
+
+      quizForm.innerHTML = `<h2>Exam Completed!</h2>
+        <p>Your Score: ${score} / ${total}</p>
+        <p>Percentage: ${percentage}%</p>
+        <p>Grade: <strong>${grade}</strong></p>
+        <button onclick="location.reload()">Restart</button>`;
+    }
+
+    function getGrade(percentage) {
+      if (percentage >= 90) return 'A+';
+      if (percentage >= 80) return 'A';
+      if (percentage >= 70) return 'B';
+      if (percentage >= 60) return 'C';
+      if (percentage >= 50) return 'D';
+      return 'F';
+    }
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+  </script>
+</body>
+</html>
