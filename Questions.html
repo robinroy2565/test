@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Quiz Question</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .question-block {
+      border: 1px solid #ccc;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 5px;
+    }
+    .btn-group {
+      margin-top: 0.5rem;
+    }
+    .btn-group button {
+      margin-right: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Add or Edit a Question</h2>
+    <form id="questionForm">
+      <input type="text" id="question" placeholder="Question" required><br>
+      <input type="text" id="option1" placeholder="Option 1" required><br>
+      <input type="text" id="option2" placeholder="Option 2" required><br>
+      <input type="text" id="option3" placeholder="Option 3" required><br>
+      <input type="text" id="option4" placeholder="Option 4" required><br>
+      <input type="text" id="answer" placeholder="Correct Answer" required><br>
+      <input type="text" id="category" placeholder="Category" required><br>
+      <input type="text" id="difficulty" placeholder="Difficulty" required><br>
+      <input type="hidden" id="editIndex">
+      <button type="submit">Save Question</button>
+    </form>
+
+    <p id="savedMsg"></p>
+    <hr>
+    <h3>Saved Questions</h3>
+    <div id="questionList"></div>
+  </div>
+
+  <script>
+    function getQuestions() {
+      return JSON.parse(localStorage.getItem("questions") || "[]");
+    }
+
+    function saveQuestions(questions) {
+      localStorage.setItem("questions", JSON.stringify(questions));
+    }
+
+    function displayQuestions() {
+      const list = document.getElementById("questionList");
+      list.innerHTML = "";
+      const questions = getQuestions();
+
+      questions.forEach((q, index) => {
+        const div = document.createElement("div");
+        div.className = "question-block";
+        div.innerHTML = `
+          <strong>${index + 1}. ${q.question}</strong><br>
+          Options: ${q.options.join(", ")}<br>
+          Answer: <strong>${q.answer}</strong><br>
+          Category: ${q.category} | Difficulty: ${q.difficulty}
+          <div class="btn-group">
+            <button onclick="editQuestion(${index})">Edit</button>
+            <button onclick="deleteQuestion(${index})">Delete</button>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    document.getElementById("questionForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const newQuestion = {
+        question: document.getElementById("question").value,
+        options: [
+          document.getElementById("option1").value,
+          document.getElementById("option2").value,
+          document.getElementById("option3").value,
+          document.getElementById("option4").value
+        ],
+        answer: document.getElementById("answer").value,
+        category: document.getElementById("category").value,
+        difficulty: document.getElementById("difficulty").value
+      };
+
+      let questions = getQuestions();
+      const editIndex = document.getElementById("editIndex").value;
+
+      if (editIndex) {
+        // Update existing
+        questions[editIndex] = newQuestion;
+        document.getElementById("savedMsg").textContent = "Question updated!";
+      } else {
+        // Add new
+        questions.push(newQuestion);
+        document.getElementById("savedMsg").textContent = "Question saved locally!";
+      }
+
+      saveQuestions(questions);
+      displayQuestions();
+      this.reset();
+      document.getElementById("editIndex").value = "";
+    });
+
+    function editQuestion(index) {
+      const q = getQuestions()[index];
+      document.getElementById("question").value = q.question;
+      document.getElementById("option1").value = q.options[0];
+      document.getElementById("option2").value = q.options[1];
+      document.getElementById("option3").value = q.options[2];
+      document.getElementById("option4").value = q.options[3];
+      document.getElementById("answer").value = q.answer;
+      document.getElementById("category").value = q.category;
+      document.getElementById("difficulty").value = q.difficulty;
+      document.getElementById("editIndex").value = index;
+    }
+
+    function deleteQuestion(index) {
+      let questions = getQuestions();
+      if (confirm("Are you sure you want to delete this question?")) {
+        questions.splice(index, 1);
+        saveQuestions(questions);
+        displayQuestions();
+      }
+    }
+
+    // Load existing on start
+    displayQuestions();
+  </script>
+</body>
+</html>
