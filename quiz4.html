@@ -58,6 +58,131 @@
       <tbody></tbody>
     </table>
   </div>
+<script>
+const chapters = {
+  english: ["all", "Chapter 1", "Chapter 2", "Chapter 3", "Chapter 4"],
+  bengali: ["all", "Chapter 1", "Chapter 2", "Chapter 3", "Chapter 4"],
+  mathematics: ["all", "Time and Distance", "Number", "Time and Work", "Simple and Compound Interest"],
+  science: ["all", "Physics", "Chemistry", "Biology"],
+  geography: ["all"], "general knowledge": ["all"],
+  history: ["all"],
+  sanskrit: ["all"],
+  inventions: ["all"]
+};
+
+let editingIndex = null;
+
+// Load chapters dynamically on subject select
+document.getElementById('subject').addEventListener('change', function() {
+  const chapterDiv = document.getElementById('chapter-div');
+  const chapterSelect = document.getElementById('chapter');
+  chapterSelect.innerHTML = '';
+  if (chapters[this.value]) {
+    chapterDiv.style.display = 'block';
+    chapters[this.value].forEach(ch => {
+      chapterSelect.innerHTML += `<option value="${ch}">${ch}</option>`;
+    });
+  } else {
+    chapterDiv.style.display = 'none';
+  }
+});
+
+// Save or update quiz data
+function submitData() {
+  const question = document.getElementById("question").value.trim();
+  const optionA = document.getElementById("optionA").value.trim();
+  const optionB = document.getElementById("optionB").value.trim();
+  const optionC = document.getElementById("optionC").value.trim();
+  const optionD = document.getElementById("optionD").value.trim();
+  const answer = document.getElementById("answer").value.trim();
+  const subject = document.getElementById("subject").value;
+  const chapter = document.getElementById("chapter").value;
+
+  if (!question || !answer || !subject) {
+    alert("Please fill all required fields.");
+    return;
+  }
+
+  const newEntry = {
+    question,
+    options: [optionA, optionB, optionC, optionD],
+    answer,
+    subject,
+    chapter
+  };
+
+  let quizData = JSON.parse(localStorage.getItem("quizData") || "[]");
+
+  if (editingIndex !== null) {
+    quizData[editingIndex] = newEntry;
+    editingIndex = null;
+  } else {
+    quizData.push(newEntry);
+  }
+
+  localStorage.setItem("quizData", JSON.stringify(quizData));
+  document.getElementById("quizForm").reset();
+  document.getElementById("chapter-div").style.display = "none";
+  renderTable();
+}
+
+// Load and display table data
+function renderTable() {
+  const tbody = document.querySelector("#quizTable tbody");
+  const quizData = JSON.parse(localStorage.getItem("quizData") || "[]");
+  tbody.innerHTML = "";
+
+  quizData.forEach((q, index) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${q.subject}</td>
+      <td>${q.chapter || ''}</td>
+      <td>${q.question}</td>
+      <td>${q.options.join(", ")}</td>
+      <td>${q.answer}</td>
+      <td>
+        <button onclick="editQuestion(${index})">Edit</button>
+        <button onclick="deleteQuestion(${index})">Delete</button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// Edit existing question
+function editQuestion(index) {
+  const quizData = JSON.parse(localStorage.getItem("quizData") || "[]");
+  const q = quizData[index];
+
+  document.getElementById("question").value = q.question;
+  document.getElementById("optionA").value = q.options[0];
+  document.getElementById("optionB").value = q.options[1];
+  document.getElementById("optionC").value = q.options[2];
+  document.getElementById("optionD").value = q.options[3];
+  document.getElementById("answer").value = q.answer;
+  document.getElementById("subject").value = q.subject;
+
+  // Load chapters again and select the one that matches
+  const event = new Event('change');
+  document.getElementById("subject").dispatchEvent(event);
+  document.getElementById("chapter").value = q.chapter;
+
+  editingIndex = index;
+}
+
+// Delete a question
+function deleteQuestion(index) {
+  if (confirm("Are you sure you want to delete this question?")) {
+    let quizData = JSON.parse(localStorage.getItem("quizData") || "[]");
+    quizData.splice(index, 1);
+    localStorage.setItem("quizData", JSON.stringify(quizData));
+    renderTable();
+  }
+}
+
+// Load table on page load
+document.addEventListener("DOMContentLoaded", renderTable);
+</script>
 
 <script>
 const chapters = {
