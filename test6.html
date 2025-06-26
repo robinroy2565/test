@@ -102,33 +102,50 @@
       <input type="text" id="regPin" required>
 
       <button type="submit">Register</button>
+      <button type="button" class="toggle-btn" onclick="showLogin()">Back to Login</button>
     </form>
   </div>
 
   <script>
-    function toggleRegister() {
-      const regForm = document.getElementById('registerForm');
-      regForm.style.display = regForm.style.display === 'none' ? 'block' : 'none';
-    }
+  function showLogin() {
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('registerForm').style.display = 'none';
+  }
 
-    const districts = {
-      state1: ["District A", "District B"],
-      state2: ["District X", "District Y"]
-    };
+  function showRegister() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('registerForm').style.display = 'block';
+  }
 
-    function populateDistricts() {
-      const state = document.getElementById('regState').value;
-      const districtSelect = document.getElementById('regDistrict');
-      districtSelect.innerHTML = '<option value="">Select District</option>';
-      if (districts[state]) {
-        districts[state].forEach(d => {
-          const option = document.createElement('option');
-          option.value = d;
-          option.innerText = d;
-          districtSelect.appendChild(option);
-        });
-      }
+  // Initial display
+  document.addEventListener('DOMContentLoaded', () => {
+    showLogin(); // Show login by default
+  });
+
+  const districts = {
+    state1: ["District A", "District B"],
+    state2: ["District X", "District Y"]
+  };
+
+  function populateDistricts() {
+    const state = document.getElementById('regState').value;
+    const districtSelect = document.getElementById('regDistrict');
+    districtSelect.innerHTML = '<option value="">Select District</option>';
+    if (districts[state]) {
+      districts[state].forEach(d => {
+        const option = document.createElement('option');
+        option.value = d;
+        option.innerText = d;
+        districtSelect.appendChild(option);
+      });
     }
-  </script>
+  }
+
+  // Link button in Login form
+  function toggleRegister() {
+    showRegister();
+  }
+</script>
+
 </body>
 </html>
