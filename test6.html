@@ -6,18 +6,21 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 30px;
-      background: #f0f0f0;
+      background: #f8f9fa;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 50px;
     }
-    h2 {
-      color: #333;
+    .container {
+      width: 400px;
     }
     form {
       background: #fff;
       padding: 20px;
       margin: 20px 0;
-      border-radius: 5px;
-      max-width: 400px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     input, select {
       width: 100%;
@@ -26,105 +29,106 @@
       box-sizing: border-box;
     }
     button {
-      padding: 10px 20px;
-      background: #28a745;
+      width: 100%;
+      padding: 10px;
+      background: #007bff;
       color: white;
       border: none;
+      border-radius: 4px;
       cursor: pointer;
+    }
+    #registerForm {
+      display: none;
+    }
+    .toggle-btn {
+      background: #28a745;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <form id="loginForm">
+      <h2>Login</h2>
+      <label>Mobile Number</label>
+      <input type="text" id="loginMobile" required>
 
-  <h2>Login</h2>
-  <form id="loginForm">
-    <label for="loginMobile">Mobile Number</label>
-    <input type="text" id="loginMobile" required>
-    
-    <label for="loginPassword">Password</label>
-    <input type="password" id="loginPassword" required>
-    
-    <button type="submit">Login</button>
-  </form>
+      <label>Password</label>
+      <input type="password" id="loginPassword" required>
 
-  <h2>Register</h2>
-  <form id="registerForm">
-    <label for="regName">Name</label>
-    <input type="text" id="regName" required>
+      <button type="submit">Login</button>
+      <button type="button" class="toggle-btn" onclick="toggleRegister()">Create Account</button>
+    </form>
 
-    <label for="regMobile">Mobile Number</label>
-    <input type="text" id="regMobile" required>
+    <form id="registerForm">
+      <h2>Register</h2>
 
-    <label for="verifyMobile">Verification Code</label>
-    <input type="text" id="verifyMobile">
+      <label>Name</label>
+      <input type="text" id="regName" required>
 
-    <label for="regPassword">Password</label>
-    <input type="password" id="regPassword" required>
+      <label>Mobile Number</label>
+      <input type="text" id="regMobile" required>
 
-    <label for="regRole">Select Role</label>
-    <select id="regRole" required>
-      <option value="">Select Role</option>
-      <option value="teacher">Teacher</option>
-      <option value="student">Student</option>
-      <option value="user">User</option>
-    </select>
+      <label>Verification Code</label>
+      <input type="text" id="verifyMobile">
 
-    <h3>Address</h3>
+      <label>Password</label>
+      <input type="password" id="regPassword" required>
 
-    <label for="regAddress">Address</label>
-    <input type="text" id="regAddress" required>
+      <label>Role</label>
+      <select id="regRole" required>
+        <option value="">Select Role</option>
+        <option value="teacher">Teacher</option>
+        <option value="student">Student</option>
+        <option value="user">User</option>
+      </select>
 
-    <label for="regState">State</label>
-    <select id="regState" onchange="populateDistricts()" required>
-      <option value="">Select State</option>
-      <option value="state1">State 1</option>
-      <option value="state2">State 2</option>
-    </select>
+      <label>Address</label>
+      <input type="text" id="regAddress" required>
 
-    <label for="regDistrict">District</label>
-    <select id="regDistrict" required>
-      <option value="">Select District</option>
-    </select>
+      <label>State</label>
+      <select id="regState" onchange="populateDistricts()" required>
+        <option value="">Select State</option>
+        <option value="state1">State 1</option>
+        <option value="state2">State 2</option>
+      </select>
 
-    <label for="regPin">PIN Code</label>
-    <input type="text" id="regPin" required>
+      <label>District</label>
+      <select id="regDistrict" required>
+        <option value="">Select District</option>
+      </select>
 
-    <button type="submit">Register</button>
-  </form>
+      <label>PIN Code</label>
+      <input type="text" id="regPin" required>
+
+      <button type="submit">Register</button>
+    </form>
+  </div>
 
   <script>
+    function toggleRegister() {
+      const regForm = document.getElementById('registerForm');
+      regForm.style.display = regForm.style.display === 'none' ? 'block' : 'none';
+    }
+
     const districts = {
-      state1: ["District A", "District B", "District C"],
-      state2: ["District X", "District Y", "District Z"]
+      state1: ["District A", "District B"],
+      state2: ["District X", "District Y"]
     };
 
     function populateDistricts() {
-      const stateSelect = document.getElementById("regState");
-      const districtSelect = document.getElementById("regDistrict");
-      const selectedState = stateSelect.value;
-
-      districtSelect.innerHTML = "<option value=''>Select District</option>";
-      if (districts[selectedState]) {
-        districts[selectedState].forEach(district => {
-          const option = document.createElement("option");
-          option.value = district;
-          option.text = district;
+      const state = document.getElementById('regState').value;
+      const districtSelect = document.getElementById('regDistrict');
+      districtSelect.innerHTML = '<option value="">Select District</option>';
+      if (districts[state]) {
+        districts[state].forEach(d => {
+          const option = document.createElement('option');
+          option.value = d;
+          option.innerText = d;
           districtSelect.appendChild(option);
         });
       }
     }
-
-    // Dummy handlers
-    document.getElementById("loginForm").onsubmit = function(e) {
-      e.preventDefault();
-      alert("Login attempted.");
-    };
-
-    document.getElementById("registerForm").onsubmit = function(e) {
-      e.preventDefault();
-      alert("Registration submitted.");
-    };
   </script>
-
 </body>
 </html>
