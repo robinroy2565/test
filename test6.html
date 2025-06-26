@@ -2,75 +2,129 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Isotope Reaction Simulator</title>
+  <title>Login & Registration</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 20px;
+      padding: 30px;
+      background: #f0f0f0;
     }
-    .container {
-      max-width: 600px;
+    h2 {
+      color: #333;
+    }
+    form {
       background: #fff;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      margin: auto;
-    }
-    select, button {
-      padding: 10px;
-      font-size: 16px;
-      margin-top: 10px;
-      width: 100%;
-    }
-    #result {
-      margin-top: 20px;
-      padding: 15px;
-      background-color: #e6f7ff;
-      border: 1px solid #91d5ff;
+      margin: 20px 0;
       border-radius: 5px;
+      max-width: 400px;
+    }
+    input, select {
+      width: 100%;
+      margin: 10px 0;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 10px 20px;
+      background: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>Isotope Reaction Simulator</h2>
-  <label for="isotope">Choose an Isotope:</label>
-  <select id="isotope">
-    <option value="Uranium-238">Uranium-238</option>
-    <option value="Carbon-14">Carbon-14</option>
-    <option value="Radon-222">Radon-222</option>
-  </select>
-  <button onclick="simulateReaction()">Simulate Reaction</button>
+  <h2>Login</h2>
+  <form id="loginForm">
+    <label for="loginMobile">Mobile Number</label>
+    <input type="text" id="loginMobile" required>
+    
+    <label for="loginPassword">Password</label>
+    <input type="password" id="loginPassword" required>
+    
+    <button type="submit">Login</button>
+  </form>
 
-  <div id="result"></div>
-</div>
+  <h2>Register</h2>
+  <form id="registerForm">
+    <label for="regName">Name</label>
+    <input type="text" id="regName" required>
 
-<script>
-  function simulateReaction() {
-    const isotope = document.getElementById("isotope").value;
-    let reaction = "";
-    let result = "";
+    <label for="regMobile">Mobile Number</label>
+    <input type="text" id="regMobile" required>
 
-    if (isotope === "Uranium-238") {
-      reaction = "U-238 → Th-234 + α (alpha decay)";
-      result = "Thorium-234";
-    } else if (isotope === "Carbon-14") {
-      reaction = "C-14 → N-14 + β⁻ (beta decay)";
-      result = "Nitrogen-14";
-    } else if (isotope === "Radon-222") {
-      reaction = "Rn-222 → Po-218 + α (alpha decay)";
-      result = "Polonium-218";
+    <label for="verifyMobile">Verification Code</label>
+    <input type="text" id="verifyMobile">
+
+    <label for="regPassword">Password</label>
+    <input type="password" id="regPassword" required>
+
+    <label for="regRole">Select Role</label>
+    <select id="regRole" required>
+      <option value="">Select Role</option>
+      <option value="teacher">Teacher</option>
+      <option value="student">Student</option>
+      <option value="user">User</option>
+    </select>
+
+    <h3>Address</h3>
+
+    <label for="regAddress">Address</label>
+    <input type="text" id="regAddress" required>
+
+    <label for="regState">State</label>
+    <select id="regState" onchange="populateDistricts()" required>
+      <option value="">Select State</option>
+      <option value="state1">State 1</option>
+      <option value="state2">State 2</option>
+    </select>
+
+    <label for="regDistrict">District</label>
+    <select id="regDistrict" required>
+      <option value="">Select District</option>
+    </select>
+
+    <label for="regPin">PIN Code</label>
+    <input type="text" id="regPin" required>
+
+    <button type="submit">Register</button>
+  </form>
+
+  <script>
+    const districts = {
+      state1: ["District A", "District B", "District C"],
+      state2: ["District X", "District Y", "District Z"]
+    };
+
+    function populateDistricts() {
+      const stateSelect = document.getElementById("regState");
+      const districtSelect = document.getElementById("regDistrict");
+      const selectedState = stateSelect.value;
+
+      districtSelect.innerHTML = "<option value=''>Select District</option>";
+      if (districts[selectedState]) {
+        districts[selectedState].forEach(district => {
+          const option = document.createElement("option");
+          option.value = district;
+          option.text = district;
+          districtSelect.appendChild(option);
+        });
+      }
     }
 
-    document.getElementById("result").innerHTML = `
-      <strong>Reaction:</strong> ${reaction}<br>
-      <strong>Resulting Isotope:</strong> ${result}
-    `;
-  }
-</script>
+    // Dummy handlers
+    document.getElementById("loginForm").onsubmit = function(e) {
+      e.preventDefault();
+      alert("Login attempted.");
+    };
+
+    document.getElementById("registerForm").onsubmit = function(e) {
+      e.preventDefault();
+      alert("Registration submitted.");
+    };
+  </script>
 
 </body>
 </html>
