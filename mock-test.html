@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mock Test Creator</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    select, input, button { margin: 10px 0; padding: 8px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 8px; border: 1px solid #ccc; text-align: left; }
+  </style>
+</head>
+<body>
+
+  <h2>Step 1: Create Mock Test</h2>
+  <label for="subject">Select Subject:</label><br>
+  <select id="subject">
+    <option>Math</option>
+    <option>Science</option>
+    <option>History</option>
+  </select><br>
+
+  <label for="chapter">Select Chapter:</label><br>
+  <select id="chapter">
+    <option>Chapter 1</option>
+    <option>Chapter 2</option>
+    <option>Chapter 3</option>
+  </select><br>
+
+  <label for="numQuestions">Number of Questions:</label><br>
+  <select id="numQuestions">
+    <option>1</option>
+    <option>2</option>
+    <option>5</option>
+    <option>10</option>
+  </select><br>
+
+  <button onclick="startMockTest()">Create Mock Test</button>
+
+  <div id="mockTestSection" style="display:none;">
+    <h2>Step 2: Add / Update Questions</h2>
+    <input type="text" id="questionInput" placeholder="Enter your question here" style="width: 80%;">
+    <button onclick="addOrUpdateQuestion()">Add/Update Question</button>
+
+    <table id="questionTable">
+      <thead>
+        <tr><th>#</th><th>Question</th><th>Actions</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    let questions = [];
+    let editingIndex = -1;
+
+    function startMockTest() {
+      const numQuestions = parseInt(document.getElementById('numQuestions').value);
+      questions = new Array(numQuestions).fill('');
+      editingIndex = -1;
+      document.getElementById('mockTestSection').style.display = 'block';
+      renderQuestions();
+    }
+
+    function renderQuestions() {
+      const tbody = document.querySelector('#questionTable tbody');
+      tbody.innerHTML = '';
+      questions.forEach((q, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${q}</td>
+          <td>
+            <button onclick="editQuestion(${index})">Edit</button>
+            <button onclick="deleteQuestion(${index})">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function addOrUpdateQuestion() {
+      const input = document.getElementById('questionInput');
+      const text = input.value.trim();
+      if (text === '') return;
+
+      if (editingIndex >= 0) {
+        questions[editingIndex] = text;
+        editingIndex = -1;
+      } else {
+        const emptyIndex = questions.findIndex(q => q === '');
+        if (emptyIndex !== -1) {
+          questions[emptyIndex] = text;
+        } else {
+          alert("You have reached the maximum number of questions.");
+        }
+      }
+      input.value = '';
+      renderQuestions();
+    }
+
+    function editQuestion(index) {
+      document.getElementById('questionInput').value = questions[index];
+      editingIndex = index;
+    }
+
+    function deleteQuestion(index) {
+      questions[index] = '';
+      renderQuestions();
+    }
+  </script>
+
+</body>
+</html>
