@@ -4,34 +4,85 @@
   <meta charset="UTF-8">
   <title>Mock Test Creator</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    select, input, button { margin: 10px 0; padding: 8px; width: 100%; max-width: 400px; }
-    .question-row { margin: 10px 0; display: flex; gap: 10px; }
-    .question-row input { flex: 1; }
-    .question-row button { padding: 6px 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+    input, select, button {
+      margin: 5px 0 10px;
+      padding: 8px;
+      width: 100%;
+    }
+    .question-block {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-top: 20px;
+    }
+    .question-actions button {
+      margin-right: 5px;
+    }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 8px;
+    }
+    .modal-header {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .close-btn {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      float: right;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
-  <h2>Step 1: Setup Mock Test</h2>
+  <h2>Create Mock Test</h2>
 
-  <label for="subject">Select Subject:</label><br>
+  <label for="subject">Select Subject:</label>
   <select id="subject">
-    <option value="">-- Select --</option>
+    <option value="">-- Select Subject --</option>
     <option>Math</option>
     <option>Science</option>
     <option>History</option>
-  </select><br>
+  </select>
 
-  <label for="chapter">Select Chapter:</label><br>
+  <label for="chapter">Select Chapter:</label>
   <select id="chapter">
-    <option value="">-- Select --</option>
+    <option value="">-- Select Chapter --</option>
     <option>Chapter 1</option>
     <option>Chapter 2</option>
     <option>Chapter 3</option>
-  </select><br>
+  </select>
 
-  <label for="questionCount">How many questions?</label><br>
+  <label for="questionCount">How Many Questions?</label>
   <select id="questionCount">
     <option value="">-- Select --</option>
     <option>1</option>
@@ -39,86 +90,202 @@
     <option>3</option>
     <option>5</option>
     <option>10</option>
-  </select><br>
+  </select>
 
-  <button onclick="generateQuestionFields()">Add Questions</button>
+  <button onclick="openQuestionForm()">Add Question</button>
 
-  <div id="questionsContainer"></div>
+  <div id="questionsList" class="question-block">
+    <h3>Questions Added</h3>
+    <div id="questionContainer"></div>
+  </div>
 
-  <button id="submitBtn" onclick="submitMockTest()" style="display:none; margin-top: 20px;">Submit Mock Test</button>
+  <button id="submitTestBtn" onclick="submitMockTest()" style="display:none; margin-top: 20px;">Submit Mock Test</button>
+
+  <!-- Modal Popup for Add/Update Question -->
+  <div id="questionModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span id="formTitle">Add Question</span>
+        <button class="close-btn" onclick="closeQuestionForm()">Close</button>
+      </div>
+
+      <label>Question:</label>
+      <input type="text" id="questionText">
+
+      <label>Option A:</label>
+      <input type="text" id="optionA">
+
+      <label>Option B:</label>
+      <input type="text" id="optionB">
+
+      <label>Option C:</label>
+      <input type="text" id="optionC">
+
+      <label>Option D:</label>
+      <input type="text" id="optionD">
+
+      <label>Correct Answer (A/B/C/D):</label>
+      <input type="text" id="answer">
+
+      <label>Previous Year (optional):</label>
+      <input type="text" id="prevYear">
+
+      <button id="addQuestionBtn" onclick="addOrUpdateQuestion()">Add Question</button>
+    </div>
+  </div>
 
   <script>
-    let questionData = [];
+    let questions = [];
+    let editingIndex = -1;
 
-    function generateQuestionFields() {
-      const count = parseInt(document.getElementById('questionCount').value);
-      const container = document.getElementById('questionsContainer');
-      container.innerHTML = ''; // Clear previous
+    function openQuestionForm(index = -1) {
+      editingIndex = index;
+      document.getElementById("formTitle").innerText = index >= 0 ? "Update Question" : "Add Question";
+      document.getElementById("addQuestionBtn").innerText = index >= 0 ? "Update Question..." : "Add Question...";
 
-      if (!count) {
-        alert('Please select number of questions');
-        return;
+      if (index >= 0) {
+        const q = questions[index];
+        document.getElementById("questionText").value = q.question;
+        document.getElementById("optionA").value = q.options.A;
+        document.getElementById("optionB").value = q.options.B;
+        document.getElementById("optionC").value = q.options.C;
+        document.getElementById("optionD").value = q.options.D;
+        document.getElementById("answer").value = q.answer;
+        document.getElementById("prevYear").value = q.prevYear;
+      } else {
+        clearInputs();
       }
 
-      questionData = new Array(count).fill('');
-
-      for (let i = 0; i < count; i++) {
-        const row = document.createElement('div');
-        row.className = 'question-row';
-        row.innerHTML = `
-          <input type="text" placeholder="Enter Question ${i + 1}" id="question-${i}">
-          <button onclick="updateQuestion(${i})">Update</button>
-          <button onclick="deleteQuestion(${i})">Delete</button>
-        `;
-        container.appendChild(row);
-      }
-
-      document.getElementById('submitBtn').style.display = 'block';
+      document.getElementById("questionModal").style.display = "block";
     }
 
-    function updateQuestion(index) {
-      const input = document.getElementById(`question-${index}`);
-      const value = input.value.trim();
-      if (value === '') {
-        alert('Question cannot be empty.');
+    function closeQuestionForm() {
+      document.getElementById("questionModal").style.display = "none";
+      editingIndex = -1;
+      clearInputs();
+    }
+
+    function clearInputs() {
+      document.getElementById("questionText").value = "";
+      document.getElementById("optionA").value = "";
+      document.getElementById("optionB").value = "";
+      document.getElementById("optionC").value = "";
+      document.getElementById("optionD").value = "";
+      document.getElementById("answer").value = "";
+      document.getElementById("prevYear").value = "";
+    }
+
+    function addOrUpdateQuestion() {
+      const subject = document.getElementById("subject").value;
+      const chapter = document.getElementById("chapter").value;
+      const maxQuestions = parseInt(document.getElementById("questionCount").value);
+
+      if (!subject || !chapter || !maxQuestions) {
+        alert("Please select subject, chapter, and number of questions.");
         return;
       }
-      questionData[index] = value;
-      alert(`Question ${index + 1} updated.`);
+
+      const question = document.getElementById("questionText").value.trim();
+      const optionA = document.getElementById("optionA").value.trim();
+      const optionB = document.getElementById("optionB").value.trim();
+      const optionC = document.getElementById("optionC").value.trim();
+      const optionD = document.getElementById("optionD").value.trim();
+      const answer = document.getElementById("answer").value.trim().toUpperCase();
+      const prevYear = document.getElementById("prevYear").value.trim();
+
+      let missingFields = [];
+      if (!question) missingFields.push("Question");
+      if (!optionA) missingFields.push("Option A");
+      if (!optionB) missingFields.push("Option B");
+      if (!optionC) missingFields.push("Option C");
+      if (!optionD) missingFields.push("Option D");
+      if (!["A", "B", "C", "D"].includes(answer)) missingFields.push("Correct Answer (A/B/C/D)");
+
+      if (missingFields.length > 0) {
+        alert("Please fill the following required fields:\n- " + missingFields.join("\n- "));
+        return;
+      }
+
+      const questionObj = {
+        question,
+        options: { A: optionA, B: optionB, C: optionC, D: optionD },
+        answer,
+        prevYear
+      };
+
+      if (editingIndex >= 0) {
+        questions[editingIndex] = questionObj;
+        editingIndex = -1;
+      } else {
+        if (questions.length >= maxQuestions) {
+          alert("You have reached the number of selected questions.");
+          return;
+        }
+        questions.push(questionObj);
+      }
+
+      renderQuestions();
+      clearInputs();
+
+      if (questions.length === maxQuestions) {
+        closeQuestionForm();
+        document.getElementById("submitTestBtn").style.display = "block";
+      }
+    }
+
+    function renderQuestions() {
+      const container = document.getElementById("questionContainer");
+      container.innerHTML = "";
+      questions.forEach((q, i) => {
+        const div = document.createElement("div");
+        div.style.border = "1px solid #ddd";
+        div.style.padding = "10px";
+        div.style.marginBottom = "10px";
+        div.innerHTML = `
+          <strong>Q${i + 1}:</strong> ${q.question}<br>
+          A. ${q.options.A}<br>
+          B. ${q.options.B}<br>
+          C. ${q.options.C}<br>
+          D. ${q.options.D}<br>
+          <strong>Answer:</strong> ${q.answer}<br>
+          <strong>Previous Year:</strong> ${q.prevYear || 'N/A'}<br>
+          <div class="question-actions">
+            <button onclick="openQuestionForm(${i})">Edit</button>
+            <button onclick="deleteQuestion(${i})">Delete</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
     }
 
     function deleteQuestion(index) {
-      document.getElementById(`question-${index}`).value = '';
-      questionData[index] = '';
+      questions.splice(index, 1);
+      renderQuestions();
+      document.getElementById("submitTestBtn").style.display = "none";
     }
 
     function submitMockTest() {
-      const subject = document.getElementById('subject').value;
-      const chapter = document.getElementById('chapter').value;
-
-      if (!subject || !chapter) {
-        alert('Please select subject and chapter.');
-        return;
-      }
-
-      const allFilled = questionData.every(q => q.trim() !== '');
-
-      if (!allFilled) {
-        alert('Please fill all questions before submitting.');
-        return;
-      }
+      const subject = document.getElementById("subject").value;
+      const chapter = document.getElementById("chapter").value;
 
       const mockTest = {
         subject,
         chapter,
-        questions: questionData
+        questions
       };
 
       console.log("Mock Test Submitted:", mockTest);
-      alert('Mock Test Submitted Successfully! Check console for data.');
-
-      // Optional: send mockTest to backend here via fetch/AJAX
+      alert("Mock Test Submitted! Check console for data.");
     }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById("questionModal");
+      if (event.target === modal) {
+        modal.style.display = "none";
+        editingIndex = -1;
+      }
+    };
   </script>
 
 </body>
