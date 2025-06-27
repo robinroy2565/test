@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mock Test Creator</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    select, input, button { margin: 10px 0; padding: 8px; width: 100%; max-width: 400px; }
+    .question-row { margin: 10px 0; display: flex; gap: 10px; }
+    .question-row input { flex: 1; }
+    .question-row button { padding: 6px 10px; }
+  </style>
+</head>
+<body>
+
+  <h2>Step 1: Setup Mock Test</h2>
+
+  <label for="subject">Select Subject:</label><br>
+  <select id="subject">
+    <option value="">-- Select --</option>
+    <option>Math</option>
+    <option>Science</option>
+    <option>History</option>
+  </select><br>
+
+  <label for="chapter">Select Chapter:</label><br>
+  <select id="chapter">
+    <option value="">-- Select --</option>
+    <option>Chapter 1</option>
+    <option>Chapter 2</option>
+    <option>Chapter 3</option>
+  </select><br>
+
+  <label for="questionCount">How many questions?</label><br>
+  <select id="questionCount">
+    <option value="">-- Select --</option>
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+    <option>5</option>
+    <option>10</option>
+  </select><br>
+
+  <button onclick="generateQuestionFields()">Add Questions</button>
+
+  <div id="questionsContainer"></div>
+
+  <button id="submitBtn" onclick="submitMockTest()" style="display:none; margin-top: 20px;">Submit Mock Test</button>
+
+  <script>
+    let questionData = [];
+
+    function generateQuestionFields() {
+      const count = parseInt(document.getElementById('questionCount').value);
+      const container = document.getElementById('questionsContainer');
+      container.innerHTML = ''; // Clear previous
+
+      if (!count) {
+        alert('Please select number of questions');
+        return;
+      }
+
+      questionData = new Array(count).fill('');
+
+      for (let i = 0; i < count; i++) {
+        const row = document.createElement('div');
+        row.className = 'question-row';
+        row.innerHTML = `
+          <input type="text" placeholder="Enter Question ${i + 1}" id="question-${i}">
+          <button onclick="updateQuestion(${i})">Update</button>
+          <button onclick="deleteQuestion(${i})">Delete</button>
+        `;
+        container.appendChild(row);
+      }
+
+      document.getElementById('submitBtn').style.display = 'block';
+    }
+
+    function updateQuestion(index) {
+      const input = document.getElementById(`question-${index}`);
+      const value = input.value.trim();
+      if (value === '') {
+        alert('Question cannot be empty.');
+        return;
+      }
+      questionData[index] = value;
+      alert(`Question ${index + 1} updated.`);
+    }
+
+    function deleteQuestion(index) {
+      document.getElementById(`question-${index}`).value = '';
+      questionData[index] = '';
+    }
+
+    function submitMockTest() {
+      const subject = document.getElementById('subject').value;
+      const chapter = document.getElementById('chapter').value;
+
+      if (!subject || !chapter) {
+        alert('Please select subject and chapter.');
+        return;
+      }
+
+      const allFilled = questionData.every(q => q.trim() !== '');
+
+      if (!allFilled) {
+        alert('Please fill all questions before submitting.');
+        return;
+      }
+
+      const mockTest = {
+        subject,
+        chapter,
+        questions: questionData
+      };
+
+      console.log("Mock Test Submitted:", mockTest);
+      alert('Mock Test Submitted Successfully! Check console for data.');
+
+      // Optional: send mockTest to backend here via fetch/AJAX
+    }
+  </script>
+
+</body>
+</html>
