@@ -50,6 +50,8 @@
   <button onclick="stopSpeech()" disabled>⏹ Stop</button>
   <button onclick="clearText()">🧹 Clear</button>
   <button id="save-btn" onclick="saveAudio()" disabled>⬇ Save Audio</button>
+  <button id="play-recording-btn" onclick="playRecording()" disabled>▶ Play Recording</button>
+
 </div>
 
 <div id="animated-text"></div>
@@ -185,6 +187,12 @@
     a.href = URL.createObjectURL(audioBlob);
     a.download = 'tts-output.webm';
     a.click();
+  }
+  function playRecording() {
+  if (!audioBlob) return alert('No recording available to play.');
+  const audioUrl = URL.createObjectURL(audioBlob);
+  const audio = new Audio(audioUrl);
+  audio.play();
   }
 </script>
 
