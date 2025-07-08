@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Text to Speech Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 50px;
+      background: #f5f5f5;
+      text-align: center;
+    }
+    input[type="text"] {
+      width: 300px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    select, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+    }
+    .buttons {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Text to Speech Generator</h1>
+
+  <input type="text" id="text-input" placeholder="Enter text here" />
+
+  <div>
+    <label for="voice-select">Voice:</label>
+    <select id="voice-select">
+      <option value="">Loading voices...</option>
+    </select>
+  </div>
+
+  <div class="buttons">
+    <button onclick="speakText()">Play</button>
+    <button onclick="downloadAudio()">Download</button>
+  </div>
+
+  <script>
+    const synth = window.speechSynthesis;
+    const voiceSelect = document.getElementById('voice-select');
+    let voices = [];
+
+    function populateVoiceList() {
+      voices = synth.getVoices();
+      voiceSelect.innerHTML = '';
+      voices.forEach((voice, i) => {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `${voice.name} (${voice.lang}) ${voice.default ? '[Default]' : ''}`;
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    // Populate on page load and on voiceschanged (important for some browsers)
+    populateVoiceList();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = populateVoiceList;
+    }
+
+    function speakText() {
+      const text = document.getElementById('text-input').value;
+      const selectedVoice = voices[voiceSelect.value];
+      if (!text || !selectedVoice) return;
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.voice = selectedVoice;
+      synth.speak(utterance);
+    }
+
+    function downloadAudio() {
+      alert("Download not available in this demo.\nTo enable audio downloads, use a server-side TTS API like Google Cloud TTS.");
+      // Placeholder: In production, integrate with an actual TTS API that returns MP3/WAV data
+    }
+  </script>
+
+</body>
+</html>
