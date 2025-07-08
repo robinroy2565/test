@@ -53,7 +53,7 @@
     <button onclick="togglePause()" id="pause-btn">⏸ Pause</button>
     <button onclick="stopSpeech()">⏹ Stop</button>
     <button onclick="clearText()">🧹 Clear</button>
-    <button onclick="downloadAudio()">⬇ Download MP3</button>
+    <button id="save-btn" onclick="saveAudio()" disabled>⬇ Save Audio</button>
   </div>
 
   <div id="animated-text"></div>
@@ -61,6 +61,7 @@
   <script>
     const synth = window.speechSynthesis;
     const voiceSelect = document.getElementById('voice-select');
+    const saveBtn = document.getElementById('save-btn');
     let voices = [];
     let currentUtterance = null;
     let animationInterval = null;
@@ -82,15 +83,18 @@
       speechSynthesis.onvoiceschanged = populateVoiceList;
     }
 
-    function speakText() {
-      stopSpeech(); // stop any ongoing speech
+    // Recording support using Web Audio API
+    let audioChunks = [];
+    let mediaRecorder;
+    let audioBlob;
+
+    async function speakText() {
+      stopSpeech();
       const text = document.getElementById('text-input').value;
       const selectedVoice = voices[voiceSelect.value];
       if (!text || !selectedVoice) return;
 
-      currentUtterance = new SpeechSynthesisUtterance(text);
-      currentUtterance.voice = selectedVoice;
-
+      // Setup animation
       let words = text.split(" ");
       let i = 0;
       const animatedDiv = document.getElementById('animated-text');
@@ -104,11 +108,29 @@
         }
       }, 300);
 
+      // Start recording speech
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        saveBtn.disabled = false;
+      };
+
+      mediaRecorder.start();
+
+      // Speak the text
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.voice = selectedVoice;
+
       currentUtterance.onend = () => {
         clearInterval(animationInterval);
         animatedDiv.textContent = '';
-        document.getElementById('pause-btn').textContent = '⏸ Pause';
         paused = false;
+        document.getElementById('pause-btn').textContent = '⏸ Pause';
+        mediaRecorder.stop();
       };
 
       synth.speak(currentUtterance);
@@ -135,16 +157,24 @@
         document.getElementById('pause-btn').textContent = '⏸ Pause';
         paused = false;
       }
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
     }
 
     function clearText() {
+      stopSpeech();
       document.getElementById('text-input').value = '';
       document.getElementById('animated-text').textContent = '';
-      stopSpeech();
+      saveBtn.disabled = true;
     }
 
-    function downloadAudio() {
-      alert("❌ In-browser TTS can't be saved as MP3.\nTo download audio, use Google Cloud TTS or a server-side API that returns audio files.");
+    function saveAudio() {
+      if (!audioBlob) return;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(audioBlob);
+      a.download = 'tts-output.webm';
+      a.click();
     }
   </script>
 
