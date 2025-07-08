@@ -86,64 +86,123 @@
   if (speechSynthesis.onvoiceschanged !== undefined) {
     speechSynthesis.onvoiceschanged = populateVoiceList;
   }
-
   async function speakText() {
-    stopSpeech();
-    const text = document.getElementById('text-input').value.trim();
-    const selectedVoice = voices[voiceSelect.value];
-    if (!text || !selectedVoice) return alert('Please enter text and select a voice.');
+  stopSpeech();
+  const text = document.getElementById('text-input').value.trim();
+  const selectedVoice = voices[voiceSelect.value];
+  if (!text || !selectedVoice) return alert('Please enter text and select a voice.');
 
-    // Animate word-by-word
-    let words = text.split(" ");
-    let i = 0;
-    const animatedDiv = document.getElementById('animated-text');
-    animationInterval = setInterval(() => {
-      if (i < words.length) {
-        animatedDiv.textContent = words[i];
-        i++;
-      } else {
-        clearInterval(animationInterval);
-      }
-    }, 300);
+  const animatedDiv = document.getElementById('animated-text');
+  animatedDiv.textContent = '';
 
-    // Request microphone for recording (warning: will capture mic, NOT TTS output)
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder = new MediaRecorder(stream);
-      audioChunks = [];
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-      mediaRecorder.onstop = () => {
-        audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-        saveBtn.disabled = false;
-      };
-      mediaRecorder.start();
-    } catch(err) {
-      alert('Microphone access denied or not available.\nRecording disabled.');
-      saveBtn.disabled = true;
-    }
+  // Setup utterance
+  currentUtterance = new SpeechSynthesisUtterance(text);
+  currentUtterance.voice = selectedVoice;
 
-    // Setup utterance
-    currentUtterance = new SpeechSynthesisUtterance(text);
-    currentUtterance.voice = selectedVoice;
-
-    currentUtterance.onend = () => {
-      clearInterval(animationInterval);
-      animatedDiv.textContent = '';
-      paused = false;
-      pauseBtn.textContent = '⏸ Pause';
-      pauseBtn.disabled = true;
-      stopBtn.disabled = true;
-
-      if(mediaRecorder && mediaRecorder.state !== 'inactive'){
-        mediaRecorder.stop();
-      }
+  // Start microphone recording
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks = [];
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorder.onstop = () => {
+      audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      saveBtn.disabled = false;
     };
-
-    synth.speak(currentUtterance);
-    pauseBtn.disabled = false;
-    stopBtn.disabled = false;
+    mediaRecorder.start();
+  } catch (err) {
+    alert('Microphone access denied or not available.\nRecording disabled.');
     saveBtn.disabled = true;
   }
+
+  // Word-by-word highlight
+  currentUtterance.onboundary = function(event) {
+    if (event.name === 'word') {
+      const charIndex = event.charIndex;
+      const spokenPortion = text.slice(0, charIndex);
+      const remainingText = text.slice(charIndex);
+      const currentWord = remainingText.split(/\s+/)[0] || '';
+      animatedDiv.textContent = currentWord;
+    }
+  };
+
+  // End of speech
+  currentUtterance.onend = () => {
+    animatedDiv.textContent = '';
+    paused = false;
+    pauseBtn.textContent = '⏸ Pause';
+    pauseBtn.disabled = true;
+    stopBtn.disabled = true;
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+    }
+  };
+
+  synth.speak(currentUtterance);
+  pauseBtn.disabled = false;
+  stopBtn.disabled = false;
+  saveBtn.disabled = true;
+}
+
+
+  async function speakTexttextext() {
+  stopSpeech();
+  const text = document.getElementById('text-input').value.trim();
+  const selectedVoice = voices[voiceSelect.value];
+  if (!text || !selectedVoice) return alert('Please enter text and select a voice.');
+
+  const animatedDiv = document.getElementById('animated-text');
+  animatedDiv.textContent = '';
+
+  // Setup utterance
+  currentUtterance = new SpeechSynthesisUtterance(text);
+  currentUtterance.voice = selectedVoice;
+
+  // Start microphone recording
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks = [];
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorder.onstop = () => {
+      audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      saveBtn.disabled = false;
+    };
+    mediaRecorder.start();
+  } catch (err) {
+    alert('Microphone access denied or not available.\nRecording disabled.');
+    saveBtn.disabled = true;
+  }
+
+  // Word-by-word highlight
+  currentUtterance.onboundary = function(event) {
+    if (event.name === 'word') {
+      const charIndex = event.charIndex;
+      const spokenPortion = text.slice(0, charIndex);
+      const remainingText = text.slice(charIndex);
+      const currentWord = remainingText.split(/\s+/)[0] || '';
+      animatedDiv.textContent = currentWord;
+    }
+  };
+
+  // End of speech
+  currentUtterance.onend = () => {
+    animatedDiv.textContent = '';
+    paused = false;
+    pauseBtn.textContent = '⏸ Pause';
+    pauseBtn.disabled = true;
+    stopBtn.disabled = true;
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+    }
+  };
+
+  synth.speak(currentUtterance);
+  pauseBtn.disabled = false;
+  stopBtn.disabled = false;
+  saveBtn.disabled = true;
+}
+
 
   function togglePause() {
     if (!currentUtterance) return;
