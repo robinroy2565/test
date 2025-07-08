@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Text to Speech Generator</title>
+  <meta charset="UTF-8" />
+  <title>Text to Speech Generator with Recording</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -10,23 +10,19 @@
       background: #f5f5f5;
       text-align: center;
     }
-
     input[type="text"] {
       width: 300px;
       padding: 10px;
       font-size: 16px;
     }
-
     select, button {
       padding: 10px;
       font-size: 16px;
       margin: 5px;
     }
-
     .buttons {
       margin-top: 20px;
     }
-
     #animated-text {
       margin-top: 30px;
       font-size: 24px;
@@ -37,146 +33,160 @@
 </head>
 <body>
 
-  <h1>Text to Speech Generator</h1>
+<h1>Text to Speech Generator</h1>
 
-  <input type="text" id="text-input" placeholder="Enter text here" />
+<input type="text" id="text-input" placeholder="Enter text here" />
 
-  <div>
-    <label for="voice-select">Voice:</label>
-    <select id="voice-select">
-      <option value="">Loading voices...</option>
-    </select>
-  </div>
+<div>
+  <label for="voice-select">Voice:</label>
+  <select id="voice-select">
+    <option value="">Loading voices...</option>
+  </select>
+</div>
 
-  <div class="buttons">
-    <button onclick="speakText()">▶ Generate</button>
-    <button onclick="togglePause()" id="pause-btn">⏸ Pause</button>
-    <button onclick="stopSpeech()">⏹ Stop</button>
-    <button onclick="clearText()">🧹 Clear</button>
-    <button id="save-btn" onclick="saveAudio()" disabled>⬇ Save Audio</button>
-  </div>
+<div class="buttons">
+  <button onclick="speakText()">▶ Generate</button>
+  <button onclick="togglePause()" id="pause-btn" disabled>⏸ Pause</button>
+  <button onclick="stopSpeech()" disabled>⏹ Stop</button>
+  <button onclick="clearText()">🧹 Clear</button>
+  <button id="save-btn" onclick="saveAudio()" disabled>⬇ Save Audio</button>
+</div>
 
-  <div id="animated-text"></div>
+<div id="animated-text"></div>
 
-  <script>
-    const synth = window.speechSynthesis;
-    const voiceSelect = document.getElementById('voice-select');
-    const saveBtn = document.getElementById('save-btn');
-    let voices = [];
-    let currentUtterance = null;
-    let animationInterval = null;
-    let paused = false;
+<script>
+  const synth = window.speechSynthesis;
+  const voiceSelect = document.getElementById('voice-select');
+  const saveBtn = document.getElementById('save-btn');
+  const pauseBtn = document.getElementById('pause-btn');
+  const stopBtn = document.querySelector('button[onclick="stopSpeech()"]');
+  let voices = [];
+  let currentUtterance = null;
+  let animationInterval = null;
+  let paused = false;
 
-    function populateVoiceList() {
-      voices = synth.getVoices();
-      voiceSelect.innerHTML = '';
-      voices.forEach((voice, i) => {
-        const option = document.createElement('option');
-        option.value = i;
-        option.textContent = `${voice.name} (${voice.lang}) ${voice.default ? '[Default]' : ''}`;
-        voiceSelect.appendChild(option);
-      });
-    }
+  let mediaRecorder;
+  let audioChunks = [];
+  let audioBlob;
 
-    populateVoiceList();
-    if (speechSynthesis.onvoiceschanged !== undefined) {
-      speechSynthesis.onvoiceschanged = populateVoiceList;
-    }
+  // Populate voice list
+  function populateVoiceList() {
+    voices = synth.getVoices();
+    voiceSelect.innerHTML = '';
+    voices.forEach((voice, i) => {
+      const option = document.createElement('option');
+      option.value = i;
+      option.textContent = `${voice.name} (${voice.lang}) ${voice.default ? '[Default]' : ''}`;
+      voiceSelect.appendChild(option);
+    });
+  }
+  populateVoiceList();
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = populateVoiceList;
+  }
 
-    // Recording support using Web Audio API
-    let audioChunks = [];
-    let mediaRecorder;
-    let audioBlob;
+  async function speakText() {
+    stopSpeech();
+    const text = document.getElementById('text-input').value.trim();
+    const selectedVoice = voices[voiceSelect.value];
+    if (!text || !selectedVoice) return alert('Please enter text and select a voice.');
 
-    async function speakText() {
-      stopSpeech();
-      const text = document.getElementById('text-input').value;
-      const selectedVoice = voices[voiceSelect.value];
-      if (!text || !selectedVoice) return;
+    // Animate word-by-word
+    let words = text.split(" ");
+    let i = 0;
+    const animatedDiv = document.getElementById('animated-text');
+    animationInterval = setInterval(() => {
+      if (i < words.length) {
+        animatedDiv.textContent = words[i];
+        i++;
+      } else {
+        clearInterval(animationInterval);
+      }
+    }, 300);
 
-      // Setup animation
-      let words = text.split(" ");
-      let i = 0;
-      const animatedDiv = document.getElementById('animated-text');
-
-      animationInterval = setInterval(() => {
-        if (i < words.length) {
-          animatedDiv.textContent = words[i];
-          i++;
-        } else {
-          clearInterval(animationInterval);
-        }
-      }, 300);
-
-      // Start recording speech
+    // Request microphone for recording (warning: will capture mic, NOT TTS output)
+    try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorder = new MediaRecorder(stream);
       audioChunks = [];
-
       mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
       mediaRecorder.onstop = () => {
         audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
         saveBtn.disabled = false;
       };
-
       mediaRecorder.start();
-
-      // Speak the text
-      currentUtterance = new SpeechSynthesisUtterance(text);
-      currentUtterance.voice = selectedVoice;
-
-      currentUtterance.onend = () => {
-        clearInterval(animationInterval);
-        animatedDiv.textContent = '';
-        paused = false;
-        document.getElementById('pause-btn').textContent = '⏸ Pause';
-        mediaRecorder.stop();
-      };
-
-      synth.speak(currentUtterance);
-    }
-
-    function togglePause() {
-      if (synth.speaking && !paused) {
-        synth.pause();
-        clearInterval(animationInterval);
-        document.getElementById('pause-btn').textContent = '▶ Resume';
-        paused = true;
-      } else if (paused) {
-        synth.resume();
-        document.getElementById('pause-btn').textContent = '⏸ Pause';
-        paused = false;
-      }
-    }
-
-    function stopSpeech() {
-      if (synth.speaking || synth.paused) {
-        synth.cancel();
-        clearInterval(animationInterval);
-        document.getElementById('animated-text').textContent = '';
-        document.getElementById('pause-btn').textContent = '⏸ Pause';
-        paused = false;
-      }
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
-      }
-    }
-
-    function clearText() {
-      stopSpeech();
-      document.getElementById('text-input').value = '';
-      document.getElementById('animated-text').textContent = '';
+    } catch(err) {
+      alert('Microphone access denied or not available.\nRecording disabled.');
       saveBtn.disabled = true;
     }
 
-    function saveAudio() {
-      if (!audioBlob) return;
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(audioBlob);
-      a.download = 'tts-output.webm';
-      a.click();
+    // Setup utterance
+    currentUtterance = new SpeechSynthesisUtterance(text);
+    currentUtterance.voice = selectedVoice;
+
+    currentUtterance.onend = () => {
+      clearInterval(animationInterval);
+      animatedDiv.textContent = '';
+      paused = false;
+      pauseBtn.textContent = '⏸ Pause';
+      pauseBtn.disabled = true;
+      stopBtn.disabled = true;
+
+      if(mediaRecorder && mediaRecorder.state !== 'inactive'){
+        mediaRecorder.stop();
+      }
+    };
+
+    synth.speak(currentUtterance);
+    pauseBtn.disabled = false;
+    stopBtn.disabled = false;
+    saveBtn.disabled = true;
+  }
+
+  function togglePause() {
+    if (!currentUtterance) return;
+    if (synth.speaking && !paused) {
+      synth.pause();
+      clearInterval(animationInterval);
+      pauseBtn.textContent = '▶ Resume';
+      paused = true;
+    } else if (paused) {
+      synth.resume();
+      pauseBtn.textContent = '⏸ Pause';
+      paused = false;
     }
-  </script>
+  }
+
+  function stopSpeech() {
+    if (synth.speaking || synth.paused) {
+      synth.cancel();
+      clearInterval(animationInterval);
+      document.getElementById('animated-text').textContent = '';
+      pauseBtn.textContent = '⏸ Pause';
+      paused = false;
+    }
+    if(mediaRecorder && mediaRecorder.state !== 'inactive'){
+      mediaRecorder.stop();
+    }
+    pauseBtn.disabled = true;
+    stopBtn.disabled = true;
+  }
+
+  function clearText() {
+    stopSpeech();
+    document.getElementById('text-input').value = '';
+    document.getElementById('animated-text').textContent = '';
+    saveBtn.disabled = true;
+  }
+
+  function saveAudio() {
+    if (!audioBlob) return;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(audioBlob);
+    a.download = 'tts-output.webm';
+    a.click();
+  }
+</script>
 
 </body>
 </html>
