@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Text to Speech Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 50px;
+      background: #f5f5f5;
+      text-align: center;
+    }
+
+    input[type="text"] {
+      width: 300px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    select, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 5px;
+    }
+
+    .buttons {
+      margin-top: 20px;
+    }
+
+    #animated-text {
+      margin-top: 30px;
+      font-size: 24px;
+      color: #333;
+      min-height: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Text to Speech Generator</h1>
+
+  <input type="text" id="text-input" placeholder="Enter text here" />
+
+  <div>
+    <label for="voice-select">Voice:</label>
+    <select id="voice-select">
+      <option value="">Loading voices...</option>
+    </select>
+  </div>
+
+  <div class="buttons">
+    <button onclick="speakText()">▶ Play</button>
+    <button onclick="pauseSpeech()">⏸ Pause</button>
+    <button onclick="resumeSpeech()">⏯ Resume</button>
+    <button onclick="stopSpeech()">⏹ Stop</button>
+    <button onclick="downloadAudio()">⬇ Download</button>
+  </div>
+
+  <div id="animated-text"></div>
+
+  <script>
+    const synth = window.speechSynthesis;
+    const voiceSelect = document.getElementById('voice-select');
+    let voices = [];
+    let currentUtterance = null;
+    let animationInterval = null;
+
+    function populateVoiceList() {
+      voices = synth.getVoices();
+      voiceSelect.innerHTML = '';
+      voices.forEach((voice, i) => {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `${voice.name} (${voice.lang}) ${voice.default ? '[Default]' : ''}`;
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    populateVoiceList();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = populateVoiceList;
+    }
+
+    function speakText() {
+      stopSpeech(); // stop any ongoing speech
+      const text = document.getElementById('text-input').value;
+      const selectedVoice = voices[voiceSelect.value];
+      if (!text || !selectedVoice) return;
+
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.voice = selectedVoice;
+
+      // Animate word-by-word
+      let words = text.split(" ");
+      let i = 0;
+      const animatedDiv = document.getElementById('animated-text');
+      animationInterval = setInterval(() => {
+        if (i < words.length) {
+          animatedDiv.textContent = words[i];
+          i++;
+        } else {
+          clearInterval(animationInterval);
+        }
+      }, 300);
+
+      currentUtterance.onend = () => {
+        clearInterval(animationInterval);
+        animatedDiv.textContent = '';
+      };
+
+      synth.speak(currentUtterance);
+    }
+
+    function pauseSpeech() {
+      if (synth.speaking && !synth.paused) {
+        synth.pause();
+        clearInterval(animationInterval);
+      }
+    }
+
+    function resumeSpeech() {
+      if (synth.paused) {
+        synth.resume();
+        // Note: Animation won't resume accurately without tracking exact position.
+      }
+    }
+
+    function stopSpeech() {
+      if (synth.speaking) {
+        synth.cancel();
+        clearInterval(animationInterval);
+        document.getElementById('animated-text').textContent = '';
+      }
+    }
+
+    function downloadAudio() {
+      alert("❌ Download not supported in browser TTS.\nUse a server-side service like Google TTS or Amazon Polly for downloadable audio.");
+    }
+  </script>
+
+</body>
+</html>
