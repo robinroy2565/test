@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Real-Time Voice Translator</title>
+</head>
+<body>
+  <h2>🎤 Speak and Translate Demo</h2>
+  <button onclick="startRecognition()">Start Talking</button>
+  <p><strong>You Said:</strong> <span id="original"></span></p>
+  <p><strong>Translated:</strong> <span id="translated"></span></p>
+  <audio id="tts"></audio>
+
+  <script>
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "en-US";  // Source language
+    recognition.interimResults = false;
+
+    async function startRecognition() {
+      recognition.start();
+      recognition.onresult = async (event) => {
+        let text = event.results[0][0].transcript;
+        document.getElementById("original").innerText = text;
+
+        // Translate using free MyMemory API (demo only)
+        let res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|hi`);
+        let data = await res.json();
+        let translated = data.responseData.translatedText;
+        document.getElementById("translated").innerText = translated;
+
+        // Speak translated text
+        let utterance = new SpeechSynthesisUtterance(translated);
+        utterance.lang = "hi-IN"; // Target language
+        speechSynthesis.speak(utterance);
+      };
+    }
+  </script>
+</body>
+</html>
