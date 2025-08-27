@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculation Type Selector</title>
+  <style>
+    body {font-family: Arial, sans-serif; padding: 20px; background:#f8fafc;}
+    label {display:block; margin:12px 0 6px; font-weight:600;}
+    select {width:100%; max-width:400px; padding:8px; font-size:15px;}
+  </style>
+</head>
+<body>
+  <h2>Calculation Type Selector</h2>
+  
+  <label for="category">Select Category:</label>
+  <select id="category">
+    <option value="">-- Choose Category --</option>
+    <option value="basic">1. 🔢 Basic & Arithmetic Calculations</option>
+    <option value="financial">2. 💰 Financial & Business Calculations</option>
+    <option value="math">3. 📐 Mathematical & Geometrical Calculations</option>
+    <option value="science">4. ⚡ Science & Engineering Calculations</option>
+    <option value="health">5. 🏥 Health & Medical Calculations</option>
+    <option value="everyday">6. 🌍 Everyday & Practical Calculations</option>
+    <option value="digital">7. 💻 Digital & Computer Calculations</option>
+  </select>
+  
+  <label for="subtype">Select Sub-Calculation:</label>
+  <select id="subtype">
+    <option value="">-- Choose Sub-Calculation --</option>
+  </select>
+  
+  <script>
+    const subOptions = {
+      basic: [
+        "Addition, Subtraction, Multiplication, Division",
+        "Percentages",
+        "Ratios & Proportions",
+        "Averages (mean, median, mode)",
+        "Square roots, powers, logarithms"
+      ],
+      financial: [
+        "Profit & Loss",
+        "Discount & Markup",
+        "Simple Interest & Compound Interest",
+        "Loan EMI",
+        "Currency Conversion",
+        "Break-even Analysis",
+        "Tax Calculations",
+        "ROI (Return on Investment)"
+      ],
+      math: [
+        "Area, Perimeter, Volume, Surface Area",
+        "Trigonometric calculations",
+        "Calculus (differentiation, integration)",
+        "Probability & Statistics",
+        "Permutations & Combinations",
+        "Matrix Calculations",
+        "Vector Calculations"
+      ],
+      science: [
+        "Physics Equations",
+        "Chemistry Calculations",
+        "Electrical Calculations",
+        "Mechanical Calculations",
+        "Thermodynamics",
+        "Fluid Dynamics"
+      ],
+      health: [
+        "BMI (Body Mass Index)",
+        "BMR (Basal Metabolic Rate)",
+        "Dosage Calculations",
+        "Blood Pressure / Heart Rate"
+      ],
+      everyday: [
+        "Age & Date Calculations",
+        "Time, Speed, Distance",
+        "Cooking Measurements",
+        "Fuel Consumption & Mileage",
+        "Temperature Conversions"
+      ],
+      digital: [
+        "Binary, Octal, Hexadecimal Conversions",
+        "Algorithmic Calculations",
+        "Data Compression Calculations",
+        "Cryptographic Calculations"
+      ]
+    };
+
+    const categoryEl = document.getElementById("category");
+    const subtypeEl = document.getElementById("subtype");
+
+    categoryEl.addEventListener("change", () => {
+      const value = categoryEl.value;
+      subtypeEl.innerHTML = '<option value="">-- Choose Sub-Calculation --</option>';
+      if (subOptions[value]) {
+        subOptions[value].forEach(item => {
+          const opt = document.createElement("option");
+          opt.value = item;
+          opt.textContent = item;
+          subtypeEl.appendChild(opt);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
