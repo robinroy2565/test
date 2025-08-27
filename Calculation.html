@@ -227,3 +227,388 @@
   </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculation Type Selector</title>
+  <style>
+    body {font-family: Arial, sans-serif; padding: 20px; background:#f8fafc;}
+    label {display:block; margin:12px 0 6px; font-weight:600;}
+    select {width:100%; max-width:400px; padding:8px; font-size:15px;}
+    h2 {margin-top:30px; color:#1e3a8a;}
+    .box {margin-top:15px; padding:15px; border:1px solid #ccc; border-radius:8px; background:#fff; max-width:500px; display:none;}
+    input {width:100%; padding:8px; font-size:15px; margin-bottom:10px;}
+    button {padding:8px 14px; font-size:15px; cursor:pointer; background:#2563eb; color:#fff; border:none; border-radius:6px;}
+    .formula {font-style:italic; margin:8px 0; color:#555;}
+    .result {margin-top:10px; font-weight:bold; color:#1e40af;}
+  </style>
+</head>
+<body>
+  <h2>Calculation Type Selector</h2>
+  
+  <label for="category">Select Category:</label>
+  <select id="category">
+    <option value="">-- Choose Category --</option>
+    <option value="basic">1. 🔢 Basic & Arithmetic Calculations</option>
+    <option value="financial">2. 💰 Financial & Business Calculations</option>
+    <option value="math">3. 📐 Mathematical & Geometrical Calculations</option>
+    <option value="science">4. ⚡ Science & Engineering Calculations</option>
+    <option value="health">5. 🏥 Health & Medical Calculations</option>
+    <option value="everyday">6. 🌍 Everyday & Practical Calculations</option>
+    <option value="digital">7. 💻 Digital & Computer Calculations</option>
+  </select>
+  
+  <label for="subtype">Select Sub-Calculation:</label>
+  <select id="subtype">
+    <option value="">-- Choose Sub-Calculation --</option>
+  </select>
+
+  <!-- 1. Addition, Subtraction, Multiplication, Division -->
+  <div class="box" id="box-basic1">
+    <h2>1. Addition, Subtraction, Multiplication, Division</h2>
+    <p class="formula">Formulas:<br>
+      Addition = a + b<br>
+      Subtraction = a - b<br>
+      Multiplication = a × b<br>
+      Division = a ÷ b
+    </p>
+    <label>Number A:</label>
+    <input type="number" id="num1" step="any">
+    <label>Number B:</label>
+    <input type="number" id="num2" step="any">
+    <button onclick="calcBasic()">Calculate</button>
+    <div id="result1" class="result"></div>
+  </div>
+
+  <!-- 2. Percentages -->
+  <div class="box" id="box-basic2">
+    <h2>2. Percentages</h2>
+    <p class="formula">Formula: (Value ÷ Total) × 100</p>
+    <label>Value:</label>
+    <input type="number" id="val" step="any">
+    <label>Total:</label>
+    <input type="number" id="total" step="any">
+    <button onclick="calcPercent()">Calculate</button>
+    <div id="result2" class="result"></div>
+  </div>
+
+  <!-- 3. Ratios & Proportions -->
+  <div class="box" id="box-basic3">
+    <h2>3. Ratios & Proportions</h2>
+    <p class="formula">Formula: Ratio = a : b (simplified)</p>
+    <label>Value A:</label>
+    <input type="number" id="ra" step="any">
+    <label>Value B:</label>
+    <input type="number" id="rb" step="any">
+    <button onclick="calcRatio()">Calculate</button>
+    <div id="result3" class="result"></div>
+  </div>
+
+  <!-- 4. Averages -->
+  <div class="box" id="box-basic4">
+    <h2>4. Averages (Mean)</h2>
+    <p class="formula">Formula: Mean = (Sum of numbers ÷ Count)</p>
+    <label>Enter numbers (comma separated):</label>
+    <input type="text" id="avg" placeholder="e.g. 10,20,30">
+    <button onclick="calcAverage()">Calculate</button>
+    <div id="result4" class="result"></div>
+  </div>
+
+  <!-- 5. Square roots, powers, logarithms -->
+  <div class="box" id="box-basic5">
+    <h2>5. Square Roots, Powers, Logarithms</h2>
+    <p class="formula">Formulas:<br>
+      √x = square root<br>
+      xⁿ = power<br>
+      log₁₀(x) = base-10 logarithm
+    </p>
+    <label>Number (x):</label>
+    <input type="number" id="xnum" step="any">
+    <label>Power (n):</label>
+    <input type="number" id="power" step="any" value="2">
+    <button onclick="calcAdvanced()">Calculate</button>
+    <div id="result5" class="result"></div>
+  </div>
+
+  <script>
+    // === CALC FUNCTIONS ===
+    function calcBasic(){
+      let a = parseFloat(document.getElementById("num1").value);
+      let b = parseFloat(document.getElementById("num2").value);
+      if(isNaN(a)||isNaN(b)){document.getElementById("result1").textContent="Enter both numbers";return;}
+      document.getElementById("result1").innerHTML =
+        `Addition = ${a+b}<br>
+         Subtraction = ${a-b}<br>
+         Multiplication = ${a*b}<br>
+         Division = ${b!==0 ? (a/b).toFixed(4) : "Infinity (divide by 0)"}`;
+    }
+
+    function calcPercent(){
+      let v = parseFloat(document.getElementById("val").value);
+      let t = parseFloat(document.getElementById("total").value);
+      if(isNaN(v)||isNaN(t)||t===0){document.getElementById("result2").textContent="Enter valid numbers";return;}
+      document.getElementById("result2").textContent = `Percentage = ${(v/t*100).toFixed(2)}%`;
+    }
+
+    function gcd(a,b){return b ? gcd(b,a%b):a;}
+
+    function calcRatio(){
+      let a = parseFloat(document.getElementById("ra").value);
+      let b = parseFloat(document.getElementById("rb").value);
+      if(isNaN(a)||isNaN(b)||b===0){document.getElementById("result3").textContent="Enter valid numbers";return;}
+      let g = gcd(a,b);
+      document.getElementById("result3").textContent = `Ratio = ${a/g} : ${b/g}`;
+    }
+
+    function calcAverage(){
+      let input = document.getElementById("avg").value;
+      let nums = input.split(",").map(n=>parseFloat(n.trim())).filter(n=>!isNaN(n));
+      if(nums.length===0){document.getElementById("result4").textContent="Enter valid numbers";return;}
+      let sum = nums.reduce((a,b)=>a+b,0);
+      document.getElementById("result4").textContent = `Mean = ${(sum/nums.length).toFixed(2)}`;
+    }
+
+    function calcAdvanced(){
+      let x = parseFloat(document.getElementById("xnum").value);
+      let n = parseFloat(document.getElementById("power").value);
+      if(isNaN(x)){document.getElementById("result5").textContent="Enter a valid number";return;}
+      let sqrt = x>=0 ? Math.sqrt(x).toFixed(4) : "NaN";
+      let pow = !isNaN(n) ? Math.pow(x,n).toFixed(4) : "NaN";
+      let log = x>0 ? Math.log10(x).toFixed(4) : "NaN";
+      document.getElementById("result5").innerHTML =
+        `√${x} = ${sqrt}<br>
+         ${x}<sup>${n}</sup> = ${pow}<br>
+         log₁₀(${x}) = ${log}`;
+    }
+
+    // === CATEGORY & SUB-CATEGORY OPTIONS ===
+    const subOptions = {
+      basic: [
+        "Addition, Subtraction, Multiplication, Division",
+        "Percentages",
+        "Ratios & Proportions",
+        "Averages (mean, median, mode)",
+        "Square roots, powers, logarithms"
+      ]
+    };
+
+    const categoryEl = document.getElementById("category");
+    const subtypeEl = document.getElementById("subtype");
+
+    categoryEl.addEventListener("change", () => {
+      const value = categoryEl.value;
+      subtypeEl.innerHTML = '<option value="">-- Choose Sub-Calculation --</option>';
+      if (subOptions[value]) {
+        subOptions[value].forEach((item, idx) => {
+          const opt = document.createElement("option");
+          opt.value = `basic${idx+1}`;
+          opt.textContent = item;
+          subtypeEl.appendChild(opt);
+        });
+      }
+      hideAllBoxes();
+    });
+
+    subtypeEl.addEventListener("change", () => {
+      hideAllBoxes();
+      let boxId = "box-" + subtypeEl.value;
+      if(document.getElementById(boxId)){
+        document.getElementById(boxId).style.display="block";
+      }
+    });
+
+    function hideAllBoxes(){
+      document.querySelectorAll(".box").forEach(b=>b.style.display="none");
+    }
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculation Type Selector</title>
+  <style>
+    body {font-family: Arial, sans-serif; padding: 20px; background:#f8fafc;}
+    label {display:block; margin:12px 0 6px; font-weight:600;}
+    select {width:100%; max-width:400px; padding:8px; font-size:15px;}
+    h2 {margin-top:30px; color:#1e3a8a;}
+    .box {margin-top:15px; padding:15px; border:1px solid #ccc; border-radius:8px; background:#fff; max-width:500px; display:none;}
+    input {width:100%; padding:8px; font-size:15px; margin-bottom:10px;}
+    button {padding:8px 14px; font-size:15px; cursor:pointer; background:#2563eb; color:#fff; border:none; border-radius:6px;}
+    .formula {font-style:italic; margin:8px 0; color:#555;}
+    .result {margin-top:10px; font-weight:bold; color:#1e40af;}
+  </style>
+</head>
+<body>
+  <h2>Calculation Type Selector</h2>
+  
+  <label for="category">Select Category:</label>
+  <select id="category">
+    <option value="">-- Choose Category --</option>
+    <option value="basic">1. 🔢 Basic & Arithmetic Calculations</option>
+    <option value="financial">2. 💰 Financial & Business Calculations</option>
+    <option value="math">3. 📐 Mathematical & Geometrical Calculations</option>
+    <option value="science">4. ⚡ Science & Engineering Calculations</option>
+    <option value="health">5. 🏥 Health & Medical Calculations</option>
+    <option value="everyday">6. 🌍 Everyday & Practical Calculations</option>
+    <option value="digital">7. 💻 Digital & Computer Calculations</option>
+  </select>
+  
+  <label for="subtype">Select Sub-Calculation:</label>
+  <select id="subtype">
+    <option value="">-- Choose Sub-Calculation --</option>
+  </select>
+  
+  <!-- BASIC CALCULATORS -->
+  <div class="box" id="basic1">
+    <h2>Addition, Subtraction, Multiplication, Division</h2>
+    <p class="formula">Addition = a + b, Subtraction = a - b, Multiplication = a × b, Division = a ÷ b</p>
+    <label>Number A:</label><input type="number" id="num1" step="any">
+    <label>Number B:</label><input type="number" id="num2" step="any">
+    <button onclick="calcBasic()">Calculate</button>
+    <div id="result1" class="result"></div>
+  </div>
+  
+  <!-- PERCENTAGE -->
+  <div class="box" id="basic2">
+    <h2>Percentages</h2>
+    <p class="formula">Formula: (Value ÷ Total) × 100</p>
+    <label>Value:</label><input type="number" id="val" step="any">
+    <label>Total:</label><input type="number" id="total" step="any">
+    <button onclick="calcPercent()">Calculate</button>
+    <div id="result2" class="result"></div>
+  </div>
+
+  <!-- FINANCIAL CALCULATORS -->
+  <div class="box" id="fin1">
+    <h2>Profit & Loss</h2>
+    <p class="formula">Profit = SP - CP | Loss = CP - SP | % = (Profit or Loss ÷ CP) × 100</p>
+    <label>Cost Price (CP):</label><input type="number" id="cp" step="any">
+    <label>Selling Price (SP):</label><input type="number" id="sp" step="any">
+    <button onclick="calcProfit()">Calculate</button>
+    <div id="resultPL" class="result"></div>
+  </div>
+
+  <div class="box" id="fin2">
+    <h2>Discount & Markup</h2>
+    <p class="formula">Discount = (MRP × Rate)/100 | Markup = CP × (1 + %/100)</p>
+    <label>MRP:</label><input type="number" id="mrp" step="any">
+    <label>Discount %:</label><input type="number" id="dperc" step="any">
+    <button onclick="calcDiscount()">Calculate</button>
+    <div id="resultDisc" class="result"></div>
+  </div>
+
+  <div class="box" id="fin3">
+    <h2>Simple & Compound Interest</h2>
+    <p class="formula">SI = (P×R×T)/100 | CI = P(1+R/100)^T - P</p>
+    <label>Principal (P):</label><input type="number" id="p" step="any">
+    <label>Rate % (R):</label><input type="number" id="r" step="any">
+    <label>Time (T in years):</label><input type="number" id="t" step="any">
+    <button onclick="calcInterest()">Calculate</button>
+    <div id="resultInt" class="result"></div>
+  </div>
+
+  <div class="box" id="fin4">
+    <h2>Loan EMI</h2>
+    <p class="formula">EMI = [P × R × (1+R)^N] ÷ [(1+R)^N – 1]</p>
+    <label>Loan Amount (P):</label><input type="number" id="loanP" step="any">
+    <label>Annual Rate %:</label><input type="number" id="loanR" step="any">
+    <label>Time (months):</label><input type="number" id="loanN" step="any">
+    <button onclick="calcEMI()">Calculate</button>
+    <div id="resultEMI" class="result"></div>
+  </div>
+
+  <div class="box" id="fin5">
+    <h2>Currency Conversion</h2>
+    <p class="formula">Converted = Amount × Rate</p>
+    <label>Amount:</label><input type="number" id="amt" step="any">
+    <label>Rate:</label><input type="number" id="rate" step="any">
+    <button onclick="calcCurrency()">Calculate</button>
+    <div id="resultCurr" class="result"></div>
+  </div>
+
+  <div class="box" id="fin6">
+    <h2>Break-even Analysis</h2>
+    <p class="formula">BEP = Fixed Cost ÷ (SP – VC)</p>
+    <label>Fixed Cost:</label><input type="number" id="fc" step="any">
+    <label>Selling Price per Unit (SP):</label><input type="number" id="bsp" step="any">
+    <label>Variable Cost per Unit (VC):</label><input type="number" id="vc" step="any">
+    <button onclick="calcBreakEven()">Calculate</button>
+    <div id="resultBE" class="result"></div>
+  </div>
+
+  <div class="box" id="fin7">
+    <h2>Tax Calculations</h2>
+    <p class="formula">Tax = Amount × (Rate/100)</p>
+    <label>Amount:</label><input type="number" id="taxAmt" step="any">
+    <label>Tax Rate %:</label><input type="number" id="taxR" step="any">
+    <button onclick="calcTax()">Calculate</button>
+    <div id="resultTax" class="result"></div>
+  </div>
+
+  <div class="box" id="fin8">
+    <h2>ROI (Return on Investment)</h2>
+    <p class="formula">ROI % = (Gain – Cost) ÷ Cost × 100</p>
+    <label>Investment Cost:</label><input type="number" id="invCost" step="any">
+    <label>Return (Final Value):</label><input type="number" id="invReturn" step="any">
+    <button onclick="calcROI()">Calculate</button>
+    <div id="resultROI" class="result"></div>
+  </div>
+
+<script>
+  // Basic
+  function calcBasic(){
+    let a=+num1.value, b=+num2.value;
+    if(!a && !b) return result1.textContent="Enter values";
+    result1.innerHTML = `Add=${a+b}, Sub=${a-b}, Mul=${a*b}, Div=${b? (a/b).toFixed(2):"∞"}`;
+  }
+  function calcPercent(){result2.textContent=`Percentage=${(val.value/total.value*100).toFixed(2)}%`;}
+  function calcProfit(){
+    let cp=+cp.value, sp=+sp.value; 
+    if(!cp||!sp) return resultPL.textContent="Enter values";
+    let p=sp-cp;
+    resultPL.textContent= p>=0?`Profit=${p}, Profit%=${(p/cp*100).toFixed(2)}`:`Loss=${-p}, Loss%=${(-p/cp*100).toFixed(2)}`;
+  }
+  function calcDiscount(){
+    let mrp=+mrp.value, d=+dperc.value;
+    let disc=mrp*d/100; resultDisc.textContent=`Discount=${disc}, Final Price=${mrp-disc}`;
+  }
+  function calcInterest(){
+    let P=+p.value,R=+r.value,T=+t.value;
+    let SI=P*R*T/100; let CI=(P*Math.pow((1+R/100),T)-P).toFixed(2);
+    resultInt.textContent=`SI=${SI}, CI=${CI}`;
+  }
+  function calcEMI(){
+    let P=+loanP.value,R=(+loanR.value)/12/100,N=+loanN.value;
+    let emi=(P*R*Math.pow(1+R,N))/(Math.pow(1+R,N)-1);
+    resultEMI.textContent=`EMI=${emi.toFixed(2)}`;
+  }
+  function calcCurrency(){resultCurr.textContent=`Converted=${(+amt.value*+rate.value).toFixed(2)}`;}
+  function calcBreakEven(){
+    let f=+fc.value,sp=+bsp.value,vc=+vc.value;
+    resultBE.textContent=`Break-even Units=${(f/(sp-vc)).toFixed(2)}`;
+  }
+  function calcTax(){resultTax.textContent=`Tax=${(+taxAmt.value*+taxR.value/100).toFixed(2)}`;}
+  function calcROI(){
+    let c=+invCost.value, r=+invReturn.value;
+    resultROI.textContent=`ROI=${((r-c)/c*100).toFixed(2)}%`;
+  }
+
+  // Select show/hide
+  const subOptions={
+    basic:["Addition, Subtraction, Multiplication, Division","Percentages"],
+    financial:["Profit & Loss","Discount & Markup","Simple Interest & Compound Interest","Loan EMI","Currency Conversion","Break-even Analysis","Tax Calculations","ROI (Return on Investment)"]
+  };
+  category.onchange=()=>{subtype.innerHTML='<option>-- Choose Sub --</option>';(subOptions[category.value]||[]).forEach((s,i)=>{let o=new Option(s,category.value+(i+1));subtype.add(o)})};
+  subtype.onchange=()=>{
+    document.querySelectorAll('.box').forEach(b=>b.style.display="none");
+    if(subtype.value) document.getElementById(subtype.value).style.display="block";
+  };
+</script>
+</body>
+</html>
+
