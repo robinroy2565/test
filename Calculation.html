@@ -8,6 +8,13 @@
     body {font-family: Arial, sans-serif; padding: 20px; background:#f8fafc;}
     label {display:block; margin:12px 0 6px; font-weight:600;}
     select {width:100%; max-width:400px; padding:8px; font-size:15px;}
+    h2 {margin-top:30px; color:#1e3a8a;}
+    .box {margin-top:15px; padding:15px; border:1px solid #ccc; border-radius:8px; background:#fff; max-width:500px;}
+    input {width:100%; padding:8px; font-size:15px; margin-bottom:10px;}
+    button {padding:8px 14px; font-size:15px; cursor:pointer; background:#2563eb; color:#fff; border:none; border-radius:6px;}
+    .formula {font-style:italic; margin:8px 0; color:#555;}
+    .result {margin-top:10px; font-weight:bold; color:#1e40af;}
+  </style>
   </style>
 </head>
 <body>
@@ -29,7 +36,122 @@
   <select id="subtype">
     <option value="">-- Choose Sub-Calculation --</option>
   </select>
-  
+    <h1>🔢 Basic & Arithmetic Calculations</h1>
+
+  <!-- 1. Addition, Subtraction, Multiplication, Division -->
+  <div class="box">
+    <h2>1. Addition, Subtraction, Multiplication, Division</h2>
+    <p class="formula">Formulas:<br>
+      Addition = a + b<br>
+      Subtraction = a - b<br>
+      Multiplication = a × b<br>
+      Division = a ÷ b
+    </p>
+    <label>Number A:</label>
+    <input type="number" id="num1" step="any">
+    <label>Number B:</label>
+    <input type="number" id="num2" step="any">
+    <button onclick="calcBasic()">Calculate</button>
+    <div id="result1" class="result"></div>
+  </div>
+
+  <!-- 2. Percentages -->
+  <div class="box">
+    <h2>2. Percentages</h2>
+    <p class="formula">Formula: (Value ÷ Total) × 100</p>
+    <label>Value:</label>
+    <input type="number" id="val" step="any">
+    <label>Total:</label>
+    <input type="number" id="total" step="any">
+    <button onclick="calcPercent()">Calculate</button>
+    <div id="result2" class="result"></div>
+  </div>
+  <!-- 3. Ratios & Proportions -->
+  <div class="box">
+    <h2>3. Ratios & Proportions</h2>
+    <p class="formula">Formula: Ratio = a : b (simplified)</p>
+    <label>Value A:</label>
+    <input type="number" id="ra" step="any">
+    <label>Value B:</label>
+    <input type="number" id="rb" step="any">
+    <button onclick="calcRatio()">Calculate</button>
+    <div id="result3" class="result"></div>
+  </div>
+
+  <!-- 4. Averages -->
+  <div class="box">
+    <h2>4. Averages (Mean)</h2>
+    <p class="formula">Formula: Mean = (Sum of numbers ÷ Count)</p>
+    <label>Enter numbers (comma separated):</label>
+    <input type="text" id="avg" placeholder="e.g. 10,20,30">
+    <button onclick="calcAverage()">Calculate</button>
+    <div id="result4" class="result"></div>
+  </div>
+  <!-- 5. Square roots, powers, logarithms -->
+  <div class="box">
+    <h2>5. Square Roots, Powers, Logarithms</h2>
+    <p class="formula">Formulas:<br>
+      √x = square root<br>
+      xⁿ = power<br>
+      log₁₀(x) = base-10 logarithm
+    </p>
+    <label>Number (x):</label>
+    <input type="number" id="xnum" step="any">
+    <label>Power (n):</label>
+    <input type="number" id="power" step="any" value="2">
+    <button onclick="calcAdvanced()">Calculate</button>
+    <div id="result5" class="result"></div>
+  </div>
+  <script>
+    function calcBasic(){
+      let a = parseFloat(document.getElementById("num1").value);
+      let b = parseFloat(document.getElementById("num2").value);
+      if(isNaN(a)||isNaN(b)){document.getElementById("result1").textContent="Enter both numbers";return;}
+      document.getElementById("result1").innerHTML =
+        `Addition = ${a+b}<br>
+         Subtraction = ${a-b}<br>
+         Multiplication = ${a*b}<br>
+         Division = ${b!==0 ? (a/b).toFixed(4) : "Infinity (divide by 0)"}`;
+    }
+
+    function calcPercent(){
+      let v = parseFloat(document.getElementById("val").value);
+      let t = parseFloat(document.getElementById("total").value);
+      if(isNaN(v)||isNaN(t)||t===0){document.getElementById("result2").textContent="Enter valid numbers";return;}
+      document.getElementById("result2").textContent = `Percentage = ${(v/t*100).toFixed(2)}%`;
+    }
+
+    function gcd(a,b){return b ? gcd(b,a%b):a;}
+
+    function calcRatio(){
+      let a = parseFloat(document.getElementById("ra").value);
+      let b = parseFloat(document.getElementById("rb").value);
+      if(isNaN(a)||isNaN(b)||b===0){document.getElementById("result3").textContent="Enter valid numbers";return;}
+      let g = gcd(a,b);
+      document.getElementById("result3").textContent = `Ratio = ${a/g} : ${b/g}`;
+    }
+
+    function calcAverage(){
+      let input = document.getElementById("avg").value;
+      let nums = input.split(",").map(n=>parseFloat(n.trim())).filter(n=>!isNaN(n));
+      if(nums.length===0){document.getElementById("result4").textContent="Enter valid numbers";return;}
+      let sum = nums.reduce((a,b)=>a+b,0);
+      document.getElementById("result4").textContent = `Mean = ${(sum/nums.length).toFixed(2)}`;
+    }
+
+    function calcAdvanced(){
+      let x = parseFloat(document.getElementById("xnum").value);
+      let n = parseFloat(document.getElementById("power").value);
+      if(isNaN(x)){document.getElementById("result5").textContent="Enter a valid number";return;}
+      let sqrt = x>=0 ? Math.sqrt(x).toFixed(4) : "NaN";
+      let pow = !isNaN(n) ? Math.pow(x,n).toFixed(4) : "NaN";
+      let log = x>0 ? Math.log10(x).toFixed(4) : "NaN";
+      document.getElementById("result5").innerHTML =
+        `√${x} = ${sqrt}<br>
+         ${x}<sup>${n}</sup> = ${pow}<br>
+         log₁₀(${x}) = ${log}`;
+    }
+  </script>
   <script>
     const subOptions = {
       basic: [
