@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,233 +40,6 @@
     <option value="">-- Choose Sub-Calculation --</option>
   </select>
     <h1>🔢 Basic & Arithmetic Calculations</h1>
-
-  <!-- 1. Addition, Subtraction, Multiplication, Division -->
-  <div class="box">
-    <h2>1. Addition, Subtraction, Multiplication, Division</h2>
-    <p class="formula">Formulas:<br>
-      Addition = a + b<br>
-      Subtraction = a - b<br>
-      Multiplication = a × b<br>
-      Division = a ÷ b
-    </p>
-    <label>Number A:</label>
-    <input type="number" id="num1" step="any">
-    <label>Number B:</label>
-    <input type="number" id="num2" step="any">
-    <button onclick="calcBasic()">Calculate</button>
-    <div id="result1" class="result"></div>
-  </div>
-
-  <!-- 2. Percentages -->
-  <div class="box">
-    <h2>2. Percentages</h2>
-    <p class="formula">Formula: (Value ÷ Total) × 100</p>
-    <label>Value:</label>
-    <input type="number" id="val" step="any">
-    <label>Total:</label>
-    <input type="number" id="total" step="any">
-    <button onclick="calcPercent()">Calculate</button>
-    <div id="result2" class="result"></div>
-  </div>
-  <!-- 3. Ratios & Proportions -->
-  <div class="box">
-    <h2>3. Ratios & Proportions</h2>
-    <p class="formula">Formula: Ratio = a : b (simplified)</p>
-    <label>Value A:</label>
-    <input type="number" id="ra" step="any">
-    <label>Value B:</label>
-    <input type="number" id="rb" step="any">
-    <button onclick="calcRatio()">Calculate</button>
-    <div id="result3" class="result"></div>
-  </div>
-
-  <!-- 4. Averages -->
-  <div class="box">
-    <h2>4. Averages (Mean)</h2>
-    <p class="formula">Formula: Mean = (Sum of numbers ÷ Count)</p>
-    <label>Enter numbers (comma separated):</label>
-    <input type="text" id="avg" placeholder="e.g. 10,20,30">
-    <button onclick="calcAverage()">Calculate</button>
-    <div id="result4" class="result"></div>
-  </div>
-  <!-- 5. Square roots, powers, logarithms -->
-  <div class="box">
-    <h2>5. Square Roots, Powers, Logarithms</h2>
-    <p class="formula">Formulas:<br>
-      √x = square root<br>
-      xⁿ = power<br>
-      log₁₀(x) = base-10 logarithm
-    </p>
-    <label>Number (x):</label>
-    <input type="number" id="xnum" step="any">
-    <label>Power (n):</label>
-    <input type="number" id="power" step="any" value="2">
-    <button onclick="calcAdvanced()">Calculate</button>
-    <div id="result5" class="result"></div>
-  </div>
-  <script>
-    function calcBasic(){
-      let a = parseFloat(document.getElementById("num1").value);
-      let b = parseFloat(document.getElementById("num2").value);
-      if(isNaN(a)||isNaN(b)){document.getElementById("result1").textContent="Enter both numbers";return;}
-      document.getElementById("result1").innerHTML =
-        `Addition = ${a+b}<br>
-         Subtraction = ${a-b}<br>
-         Multiplication = ${a*b}<br>
-         Division = ${b!==0 ? (a/b).toFixed(4) : "Infinity (divide by 0)"}`;
-    }
-
-    function calcPercent(){
-      let v = parseFloat(document.getElementById("val").value);
-      let t = parseFloat(document.getElementById("total").value);
-      if(isNaN(v)||isNaN(t)||t===0){document.getElementById("result2").textContent="Enter valid numbers";return;}
-      document.getElementById("result2").textContent = `Percentage = ${(v/t*100).toFixed(2)}%`;
-    }
-
-    function gcd(a,b){return b ? gcd(b,a%b):a;}
-
-    function calcRatio(){
-      let a = parseFloat(document.getElementById("ra").value);
-      let b = parseFloat(document.getElementById("rb").value);
-      if(isNaN(a)||isNaN(b)||b===0){document.getElementById("result3").textContent="Enter valid numbers";return;}
-      let g = gcd(a,b);
-      document.getElementById("result3").textContent = `Ratio = ${a/g} : ${b/g}`;
-    }
-
-    function calcAverage(){
-      let input = document.getElementById("avg").value;
-      let nums = input.split(",").map(n=>parseFloat(n.trim())).filter(n=>!isNaN(n));
-      if(nums.length===0){document.getElementById("result4").textContent="Enter valid numbers";return;}
-      let sum = nums.reduce((a,b)=>a+b,0);
-      document.getElementById("result4").textContent = `Mean = ${(sum/nums.length).toFixed(2)}`;
-    }
-
-    function calcAdvanced(){
-      let x = parseFloat(document.getElementById("xnum").value);
-      let n = parseFloat(document.getElementById("power").value);
-      if(isNaN(x)){document.getElementById("result5").textContent="Enter a valid number";return;}
-      let sqrt = x>=0 ? Math.sqrt(x).toFixed(4) : "NaN";
-      let pow = !isNaN(n) ? Math.pow(x,n).toFixed(4) : "NaN";
-      let log = x>0 ? Math.log10(x).toFixed(4) : "NaN";
-      document.getElementById("result5").innerHTML =
-        `√${x} = ${sqrt}<br>
-         ${x}<sup>${n}</sup> = ${pow}<br>
-         log₁₀(${x}) = ${log}`;
-    }
-  </script>
-  <script>
-    const subOptions = {
-      basic: [
-        "Addition, Subtraction, Multiplication, Division",
-        "Percentages",
-        "Ratios & Proportions",
-        "Averages (mean, median, mode)",
-        "Square roots, powers, logarithms"
-      ],
-      financial: [
-        "Profit & Loss",
-        "Discount & Markup",
-        "Simple Interest & Compound Interest",
-        "Loan EMI",
-        "Currency Conversion",
-        "Break-even Analysis",
-        "Tax Calculations",
-        "ROI (Return on Investment)"
-      ],
-      math: [
-        "Area, Perimeter, Volume, Surface Area",
-        "Trigonometric calculations",
-        "Calculus (differentiation, integration)",
-        "Probability & Statistics",
-        "Permutations & Combinations",
-        "Matrix Calculations",
-        "Vector Calculations"
-      ],
-      science: [
-        "Physics Equations",
-        "Chemistry Calculations",
-        "Electrical Calculations",
-        "Mechanical Calculations",
-        "Thermodynamics",
-        "Fluid Dynamics"
-      ],
-      health: [
-        "BMI (Body Mass Index)",
-        "BMR (Basal Metabolic Rate)",
-        "Dosage Calculations",
-        "Blood Pressure / Heart Rate"
-      ],
-      everyday: [
-        "Age & Date Calculations",
-        "Time, Speed, Distance",
-        "Cooking Measurements",
-        "Fuel Consumption & Mileage",
-        "Temperature Conversions"
-      ],
-      digital: [
-        "Binary, Octal, Hexadecimal Conversions",
-        "Algorithmic Calculations",
-        "Data Compression Calculations",
-        "Cryptographic Calculations"
-      ]
-    };
-
-    const categoryEl = document.getElementById("category");
-    const subtypeEl = document.getElementById("subtype");
-
-    categoryEl.addEventListener("change", () => {
-      const value = categoryEl.value;
-      subtypeEl.innerHTML = '<option value="">-- Choose Sub-Calculation --</option>';
-      if (subOptions[value]) {
-        subOptions[value].forEach(item => {
-          const opt = document.createElement("option");
-          opt.value = item;
-          opt.textContent = item;
-          subtypeEl.appendChild(opt);
-        });
-      }
-    });
-  </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculation Type Selector</title>
-  <style>
-    body {font-family: Arial, sans-serif; padding: 20px; background:#f8fafc;}
-    label {display:block; margin:12px 0 6px; font-weight:600;}
-    select {width:100%; max-width:400px; padding:8px; font-size:15px;}
-    h2 {margin-top:30px; color:#1e3a8a;}
-    .box {margin-top:15px; padding:15px; border:1px solid #ccc; border-radius:8px; background:#fff; max-width:500px; display:none;}
-    input {width:100%; padding:8px; font-size:15px; margin-bottom:10px;}
-    button {padding:8px 14px; font-size:15px; cursor:pointer; background:#2563eb; color:#fff; border:none; border-radius:6px;}
-    .formula {font-style:italic; margin:8px 0; color:#555;}
-    .result {margin-top:10px; font-weight:bold; color:#1e40af;}
-  </style>
-</head>
-<body>
-  <h2>Calculation Type Selector</h2>
-  
-  <label for="category">Select Category:</label>
-  <select id="category">
-    <option value="">-- Choose Category --</option>
-    <option value="basic">1. 🔢 Basic & Arithmetic Calculations</option>
-    <option value="financial">2. 💰 Financial & Business Calculations</option>
-    <option value="math">3. 📐 Mathematical & Geometrical Calculations</option>
-    <option value="science">4. ⚡ Science & Engineering Calculations</option>
-    <option value="health">5. 🏥 Health & Medical Calculations</option>
-    <option value="everyday">6. 🌍 Everyday & Practical Calculations</option>
-    <option value="digital">7. 💻 Digital & Computer Calculations</option>
-  </select>
-  
-  <label for="subtype">Select Sub-Calculation:</label>
-  <select id="subtype">
-    <option value="">-- Choose Sub-Calculation --</option>
-  </select>
 
   <!-- 1. Addition, Subtraction, Multiplication, Division -->
   <div class="box" id="box-basic1">
@@ -332,137 +108,7 @@
     <div id="result5" class="result"></div>
   </div>
 
-  <script>
-    // === CALC FUNCTIONS ===
-    function calcBasic(){
-      let a = parseFloat(document.getElementById("num1").value);
-      let b = parseFloat(document.getElementById("num2").value);
-      if(isNaN(a)||isNaN(b)){document.getElementById("result1").textContent="Enter both numbers";return;}
-      document.getElementById("result1").innerHTML =
-        `Addition = ${a+b}<br>
-         Subtraction = ${a-b}<br>
-         Multiplication = ${a*b}<br>
-         Division = ${b!==0 ? (a/b).toFixed(4) : "Infinity (divide by 0)"}`;
-    }
-
-    function calcPercent(){
-      let v = parseFloat(document.getElementById("val").value);
-      let t = parseFloat(document.getElementById("total").value);
-      if(isNaN(v)||isNaN(t)||t===0){document.getElementById("result2").textContent="Enter valid numbers";return;}
-      document.getElementById("result2").textContent = `Percentage = ${(v/t*100).toFixed(2)}%`;
-    }
-
-    function gcd(a,b){return b ? gcd(b,a%b):a;}
-
-    function calcRatio(){
-      let a = parseFloat(document.getElementById("ra").value);
-      let b = parseFloat(document.getElementById("rb").value);
-      if(isNaN(a)||isNaN(b)||b===0){document.getElementById("result3").textContent="Enter valid numbers";return;}
-      let g = gcd(a,b);
-      document.getElementById("result3").textContent = `Ratio = ${a/g} : ${b/g}`;
-    }
-
-    function calcAverage(){
-      let input = document.getElementById("avg").value;
-      let nums = input.split(",").map(n=>parseFloat(n.trim())).filter(n=>!isNaN(n));
-      if(nums.length===0){document.getElementById("result4").textContent="Enter valid numbers";return;}
-      let sum = nums.reduce((a,b)=>a+b,0);
-      document.getElementById("result4").textContent = `Mean = ${(sum/nums.length).toFixed(2)}`;
-    }
-
-    function calcAdvanced(){
-      let x = parseFloat(document.getElementById("xnum").value);
-      let n = parseFloat(document.getElementById("power").value);
-      if(isNaN(x)){document.getElementById("result5").textContent="Enter a valid number";return;}
-      let sqrt = x>=0 ? Math.sqrt(x).toFixed(4) : "NaN";
-      let pow = !isNaN(n) ? Math.pow(x,n).toFixed(4) : "NaN";
-      let log = x>0 ? Math.log10(x).toFixed(4) : "NaN";
-      document.getElementById("result5").innerHTML =
-        `√${x} = ${sqrt}<br>
-         ${x}<sup>${n}</sup> = ${pow}<br>
-         log₁₀(${x}) = ${log}`;
-    }
-
-    // === CATEGORY & SUB-CATEGORY OPTIONS ===
-    const subOptions = {
-      basic: [
-        "Addition, Subtraction, Multiplication, Division",
-        "Percentages",
-        "Ratios & Proportions",
-        "Averages (mean, median, mode)",
-        "Square roots, powers, logarithms"
-      ]
-    };
-
-    const categoryEl = document.getElementById("category");
-    const subtypeEl = document.getElementById("subtype");
-
-    categoryEl.addEventListener("change", () => {
-      const value = categoryEl.value;
-      subtypeEl.innerHTML = '<option value="">-- Choose Sub-Calculation --</option>';
-      if (subOptions[value]) {
-        subOptions[value].forEach((item, idx) => {
-          const opt = document.createElement("option");
-          opt.value = `basic${idx+1}`;
-          opt.textContent = item;
-          subtypeEl.appendChild(opt);
-        });
-      }
-      hideAllBoxes();
-    });
-
-    subtypeEl.addEventListener("change", () => {
-      hideAllBoxes();
-      let boxId = "box-" + subtypeEl.value;
-      if(document.getElementById(boxId)){
-        document.getElementById(boxId).style.display="block";
-      }
-    });
-
-    function hideAllBoxes(){
-      document.querySelectorAll(".box").forEach(b=>b.style.display="none");
-    }
-  </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculation Type Selector</title>
-  <style>
-    body {font-family: Arial, sans-serif; padding: 20px; background:#f8fafc;}
-    label {display:block; margin:12px 0 6px; font-weight:600;}
-    select {width:100%; max-width:400px; padding:8px; font-size:15px;}
-    h2 {margin-top:30px; color:#1e3a8a;}
-    .box {margin-top:15px; padding:15px; border:1px solid #ccc; border-radius:8px; background:#fff; max-width:500px; display:none;}
-    input {width:100%; padding:8px; font-size:15px; margin-bottom:10px;}
-    button {padding:8px 14px; font-size:15px; cursor:pointer; background:#2563eb; color:#fff; border:none; border-radius:6px;}
-    .formula {font-style:italic; margin:8px 0; color:#555;}
-    .result {margin-top:10px; font-weight:bold; color:#1e40af;}
-  </style>
-</head>
-<body>
-  <h2>Calculation Type Selector</h2>
-  
-  <label for="category">Select Category:</label>
-  <select id="category">
-    <option value="">-- Choose Category --</option>
-    <option value="basic">1. 🔢 Basic & Arithmetic Calculations</option>
-    <option value="financial">2. 💰 Financial & Business Calculations</option>
-    <option value="math">3. 📐 Mathematical & Geometrical Calculations</option>
-    <option value="science">4. ⚡ Science & Engineering Calculations</option>
-    <option value="health">5. 🏥 Health & Medical Calculations</option>
-    <option value="everyday">6. 🌍 Everyday & Practical Calculations</option>
-    <option value="digital">7. 💻 Digital & Computer Calculations</option>
-  </select>
-  
-  <label for="subtype">Select Sub-Calculation:</label>
-  <select id="subtype">
-    <option value="">-- Choose Sub-Calculation --</option>
-  </select>
-  
+  //=======
   <!-- BASIC CALCULATORS -->
   <div class="box" id="basic1">
     <h2>Addition, Subtraction, Multiplication, Division</h2>
@@ -558,57 +204,206 @@
     <button onclick="calcROI()">Calculate</button>
     <div id="resultROI" class="result"></div>
   </div>
+   
+  
+  //=========
 
 <script>
-  // Basic
+  // === CALCULATION FUNCTIONS ===
   function calcBasic(){
-    let a=+num1.value, b=+num2.value;
-    if(!a && !b) return result1.textContent="Enter values";
-    result1.innerHTML = `Add=${a+b}, Sub=${a-b}, Mul=${a*b}, Div=${b? (a/b).toFixed(2):"∞"}`;
+    let a = +document.getElementById("num1").value;
+    let b = +document.getElementById("num2").value;
+    if(isNaN(a) || isNaN(b)) return result1.textContent="Enter valid numbers";
+    result1.innerHTML = 
+      `Addition = ${a+b}<br>
+       Subtraction = ${a-b}<br>
+       Multiplication = ${a*b}<br>
+       Division = ${b ? (a/b).toFixed(2) : "∞"}`;
   }
-  function calcPercent(){result2.textContent=`Percentage=${(val.value/total.value*100).toFixed(2)}%`;}
+
+  function calcPercent(){
+    let v = +document.getElementById("val").value;
+    let t = +document.getElementById("total").value;
+    if(isNaN(v) || isNaN(t) || t===0) return result2.textContent="Enter valid numbers";
+    result2.textContent = `Percentage = ${(v/t*100).toFixed(2)}%`;
+  }
+
+  function gcd(a,b){return b ? gcd(b,a%b) : a;}
+
+  function calcRatio(){
+    let a = +document.getElementById("ra").value;
+    let b = +document.getElementById("rb").value;
+    if(isNaN(a)||isNaN(b)||b===0) return result3.textContent="Enter valid numbers";
+    let g = gcd(a,b);
+    result3.textContent = `Ratio = ${a/g} : ${b/g}`;
+  }
+
+  function calcAverage(){
+    let input = document.getElementById("avg").value;
+    let nums = input.split(",").map(n=>+n.trim()).filter(n=>!isNaN(n));
+    if(nums.length===0) return result4.textContent="Enter valid numbers";
+    let sum = nums.reduce((a,b)=>a+b,0);
+    result4.textContent = `Mean = ${(sum/nums.length).toFixed(2)}`;
+  }
+
+  function calcAdvanced(){
+    let x = +document.getElementById("xnum").value;
+    let n = +document.getElementById("power").value;
+    if(isNaN(x)) return result5.textContent="Enter a valid number";
+    let sqrt = x>=0 ? Math.sqrt(x).toFixed(4) : "NaN";
+    let pow = !isNaN(n) ? Math.pow(x,n).toFixed(4) : "NaN";
+    let log = x>0 ? Math.log10(x).toFixed(4) : "NaN";
+    result5.innerHTML =
+      `√${x} = ${sqrt}<br>
+       ${x}<sup>${n}</sup> = ${pow}<br>
+       log₁₀(${x}) = ${log}`;
+  }
+
+  // === Financial Functions ===
   function calcProfit(){
-    let cp=+cp.value, sp=+sp.value; 
+    let cp=+document.getElementById("cp").value, sp=+document.getElementById("sp").value; 
     if(!cp||!sp) return resultPL.textContent="Enter values";
     let p=sp-cp;
-    resultPL.textContent= p>=0?`Profit=${p}, Profit%=${(p/cp*100).toFixed(2)}`:`Loss=${-p}, Loss%=${(-p/cp*100).toFixed(2)}`;
+    resultPL.textContent = p>=0
+      ? `Profit=${p}, Profit%=${(p/cp*100).toFixed(2)}`
+      : `Loss=${-p}, Loss%=${(-p/cp*100).toFixed(2)}`;
   }
+
   function calcDiscount(){
-    let mrp=+mrp.value, d=+dperc.value;
-    let disc=mrp*d/100; resultDisc.textContent=`Discount=${disc}, Final Price=${mrp-disc}`;
+    let mrp=+document.getElementById("mrp").value, d=+document.getElementById("dperc").value;
+    if(!mrp||!d) return resultDisc.textContent="Enter values";
+    let disc=mrp*d/100; 
+    resultDisc.textContent=`Discount=${disc}, Final Price=${mrp-disc}`;
   }
+
   function calcInterest(){
-    let P=+p.value,R=+r.value,T=+t.value;
-    let SI=P*R*T/100; let CI=(P*Math.pow((1+R/100),T)-P).toFixed(2);
+    let P=+document.getElementById("p").value,R=+document.getElementById("r").value,T=+document.getElementById("t").value;
+    if(!P||!R||!T) return resultInt.textContent="Enter values";
+    let SI=P*R*T/100; 
+    let CI=(P*Math.pow((1+R/100),T)-P).toFixed(2);
     resultInt.textContent=`SI=${SI}, CI=${CI}`;
   }
+
   function calcEMI(){
-    let P=+loanP.value,R=(+loanR.value)/12/100,N=+loanN.value;
+    let P=+document.getElementById("loanP").value,
+        R=(+document.getElementById("loanR").value)/12/100,
+        N=+document.getElementById("loanN").value;
+    if(!P||!R||!N) return resultEMI.textContent="Enter values";
     let emi=(P*R*Math.pow(1+R,N))/(Math.pow(1+R,N)-1);
     resultEMI.textContent=`EMI=${emi.toFixed(2)}`;
   }
-  function calcCurrency(){resultCurr.textContent=`Converted=${(+amt.value*+rate.value).toFixed(2)}`;}
+
+  function calcCurrency(){
+    let amt=+document.getElementById("amt").value, rate=+document.getElementById("rate").value;
+    if(!amt||!rate) return resultCurr.textContent="Enter values";
+    resultCurr.textContent=`Converted=${(amt*rate).toFixed(2)}`;
+  }
+
   function calcBreakEven(){
-    let f=+fc.value,sp=+bsp.value,vc=+vc.value;
+    let f=+document.getElementById("fc").value,sp=+document.getElementById("bsp").value,vc=+document.getElementById("vc").value;
+    if(!f||!sp||!vc) return resultBE.textContent="Enter values";
     resultBE.textContent=`Break-even Units=${(f/(sp-vc)).toFixed(2)}`;
   }
-  function calcTax(){resultTax.textContent=`Tax=${(+taxAmt.value*+taxR.value/100).toFixed(2)}`;}
+
+  function calcTax(){
+    let amt=+document.getElementById("taxAmt").value, rate=+document.getElementById("taxR").value;
+    if(!amt||!rate) return resultTax.textContent="Enter values";
+    resultTax.textContent=`Tax=${(amt*rate/100).toFixed(2)}`;
+  }
+
   function calcROI(){
-    let c=+invCost.value, r=+invReturn.value;
+    let c=+document.getElementById("invCost").value, r=+document.getElementById("invReturn").value;
+    if(!c||!r) return resultROI.textContent="Enter values";
     resultROI.textContent=`ROI=${((r-c)/c*100).toFixed(2)}%`;
   }
 
-  // Select show/hide
-  const subOptions={
-    basic:["Addition, Subtraction, Multiplication, Division","Percentages"],
-    financial:["Profit & Loss","Discount & Markup","Simple Interest & Compound Interest","Loan EMI","Currency Conversion","Break-even Analysis","Tax Calculations","ROI (Return on Investment)"]
+  // === CATEGORY & SUB-CATEGORY OPTIONS ===
+  const subOptions = {
+    basic: [
+      "Addition, Subtraction, Multiplication, Division",
+      "Percentages",
+      "Ratios & Proportions",
+      "Averages (mean, median, mode)",
+      "Square roots, powers, logarithms"
+    ],
+    financial: [
+      "Profit & Loss",
+      "Discount & Markup",
+      "Simple Interest & Compound Interest",
+      "Loan EMI",
+      "Currency Conversion",
+      "Break-even Analysis",
+      "Tax Calculations",
+      "ROI (Return on Investment)"
+    ],
+    math: [
+      "Area, Perimeter, Volume, Surface Area",
+      "Trigonometric calculations",
+      "Calculus (differentiation, integration)",
+      "Probability & Statistics",
+      "Permutations & Combinations",
+      "Matrix Calculations",
+      "Vector Calculations"
+    ],
+    science: [
+      "Physics Equations",
+      "Chemistry Calculations",
+      "Electrical Calculations",
+      "Mechanical Calculations",
+      "Thermodynamics",
+      "Fluid Dynamics"
+    ],
+    health: [
+      "BMI (Body Mass Index)",
+      "BMR (Basal Metabolic Rate)",
+      "Dosage Calculations",
+      "Blood Pressure / Heart Rate"
+    ],
+    everyday: [
+      "Age & Date Calculations",
+      "Time, Speed, Distance",
+      "Cooking Measurements",
+      "Fuel Consumption & Mileage",
+      "Temperature Conversions"
+    ],
+    digital: [
+      "Binary, Octal, Hexadecimal Conversions",
+      "Algorithmic Calculations",
+      "Data Compression Calculations",
+      "Cryptographic Calculations"
+    ]
   };
-  category.onchange=()=>{subtype.innerHTML='<option>-- Choose Sub --</option>';(subOptions[category.value]||[]).forEach((s,i)=>{let o=new Option(s,category.value+(i+1));subtype.add(o)})};
-  subtype.onchange=()=>{
-    document.querySelectorAll('.box').forEach(b=>b.style.display="none");
-    if(subtype.value) document.getElementById(subtype.value).style.display="block";
-  };
+
+  const categoryEl = document.getElementById("category");
+  const subtypeEl = document.getElementById("subtype");
+
+  categoryEl.addEventListener("change", () => {
+  const value = categoryEl.value;
+  subtypeEl.innerHTML = '<option value="">-- Choose Sub-Calculation --</option>';
+  if (subOptions[value]) {
+    subOptions[value].forEach((item, idx) => {
+      const opt = document.createElement("option");
+      opt.value = "box-" + value + (idx+1); // FIXED
+      opt.textContent = item;
+      subtypeEl.appendChild(opt);
+    });
+  }
+  hideAllBoxes();
+});
+
+subtypeEl.addEventListener("change", () => {
+  hideAllBoxes();
+  if(subtypeEl.value){
+    const box = document.getElementById(subtypeEl.value); // matches box-basic1
+    if(box) box.style.display="block";
+  }
+});
+
+
+  function hideAllBoxes(){
+    document.querySelectorAll(".box").forEach(b=>b.style.display="none");
+  }
 </script>
+
 </body>
 </html>
-
