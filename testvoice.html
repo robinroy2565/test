@@ -1,38 +1,230 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Real-Time Voice Translator</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ad‑Free Music (Royalty‑Free)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0e14; --card:#121826; --muted:#8a93a6; --text:#e6ebff; --accent:#7c3aed;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:radial-gradient(1200px 800px at 10% -10%, #1a2033 0%, #0b0e14 55%, #0b0e14 100%);color:var(--text);}
+    .app{max-width:980px;margin:32px auto;padding:20px}
+    .header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+    .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#9f67ff,#3d1aff);display:grid;place-items:center;font-weight:800}
+    .title{font-size:1.3rem;font-weight:800;letter-spacing:.3px}
+    .sub{color:var(--muted);font-size:.9rem}
+    .grid{display:grid;grid-template-columns:380px 1fr;gap:18px}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+
+    .card{background:var(--card);border:1px solid #20283b;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    .player{padding:16px}
+    .cover{width:100%;aspect-ratio:1/1;border-radius:14px;object-fit:cover;box-shadow:0 10px 24px rgba(0,0,0,.45)}
+    .meta{margin:12px 4px 8px}
+    .track-title{font-weight:700;font-size:1.05rem}
+    .artist{color:var(--muted);font-size:.95rem}
+
+    .controls{display:flex;align-items:center;gap:12px;margin-top:8px}
+    .btn{background:#1b2235;border:1px solid #26304a;color:#e6ebff;padding:10px 12px;border-radius:12px;cursor:pointer;min-width:42px;display:grid;place-items:center;transition:transform .06s ease, background .15s}
+    .btn:hover{background:#232c44}
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6);border:none;font-weight:700;padding:10px 16px}
+
+    .range{appearance:none;width:100%;height:10px;border-radius:999px;background:#232c44;outline:none}
+    .range::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:50%;background:#b9c2ff;border:2px solid #303a58;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+
+    .timers{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted);margin:6px 4px 0}
+
+    .playlist{padding:14px}
+    .search{display:flex;gap:8px}
+    .search input{flex:1;background:#121826;border:1px solid #26304a;color:var(--text);border-radius:12px;padding:10px 12px}
+    .list{margin-top:12px;max-height:520px;overflow:auto}
+    .row{display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center;padding:10px;border-radius:12px;cursor:pointer;border:1px solid transparent}
+    .row:hover{background:#121a2a;border-color:#26304a}
+    .row.active{background:#1a2140;border-color:#3c4a75}
+    .row img{width:42px;height:42px;border-radius:10px;object-fit:cover}
+    .row .name{font-weight:600}
+    .row .by{color:var(--muted);font-size:.9rem}
+
+    .foot{margin-top:18px;color:var(--muted);font-size:.85rem}
+    .pill{display:inline-block;padding:4px 8px;border:1px solid #2a3555;border-radius:999px;margin-left:6px}
+    .vol-wrap{display:flex;align-items:center;gap:10px;margin-top:8px}
+  </style>
 </head>
 <body>
-  <h2>🎤 Speak and Translate Demo</h2>
-  <button onclick="startRecognition()">Start Talking</button>
-  <p><strong>You Said:</strong> <span id="original"></span></p>
-  <p><strong>Translated:</strong> <span id="translated"></span></p>
-  <audio id="tts"></audio>
+  <div class="app">
+    <div class="header">
+      <div class="logo">♫</div>
+      <div>
+        <div class="title">Ad‑Free Music Player</div>
+        <div class="sub">Plays <b>royalty‑free</b> tracks only. 100% website‑side, no tracking, no ads.</div>
+      </div>
+    </div>
 
-  <script>
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = "en-US";  // Source language
-    recognition.interimResults = false;
+    <div class="grid">
+      <div class="card player">
+        <img class="cover" id="cover" alt="cover" src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=800&auto=format&fit=crop" />
+        <div class="meta">
+          <div class="track-title" id="title">—</div>
+          <div class="artist" id="artist">—</div>
+        </div>
 
-    async function startRecognition() {
-      recognition.start();
-      recognition.onresult = async (event) => {
-        let text = event.results[0][0].transcript;
-        document.getElementById("original").innerText = text;
+        <input type="range" class="range" id="seek" min="0" max="100" value="0" />
+        <div class="timers"><span id="cur">0:00</span><span id="dur">0:00</span></div>
 
-        // Translate using free MyMemory API (demo only)
-        let res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|hi`);
-        let data = await res.json();
-        let translated = data.responseData.translatedText;
-        document.getElementById("translated").innerText = translated;
+        <div class="controls">
+          <button class="btn" id="prev" title="Prev">⏮</button>
+          <button class="btn primary" id="play">▶</button>
+          <button class="btn" id="next" title="Next">⏭</button>
+          <button class="btn" id="shuffle" title="Shuffle">🔀</button>
+          <button class="btn" id="repeat" title="Repeat">🔁</button>
+        </div>
+        <div class="vol-wrap">
+          <span style="color:var(--muted);font-size:.9rem">Volume</span>
+          <input type="range" class="range" id="vol" min="0" max="1" step="0.01" value="0.9" />
+        </div>
+        <audio id="audio" preload="metadata"></audio>
+      </div>
 
-        // Speak translated text
-        let utterance = new SpeechSynthesisUtterance(translated);
-        utterance.lang = "hi-IN"; // Target language
-        speechSynthesis.speak(utterance);
-      };
-    }
-  </script>
+      <div class="card playlist">
+        <div class="search">
+          <input id="q" placeholder="Search tracks or artists…" />
+        </div>
+        <div class="list" id="list"></div>
+        <div class="foot">
+          ✅ Only songs with licenses suitable for free playback are listed.
+          <span class="pill">Tip: replace with your own hosted tracks.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+// *************** IMPORTANT LEGAL NOTE *****************
+// You cannot legally remove or block ads from YouTube embeds.
+// If you need truly ad‑free playback on your site, use tracks you
+// created yourself or that are licensed for free use, and host them
+// (or link to files that permit hotlinking). The demo below uses
+// publicly available sample/royalty‑free MP3s.
+// ******************************************************
+
+const TRACKS = [
+  {
+    id: 1,
+    title: "SoundHelix Song 1",
+    artist: "SoundHelix (demo)",
+    cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=800&auto=format&fit=crop",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  },
+  {
+    id: 2,
+    title: "SoundHelix Song 2",
+    artist: "SoundHelix (demo)",
+    cover: "https://images.unsplash.com/photo-1513863321616-7b2f2914d369?q=80&w=800&auto=format&fit=crop",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+  },
+  {
+    id: 3,
+    title: "Acoustic Breeze",
+    artist: "Benjamin Tissot (Bensound, free license)",
+    cover: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800&auto=format&fit=crop",
+    url: "https://www.bensound.com/bensound-music/bensound-acousticbreeze.mp3",
+  },
+  {
+    id: 4,
+    title: "Creative Minds",
+    artist: "Benjamin Tissot (Bensound, free license)",
+    cover: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=800&auto=format&fit=crop",
+    url: "https://www.bensound.com/bensound-music/bensound-creativeminds.mp3",
+  },
+];
+
+// --- Elements
+const audio = document.getElementById('audio');
+const titleEl = document.getElementById('title');
+const artistEl = document.getElementById('artist');
+const coverEl = document.getElementById('cover');
+const seekEl = document.getElementById('seek');
+const curEl = document.getElementById('cur');
+const durEl = document.getElementById('dur');
+const volEl = document.getElementById('vol');
+const listEl = document.getElementById('list');
+const qEl = document.getElementById('q');
+
+const btnPlay = document.getElementById('play');
+const btnNext = document.getElementById('next');
+const btnPrev = document.getElementById('prev');
+const btnShuffle = document.getElementById('shuffle');
+const btnRepeat = document.getElementById('repeat');
+
+let state = { index: 0, shuffle: false, repeat: false, filtered: TRACKS };
+
+function format(t){ if(!isFinite(t)) return '0:00'; const m=Math.floor(t/60), s=Math.floor(t%60).toString().padStart(2,'0'); return `${m}:${s}`; }
+
+function renderList(){
+  listEl.innerHTML = '';
+  state.filtered.forEach((t,i)=>{
+    const row = document.createElement('div');
+    row.className = 'row' + (TRACKS[state.index].id===t.id ? ' active' : '');
+    row.innerHTML = `<img src="${t.cover}" alt=""/><div><div class="name">${t.title}</div><div class="by">${t.artist}</div></div><div>▶</div>`;
+    row.onclick = ()=>{ state.index = TRACKS.findIndex(x=>x.id===t.id); load(); play(); };
+    listEl.appendChild(row);
+  });
+}
+
+function load(){
+  const t = TRACKS[state.index];
+  audio.src = t.url;
+  titleEl.textContent = t.title;
+  artistEl.textContent = t.artist;
+  coverEl.src = t.cover;
+  document.querySelectorAll('.row').forEach(r=>r.classList.remove('active'));
+  const idx = state.filtered.findIndex(x=>x.id===t.id);
+  if(idx>-1 && listEl.children[idx]) listEl.children[idx].classList.add('active');
+}
+
+function play(){ audio.play(); btnPlay.textContent = '⏸'; }
+function pause(){ audio.pause(); btnPlay.textContent = '▶'; }
+
+btnPlay.onclick = ()=> audio.paused ? play() : pause();
+btnNext.onclick = ()=> next();
+btnPrev.onclick = ()=> prev();
+btnShuffle.onclick = ()=>{ state.shuffle=!state.shuffle; btnShuffle.style.outline= state.shuffle? '2px solid var(--accent)':'none'; };
+btnRepeat.onclick = ()=>{ state.repeat=!state.repeat; btnRepeat.style.outline= state.repeat? '2px solid var(--accent)':'none'; };
+
+function next(){
+  if(state.shuffle){ state.index = Math.floor(Math.random()*TRACKS.length); }
+  else { state.index = (state.index+1)%TRACKS.length; }
+  load(); play();
+}
+function prev(){ state.index = (state.index-1+TRACKS.length)%TRACKS.length; load(); play(); }
+
+seekEl.oninput = ()=>{ const p = seekEl.value/100; audio.currentTime = p * (audio.duration||0); };
+volEl.oninput = ()=> audio.volume = parseFloat(volEl.value);
+
+audio.addEventListener('timeupdate',()=>{
+  seekEl.value = ((audio.currentTime||0) / (audio.duration||1))*100;
+  curEl.textContent = format(audio.currentTime||0);
+  durEl.textContent = format(audio.duration||0);
+});
+
+audio.addEventListener('ended',()=>{ state.repeat ? (audio.currentTime=0, play()) : next(); });
+
+qEl.addEventListener('input',()=>{
+  const q = qEl.value.toLowerCase().trim();
+  state.filtered = TRACKS.filter(t=> (t.title+" "+t.artist).toLowerCase().includes(q));
+  renderList();
+});
+
+// init
+renderList();
+load();
+
+</script>
 </body>
 </html>
