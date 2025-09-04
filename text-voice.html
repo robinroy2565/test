@@ -1,259 +1,335 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Text to Speech Generator with Recording</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Music+Video Player — Playlists & Favorites</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 50px;
-      background: #f5f5f5;
-      text-align: center;
-    }
-    input[type="text"] {
-      width: 300px;
-      padding: 10px;
-      font-size: 16px;
-    }
-    select, button {
-      padding: 10px;
-      font-size: 16px;
-      margin: 5px;
-    }
-    .buttons {
-      margin-top: 20px;
-    }
-    #animated-text {
-      margin-top: 30px;
-      font-size: 24px;
-      color: #333;
-      min-height: 30px;
-    }
+    /* Minimal styling: reuse earlier player look; kept compact for brevity */
+    body{font-family:Inter,system-ui,Arial;background:#071025;color:#e6eefc;margin:0;padding:18px}
+    .app{max-width:1050px;margin:0 auto;display:grid;grid-template-columns:360px 1fr;gap:18px}
+    .card{background:#0e1726;padding:14px;border-radius:12px;border:1px solid #1b2433}
+    .controls{display:flex;gap:8px;margin-top:8px}
+    button{padding:8px 10px;border-radius:8px;border:none;background:#253245;color:white;cursor:pointer}
+    input,select{padding:8px;border-radius:8px;border:1px solid #283444;background:#0b1420;color:#e6eefc;width:100%}
+    .list{max-height:540px;overflow:auto;margin-top:12px}
+    .row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px}
+    .row:hover{background:#112233}
+    .active{background:#1b3050}
+    .small{font-size:13px;color:#94a3bd}
+    .muted{color:#7e8ea5}
   </style>
 </head>
 <body>
+<div class="app">
+  <div class="card">
+    <h3>Account</h3>
+    <div><input id="userId" placeholder="Enter email or username"/></div>
+    <div style="margin-top:8px"><button id="btnLogin">Login / Create</button></div>
+    <div id="userInfo" class="small muted" style="margin-top:10px"></div>
 
-<h1>Text to Speech Generator</h1>
+    <hr style="margin:12px 0;border:none;border-top:1px solid #152236"/>
 
-<input type="text" id="text-input" placeholder="Enter text here" />
+    <h4>Playlists</h4>
+    <div style="display:flex;gap:8px;margin-top:6px">
+      <input id="newPlaylist" placeholder="New playlist name"/>
+      <button id="btnCreatePlaylist">Add</button>
+    </div>
+    <div id="playlists" class="list"></div>
 
-<div>
-  <label for="voice-select">Voice:</label>
-  <select id="voice-select">
-    <option value="">Loading voices...</option>
-  </select>
+    <hr style="margin:12px 0;border:none;border-top:1px solid #152236"/>
+    <h4>Favorites</h4>
+    <div id="favorites" class="list"></div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <h2 id="nowTitle">—</h2>
+        <div id="nowArtist" class="small muted">—</div>
+      </div>
+      <div>
+        <select id="mode">
+          <option value="audio">Audio</option>
+          <option value="video">Video</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="margin-top:12px">
+      <video id="videoPlayer" style="width:100%;display:none" controls></video>
+      <audio id="audioPlayer" style="width:100%" controls></audio>
+    </div>
+
+    <div class="controls" style="margin-top:8px">
+      <button id="prev">Prev</button>
+      <button id="play">Play</button>
+      <button id="next">Next</button>
+      <button id="fav">♡ Fav</button>
+    </div>
+
+    <div style="margin-top:12px">
+      <input id="q" placeholder="Search tracks or artists"/>
+    </div>
+
+    <div id="library" class="list"></div>
+  </div>
 </div>
-
-<div class="buttons">
-  <button onclick="speakText()">▶ Generate</button>
-  <button onclick="togglePause()" id="pause-btn" disabled>⏸ Pause</button>
-  <button onclick="stopSpeech()" disabled>⏹ Stop</button>
-  <button onclick="clearText()">🧹 Clear</button>
-  <button id="save-btn" onclick="saveAudio()" disabled>⬇ Save Audio</button>
-  <button id="play-recording-btn" onclick="playRecording()" >▶ Play Recording</button>
-
-</div>
-
-<div id="animated-text"></div>
 
 <script>
-  const synth = window.speechSynthesis;
-  const voiceSelect = document.getElementById('voice-select');
-  const saveBtn = document.getElementById('save-btn');
-  const pauseBtn = document.getElementById('pause-btn');
-  const stopBtn = document.querySelector('button[onclick="stopSpeech()"]');
-  let voices = [];
-  let currentUtterance = null;
-  let animationInterval = null;
-  let paused = false;
+const API_URL = "PASTE_YOUR_APPS_SCRIPT_WEBAPP_URL_HERE"; // <<== REPLACE with your Web App URL
 
-  let mediaRecorder;
-  let audioChunks = [];
-  let audioBlob;
+// Elements
+const userIdEl = document.getElementById('userId');
+const btnLogin = document.getElementById('btnLogin');
+const userInfo = document.getElementById('userInfo');
+const playlistsEl = document.getElementById('playlists');
+const favoritesEl = document.getElementById('favorites');
+const btnCreatePlaylist = document.getElementById('btnCreatePlaylist');
+const newPlaylistEl = document.getElementById('newPlaylist');
 
-  // Populate voice list
-  function populateVoiceList() {
-    voices = synth.getVoices();
-    voiceSelect.innerHTML = '';
-    voices.forEach((voice, i) => {
-      const option = document.createElement('option');
-      option.value = i;
-      option.textContent = `${voice.name} (${voice.lang}) ${voice.default ? '[Default]' : ''}`;
-      voiceSelect.appendChild(option);
-    });
-  }
-  populateVoiceList();
-  if (speechSynthesis.onvoiceschanged !== undefined) {
-    speechSynthesis.onvoiceschanged = populateVoiceList;
-  }
-  async function speakText() {
-  stopSpeech();
-  const text = document.getElementById('text-input').value.trim();
-  const selectedVoice = voices[voiceSelect.value];
-  if (!text || !selectedVoice) return alert('Please enter text and select a voice.');
+const audioPlayer = document.getElementById('audioPlayer');
+const videoPlayer = document.getElementById('videoPlayer');
+const nowTitle = document.getElementById('nowTitle');
+const nowArtist = document.getElementById('nowArtist');
+const playBtn = document.getElementById('play');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+const favBtn = document.getElementById('fav');
+const queryEl = document.getElementById('q');
+const libraryEl = document.getElementById('library');
+const modeSelect = document.getElementById('mode');
 
-  const animatedDiv = document.getElementById('animated-text');
-  animatedDiv.textContent = '';
+let TRACKS = []; // loaded from backend or static seed
+let state = { index:0, filtered:[], user:null };
 
-  // Setup utterance
-  currentUtterance = new SpeechSynthesisUtterance(text);
-  currentUtterance.voice = selectedVoice;
-
-  // Start microphone recording
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder = new MediaRecorder(stream);
-    audioChunks = [];
-    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-    mediaRecorder.onstop = () => {
-      audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-      saveBtn.disabled = false;
-    };
-    mediaRecorder.start();
-  } catch (err) {
-    alert('Microphone access denied or not available.\nRecording disabled.');
-    saveBtn.disabled = true;
-  }
-
-  // Word-by-word highlight
-  currentUtterance.onboundary = function(event) {
-    if (event.name === 'word') {
-      const charIndex = event.charIndex;
-      const spokenPortion = text.slice(0, charIndex);
-      const remainingText = text.slice(charIndex);
-      const currentWord = remainingText.split(/\s+/)[0] || '';
-      animatedDiv.textContent = currentWord;
-    }
-  };
-
-  // End of speech
-  currentUtterance.onend = () => {
-    animatedDiv.textContent = '';
-    paused = false;
-    pauseBtn.textContent = '⏸ Pause';
-    pauseBtn.disabled = true;
-    stopBtn.disabled = true;
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-      mediaRecorder.stop();
-    }
-  };
-
-  synth.speak(currentUtterance);
-  pauseBtn.disabled = false;
-  stopBtn.disabled = false;
-  saveBtn.disabled = true;
+// --- helper fetch wrappers
+async function apiGet(params){
+  const url = API_URL + "?" + new URLSearchParams(params);
+  const res = await fetch(url);
+  return res.json();
+}
+async function apiPost(body){
+  const res = await fetch(API_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(body)});
+  return res.json();
 }
 
-
-  async function speakTexttextext() {
-  stopSpeech();
-  const text = document.getElementById('text-input').value.trim();
-  const selectedVoice = voices[voiceSelect.value];
-  if (!text || !selectedVoice) return alert('Please enter text and select a voice.');
-
-  const animatedDiv = document.getElementById('animated-text');
-  animatedDiv.textContent = '';
-
-  // Setup utterance
-  currentUtterance = new SpeechSynthesisUtterance(text);
-  currentUtterance.voice = selectedVoice;
-
-  // Start microphone recording
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder = new MediaRecorder(stream);
-    audioChunks = [];
-    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-    mediaRecorder.onstop = () => {
-      audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-      saveBtn.disabled = false;
-    };
-    mediaRecorder.start();
-  } catch (err) {
-    alert('Microphone access denied or not available.\nRecording disabled.');
-    saveBtn.disabled = true;
+// --- Load tracks: first try backend /tracks, if fails use fallback demo list
+async function loadTracks(){
+  try{
+    const r = await apiGet({action:"tracks"});
+    if(r && r.success && r.data) {
+      TRACKS = r.data.map(t => ({
+        id: parseInt(t.id),
+        title: t.title,
+        artist: t.artist,
+        type: t.type || 'audio',
+        url: t.url,
+        cover: t.cover || ''
+      }));
+    }
+  }catch(e){
+    console.warn("tracks fetch failed:", e);
   }
-
-  // Word-by-word highlight
-  currentUtterance.onboundary = function(event) {
-    if (event.name === 'word') {
-      const charIndex = event.charIndex;
-      const spokenPortion = text.slice(0, charIndex);
-      const remainingText = text.slice(charIndex);
-      const currentWord = remainingText.split(/\s+/)[0] || '';
-      animatedDiv.textContent = currentWord;
-    }
-  };
-
-  // End of speech
-  currentUtterance.onend = () => {
-    animatedDiv.textContent = '';
-    paused = false;
-    pauseBtn.textContent = '⏸ Pause';
-    pauseBtn.disabled = true;
-    stopBtn.disabled = true;
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-      mediaRecorder.stop();
-    }
-  };
-
-  synth.speak(currentUtterance);
-  pauseBtn.disabled = false;
-  stopBtn.disabled = false;
-  saveBtn.disabled = true;
+  if(!TRACKS || TRACKS.length===0){
+    // local demo fallback
+    TRACKS = [
+      {id:1,title:"Demo Song",artist:"Demo",type:"audio",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"},
+      {id:2,title:"Demo Video",artist:"Demo",type:"video",url:"https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm"}
+    ];
+  }
+  state.filtered = TRACKS.slice();
+  renderLibrary();
+  loadTrack(0);
 }
 
+// --- Render library
+function renderLibrary(){
+  libraryEl.innerHTML = "";
+  state.filtered.forEach((t,i)=>{
+    const div = document.createElement('div');
+    div.className = 'row';
+    div.innerHTML = `<div style="flex:1"><strong>${t.title}</strong><div class="small muted">${t.artist} • ${t.type}</div></div><div><button data-i="${i}">Play</button></div>`;
+    div.querySelector('button').onclick = ()=> { loadTrack(i); play(); scrollToNow(); };
+    libraryEl.appendChild(div);
+  });
+}
 
-  function togglePause() {
-    if (!currentUtterance) return;
-    if (synth.speaking && !paused) {
-      synth.pause();
-      clearInterval(animationInterval);
-      pauseBtn.textContent = '▶ Resume';
-      paused = true;
-    } else if (paused) {
-      synth.resume();
-      pauseBtn.textContent = '⏸ Pause';
-      paused = false;
-    }
+// --- Play controls
+function loadTrack(i){
+  state.index = i;
+  const t = state.filtered[i];
+  nowTitle.textContent = t.title;
+  nowArtist.textContent = t.artist;
+  modeSelect.value = t.type === 'video' ? 'video' : 'audio';
+  if(t.type === 'video'){
+    audioPlayer.style.display = 'none';
+    videoPlayer.style.display = 'block';
+    videoPlayer.src = t.url;
+    audioPlayer.src = '';
+  } else {
+    videoPlayer.style.display = 'none';
+    audioPlayer.style.display = 'block';
+    audioPlayer.src = t.url;
+    videoPlayer.src = '';
   }
+  updateFavButton();
+}
+function play(){ 
+  if(modeSelect.value === 'video') {
+    videoPlayer.play();
+  } else {
+    audioPlayer.play();
+  }
+  playBtn.textContent = "Pause";
+}
+function pause(){
+  if(modeSelect.value === 'video') videoPlayer.pause(); else audioPlayer.pause();
+  playBtn.textContent = "Play";
+}
+playBtn.onclick = ()=> {
+  if((modeSelect.value==='video' && videoPlayer.paused) || (modeSelect.value==='audio' && audioPlayer.paused)) play(); else pause();
+};
+prevBtn.onclick = ()=> {
+  state.index = (state.index - 1 + state.filtered.length) % state.filtered.length;
+  loadTrack(state.index); play();
+};
+nextBtn.onclick = ()=> {
+  state.index = (state.index + 1) % state.filtered.length;
+  loadTrack(state.index); play();
+};
 
-  function stopSpeech() {
-    if (synth.speaking || synth.paused) {
-      synth.cancel();
-      clearInterval(animationInterval);
-      document.getElementById('animated-text').textContent = '';
-      pauseBtn.textContent = '⏸ Pause';
-      paused = false;
-    }
-    if(mediaRecorder && mediaRecorder.state !== 'inactive'){
-      mediaRecorder.stop();
-    }
-    pauseBtn.disabled = true;
-    stopBtn.disabled = true;
-  }
+// search
+queryEl.oninput = ()=> {
+  const q = queryEl.value.toLowerCase().trim();
+  state.filtered = TRACKS.filter(t => (t.title + " " + t.artist).toLowerCase().includes(q));
+  renderLibrary();
+};
 
-  function clearText() {
-    stopSpeech();
-    document.getElementById('text-input').value = '';
-    document.getElementById('animated-text').textContent = '';
-    saveBtn.disabled = true;
-  }
+// user actions
+btnLogin.onclick = async ()=> {
+  const uid = userIdEl.value.trim();
+  if(!uid) return alert("Enter an ID (email or username).");
+  // create if not exist
+  const r = await apiPost({ action:"createUser", userId: uid });
+  if(r.error) return alert(r.message || "Failed");
+  state.user = uid;
+  userInfo.textContent = "Logged in: " + uid;
+  await loadUserData();
+};
 
-  function saveAudio() {
-    if (!audioBlob) return;
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(audioBlob);
-    a.download = 'tts-output.webm';
-    a.click();
+async function loadUserData(){
+  if(!state.user) return;
+  const r = await apiGet({action:"getUser", userId: state.user});
+  if(r && r.success){
+    const u = r.data;
+    // u.favorites (array) & u.playlists (object)
+    renderPlaylists(u.playlists || {});
+    renderFavorites(u.favorites || []);
+  } else {
+    renderPlaylists({});
+    renderFavorites([]);
   }
-  function playRecording() {
-  if (!audioBlob) return alert('No recording available to play.');
-  const audioUrl = URL.createObjectURL(audioBlob);
-  const audio = new Audio(audioUrl);
-  audio.play();
+}
+
+function renderPlaylists(pl){
+  playlistsEl.innerHTML = "";
+  for(const name in pl){
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `<div style="flex:1"><strong>${name}</strong><div class="small muted">${pl[name].length} tracks</div></div>
+      <div>
+        <button data-name="${name}" class="open">Open</button>
+        <button data-name="${name}" class="del">Del</button>
+      </div>`;
+    row.querySelector('.open').onclick = ()=> {
+      // open playlist: map ids to tracks
+      const ids = pl[name];
+      state.filtered = TRACKS.filter(t => ids.includes(Number(t.id)) );
+      renderLibrary();
+      if(state.filtered.length) { loadTrack(0); play(); }
+    };
+    row.querySelector('.del').onclick = async ()=> {
+      if(!confirm("Delete playlist?")) return;
+      await apiPost({action:"deletePlaylist", userId: state.user, name});
+      await loadUserData();
+    };
+    playlistsEl.appendChild(row);
   }
+}
+
+function renderFavorites(favs){
+  favoritesEl.innerHTML = "";
+  favs.forEach(id=>{
+    const t = TRACKS.find(x=>Number(x.id) === Number(id));
+    if(!t) return;
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `<div style="flex:1"><strong>${t.title}</strong><div class="small muted">${t.artist}</div></div><div><button data-id="${t.id}">Play</button></div>`;
+    row.querySelector('button').onclick = ()=> { loadTrack(TRACKS.findIndex(x=>x.id==t.id)); play(); };
+    favoritesEl.appendChild(row);
+  });
+  updateFavButton();
+}
+
+// favorites toggle
+favBtn.onclick = async ()=> {
+  if(!state.user) return alert("Login first");
+  const currentTrack = getCurrentTrack();
+  if(!currentTrack) return;
+  // fetch existing user
+  const r = await apiGet({action:"getUser", userId: state.user});
+  let favs = (r.data && r.data.favorites) ? r.data.favorites : [];
+  if(!Array.isArray(favs)) favs = [];
+  const exists = favs.includes(Number(currentTrack.id));
+  if(exists) favs = favs.filter(x=>Number(x)!==Number(currentTrack.id)); else favs.push(Number(currentTrack.id));
+  await apiPost({action:"saveFavorites", userId: state.user, favorites: favs});
+  await loadUserData();
+};
+
+function updateFavButton(){
+  const t = getCurrentTrack();
+  if(!t) { favBtn.textContent = "♡ Fav"; return; }
+  if(!state.user){ favBtn.textContent = "♡ Fav"; return; }
+  // fetch user quickly (synchronous-ish)
+  apiGet({action:"getUser", userId: state.user}).then(r=>{
+    const favs = (r.data && r.data.favorites) ? r.data.favorites : [];
+    if(favs && favs.includes(Number(t.id))) favBtn.textContent = "♥ Unfav"; else favBtn.textContent = "♡ Fav";
+  });
+}
+
+function getCurrentTrack(){ return state.filtered[state.index]; }
+
+btnCreatePlaylist.onclick = async ()=> {
+  if(!state.user) return alert("Login first");
+  const name = newPlaylistEl.value.trim();
+  if(!name) return alert("Enter playlist name");
+  // we'll create the playlist with current filtered list (ids) as default
+  const ids = state.filtered.map(t=>Number(t.id));
+  const r = await apiPost({action:"savePlaylist", userId: state.user, name, tracks: ids});
+  if(r.error) return alert(r.message || "Error");
+  newPlaylistEl.value = "";
+  await loadUserData();
+};
+
+// utility
+function scrollToNow(){ window.scrollTo({top:0,behavior:'smooth'}); }
+
+// init
+(async function(){
+  await loadTracks();
+  // try to restore login from localStorage
+  const saved = localStorage.getItem('music_user');
+  if(saved){ userIdEl.value = saved; }
+  btnLogin.onclick = async ()=> {
+    if(!userIdEl.value) return alert("Enter user id");
+    await apiPost({action:"createUser", userId:userIdEl.value});
+    localStorage.setItem('music_user', userIdEl.value);
+    state.user = userIdEl.value;
+    userInfo.textContent = "Logged in: "+state.user;
+    await loadUserData();
+  };
+})();
 </script>
-
 </body>
 </html>
