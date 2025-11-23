@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Susangati.in Auto Refresh Page</title>
+    <title>Background Auto Refresh - Susangati.in</title>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,15 +26,24 @@
             padding: 8px;
             text-align: center;
         }
+        /* Hide iframe so refresh runs in background */
+        #hiddenFrame {
+            width: 0px;
+            height: 0px;
+            border: none;
+            visibility: hidden;
+        }
     </style>
 
     <script>
         let refreshCount = 0;
 
-        function refreshIframe() {
+        function backgroundRefresh() {
             refreshCount++;
-            document.getElementById("autoFrame").src =
-                document.getElementById("autoFrame").src;
+
+            // Reload hidden iframe (background refresh)
+            document.getElementById("hiddenFrame").src =
+                "https://susangati.in?time=" + new Date().getTime();
 
             // Update display
             document.getElementById("status").innerHTML =
@@ -41,43 +51,27 @@
                 " | Last Refresh: " + new Date().toLocaleTimeString();
         }
 
-        setInterval(refreshIframe, 60000); // refresh every 60 seconds
+        setInterval(backgroundRefresh, 60000);  // 60 seconds
     </script>
 </head>
 
 <body>
 
-    <!-- Refresh info -->
+    <!-- Refresh status at top -->
     <div id="status">Refresh Count: 0 | Last Refresh: Not yet refreshed</div>
 
-    <!-- Example timetable section -->
+    <!-- Timetable -->
     <h2>Daily Time Table</h2>
     <table>
-        <tr>
-            <th>Time</th>
-            <th>Activity</th>
-        </tr>
-        <tr>
-            <td>09:00 AM</td>
-            <td>Morning Session</td>
-        </tr>
-        <tr>
-            <td>12:00 PM</td>
-            <td>Lunch Break</td>
-        </tr>
-        <tr>
-            <td>02:00 PM</td>
-            <td>Afternoon Session</td>
-        </tr>
-        <tr>
-            <td>05:00 PM</td>
-            <td>Closing Time</td>
-        </tr>
+        <tr><th>Time</th><th>Activity</th></tr>
+        <tr><td>09:00 AM</td><td>Morning Session</td></tr>
+        <tr><td>12:00 PM</td><td>Lunch Break</td></tr>
+        <tr><td>02:00 PM</td><td>Afternoon Session</td></tr>
+        <tr><td>05:00 PM</td><td>Closing Time</td></tr>
     </table>
 
-    <!-- Your website auto-refresh -->
-    <iframe id="autoFrame" src="https://susangati.in" 
-            width="100%" height="500px" style="border:none;"></iframe>
+    <!-- Hidden iframe (background auto-refresh) -->
+    <iframe id="hiddenFrame"></iframe>
 
 </body>
 </html>
