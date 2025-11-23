@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Susangati.in Auto Refresh</title>
+    <script>
+        function refreshIframe() {
+            document.getElementById("autoFrame").src =
+                document.getElementById("autoFrame").src;
+        }
+        setInterval(refreshIframe, 60000); // 60 seconds
+    </script>
+</head>
+<body>
+    <h2>Auto Refreshing: susangati.in</h2>
+
+    <iframe id="autoFrame" src="https://susangati.in" 
+            width="100%" height="600px" style="border:none;"></iframe>
+</body>
+</html>
