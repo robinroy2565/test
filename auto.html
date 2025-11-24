@@ -26,13 +26,6 @@
             padding: 8px;
             text-align: center;
         }
-        /* Hide iframe so refresh runs in background */
-        #hiddenFrame {
-            width: 0px;
-            height: 0px;
-            border: none;
-            visibility: hidden;
-        }
     </style>
 
     <script>
@@ -41,7 +34,7 @@
         function backgroundRefresh() {
             refreshCount++;
 
-            // Reload hidden iframe (background refresh)
+            // Reload hidden iframe
             document.getElementById("hiddenFrame").src =
                 "https://susangati.in?time=" + new Date().getTime();
 
@@ -51,16 +44,15 @@
                 " | Last Refresh: " + new Date().toLocaleTimeString();
         }
 
-        setInterval(backgroundRefresh, 60000);  // 60 seconds
+        // Run every 60 seconds
+        setInterval(backgroundRefresh, 60000);
     </script>
 </head>
 
 <body>
 
-    <!-- Refresh status at top -->
     <div id="status">Refresh Count: 0 | Last Refresh: Not yet refreshed</div>
 
-    <!-- Timetable -->
     <h2>Daily Time Table</h2>
     <table>
         <tr><th>Time</th><th>Activity</th></tr>
@@ -70,8 +62,9 @@
         <tr><td>05:00 PM</td><td>Closing Time</td></tr>
     </table>
 
-    <!-- Hidden iframe (background auto-refresh) -->
-    <iframe id="hiddenFrame"></iframe>
+    <!-- Hidden iframe that Chrome will still load -->
+    <iframe id="hiddenFrame" loading="eager"
+            width="1" height="1" style="border:none; opacity:0;"></iframe>
 
 </body>
 </html>
