@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan EMI Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 60%;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e0f7fa;
+            border: 1px solid #00796b;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Loan EMI Calculator</h1>
+
+        <!-- Loan EMI Type -->
+        <label for="emiType">Loan EMI Type</label>
+        <select id="emiType">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+        </select>
+
+        <!-- Loan Type -->
+        <label for="loanType">Loan Type</label>
+        <select id="loanType">
+            <option value="agricultural">Agricultural Loan (10.1%)</option>
+            <option value="employeeWelfare">Employee Welfare Loan (12.5%)</option>
+            <option value="goldMortgage">Gold Mortgage Loan (11.4%)</option>
+            <option value="propertyMortgage">Property Mortgage Loan (16%)</option>
+            <option value="schemeMortgage">Scheme Mortgage Loan (13.52%)</option>
+            <option value="smallBusinessCredit">Small Business Credit Loan (30%)</option>
+        </select>
+
+        <!-- Manual Interest Rate -->
+        <label for="manualInterestRate">Manual Interest Rate (Optional)</label>
+        <input type="number" id="manualInterestRate" placeholder="Enter custom interest rate (optional)" />
+
+        <!-- Loan Amount -->
+        <label for="loanAmount">Loan Amount</label>
+        <input type="number" id="loanAmount" placeholder="Enter loan amount" />
+
+        <!-- EMI Number -->
+        <label for="emiNumber">EMI Number (Months)</label>
+        <input type="number" id="emiNumber" placeholder="Enter number of EMI months" />
+
+        <!-- Calculate Button -->
+        <button class="button" onclick="calculateEMI()">Calculate EMI</button>
+
+        <!-- Results Section -->
+        <div class="result" id="result" style="display:none;">
+            <h3>Loan Details</h3>
+            <p><strong>Loan EMI Type:</strong> <span id="loanEmiType"></span></p>
+            <p><strong>Loan Type:</strong> <span id="loanTypeDetails"></span></p>
+            <p><strong>Interest Rate:</strong> <span id="interestRate"></span></p>
+            <p><strong>Total Principal Amount (Including Processing Charges):</strong> <span id="loanAmountDetails"></span></p>
+            <p><strong>Total Interest:</strong> <span id="totalInterest"></span></p>
+            <p><strong>Total Repayment (Including Processing Charges):</strong> <span id="totalRepayment"></span></p>
+            <p><strong>EMI Amount:</strong> <span id="emiAmount"></span></p>
+            <p><strong>EMI Number:</strong> <span id="emiNumberDetails"></span></p>
+        </div>
+    </div>
+
+    <script>
+        // Function to calculate EMI, Interest, and Total Repayment including Processing Charges
+        function calculateEMI() {
+            const loanAmount = parseFloat(document.getElementById("loanAmount").value);
+            const emiNumber = parseInt(document.getElementById("emiNumber").value);
+            const loanType = document.getElementById("loanType").value;
+            const manualInterestRate = parseFloat(document.getElementById("manualInterestRate").value);
+            const emiType = document.getElementById("emiType").value;
+
+            let interestRate = 0;
+
+            // Set loan type interest rate
+            switch (loanType) {
+                case 'agricultural':
+                    interestRate = 10.1;
+                    break;
+                case 'employeeWelfare':
+                    interestRate = 12.5;
+                    break;
+                case 'goldMortgage':
+                    interestRate = 11.4;
+                    break;
+                case 'propertyMortgage':
+                    interestRate = 16;
+                    break;
+                case 'schemeMortgage':
+                    interestRate = 13.52;
+                    break;
+                case 'smallBusinessCredit':
+                    interestRate = 30;
+                    break;
+                default:
+                    break;
+            }
+
+            // If manual interest rate is provided, use that
+            if (manualInterestRate && !isNaN(manualInterestRate)) {
+                interestRate = manualInterestRate;
+            }
+
+            // Calculate loan processing charge (3.5% of loan amount)
+            const processingCharge = (loanAmount * 3.5) / 100;
+            const loanAmountWithCharges = loanAmount + processingCharge; // Add processing charge to loan amount
+
+            // Calculate EMI based on the formula (using loan amount + processing charge)
+            let r = (interestRate / 100) / 12; // Monthly interest rate
+            let emiAmount = (loanAmountWithCharges * r * Math.pow(1 + r, emiNumber)) / (Math.pow(1 + r, emiNumber) - 1);
+            let totalRepayment = emiAmount * emiNumber;
+            let totalInterest = totalRepayment - loanAmountWithCharges;
+
+            // Show results in the result div
+            document.getElementById("loanEmiType").textContent = emiType.charAt(0).toUpperCase() + emiType.slice(1);
+            document.getElementById("loanTypeDetails").textContent = loanType.charAt(0).toUpperCase() + loanType.slice(1).replace(/([A-Z])/g, ' $1').trim();
+            document.getElementById("interestRate").textContent = interestRate.toFixed(2) + "%";
+            document.getElementById("loanAmountDetails").textContent = loanAmountWithCharges.toFixed(2);
+            document.getElementById("totalInterest").textContent = totalInterest.toFixed(2);
+            document.getElementById("totalRepayment").textContent = totalRepayment.toFixed(2);
+            document.getElementById("emiAmount").textContent = emiAmount.toFixed(2);
+            document.getElementById("emiNumberDetails").textContent = emiNumber;
+
+            // Show the results div
+            document.getElementById("result").style.display = "block";
+        }
+    </script>
+
+</body>
+</html>
