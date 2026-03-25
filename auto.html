@@ -27,27 +27,6 @@
             text-align: center;
         }
     </style>
-
-    <!-- <script>
-        let refreshCount = 0;
-
-        function backgroundRefresh() {
-            refreshCount++;
-
-            // Reload hidden iframe
-            document.getElementById("hiddenFrame").src =
-                "https://susangati.in?time=" + new Date().getTime();
-
-            // Update display
-            document.getElementById("status").innerHTML =
-                "Refresh Count: " + refreshCount +
-                " | Last Refresh: " + new Date().toLocaleTimeString();
-        }
-
-        // Run every 60 seconds
-        setInterval(backgroundRefresh, 60000);
-    </script> -->
-    
 </head>
 
 <body>
@@ -63,45 +42,55 @@
         <tr><td>05:00 PM</td><td>Closing Time</td></tr>
     </table>
 
-    <!-- Hidden iframe that Chrome will still load -->
-    <iframe id="hiddenFrame" loading="eager"
-            width="1" height="1" style="border:none; opacity:0;"></iframe>
-<script>
-let refreshCount = 0;
-let iframe = null;
+    <!-- Hidden iframe -->
+    <iframe id="hiddenFrame"
+            width="1"
+            height="1"
+            style="border:none; opacity:0;"
+            loading="eager">
+    </iframe>
 
-function backgroundRefresh() {
-    if (!iframe) {
-        iframe = document.getElementById("hiddenFrame");
-    }
+    <script>
+    document.addEventListener("DOMContentLoaded", function(){
 
-    refreshCount++;
+        let refreshCount = 0;
+        let iframe = document.getElementById("hiddenFrame");
+        let status = document.getElementById("status");
 
-    let url = "https://susangati.in?time=" + Date.now();
+        if(!iframe){
+            console.error("❌ iframe not found");
+            return;
+        }
 
-    // iframe reload
-    iframe.src = url;
+        function backgroundRefresh(){
+            refreshCount++;
 
-    // status update
-    document.getElementById("status").innerHTML =
-        "Refresh Count: " + refreshCount +
-        " | Last Refresh: " + new Date().toLocaleTimeString();
-}
+            let url = "https://susangati.in?time=" + Date.now();
 
-// ✅ First run
-window.onload = function () {
-    backgroundRefresh();
-};
+            // iframe reload
+            iframe.src = url;
 
-// ✅ Every 30 seconds
-setInterval(backgroundRefresh, 30000);
+            // update UI
+            status.innerHTML =
+                "Refresh Count: " + refreshCount +
+                " | Last Refresh: " + new Date().toLocaleTimeString();
+        }
 
-// ✅ Tab active hone par bhi refresh
-document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) {
+        // ✅ First load
         backgroundRefresh();
-    }
-});
-</script>
+
+        // ✅ Every 30 sec
+        setInterval(backgroundRefresh, 30000);
+
+        // ✅ When tab becomes active again
+        document.addEventListener("visibilitychange", function(){
+            if(!document.hidden){
+                backgroundRefresh();
+            }
+        });
+
+    });
+    </script>
+
 </body>
 </html>
