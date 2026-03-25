@@ -28,7 +28,7 @@
         }
     </style>
 
-    <script>
+    <!-- <script>
         let refreshCount = 0;
 
         function backgroundRefresh() {
@@ -46,7 +46,8 @@
 
         // Run every 60 seconds
         setInterval(backgroundRefresh, 60000);
-    </script>
+    </script> -->
+    
 </head>
 
 <body>
@@ -65,6 +66,42 @@
     <!-- Hidden iframe that Chrome will still load -->
     <iframe id="hiddenFrame" loading="eager"
             width="1" height="1" style="border:none; opacity:0;"></iframe>
+<script>
+let refreshCount = 0;
+let iframe = null;
 
+function backgroundRefresh() {
+    if (!iframe) {
+        iframe = document.getElementById("hiddenFrame");
+    }
+
+    refreshCount++;
+
+    let url = "https://susangati.in?time=" + Date.now();
+
+    // iframe reload
+    iframe.src = url;
+
+    // status update
+    document.getElementById("status").innerHTML =
+        "Refresh Count: " + refreshCount +
+        " | Last Refresh: " + new Date().toLocaleTimeString();
+}
+
+// ✅ First run
+window.onload = function () {
+    backgroundRefresh();
+};
+
+// ✅ Every 30 seconds
+setInterval(backgroundRefresh, 30000);
+
+// ✅ Tab active hone par bhi refresh
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+        backgroundRefresh();
+    }
+});
+</script>
 </body>
 </html>
