@@ -49,8 +49,49 @@
             style="border:none; opacity:0;"
             loading="eager">
     </iframe>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
 
-    <script>
+    let refreshCount = 0;
+    let status = document.getElementById("status");
+
+    function backgroundRefresh(){
+        refreshCount++;
+
+        let url = "https://susangati.in?time=" + Date.now();
+
+        // ✅ SILENT BACKGROUND CALL (NO UI CHANGE)
+        fetch(url)
+        .then(res => res.text())
+        .then(() => {
+            console.log("Background refresh success");
+        })
+        .catch(err => {
+            console.error("Refresh error:", err);
+        });
+
+        // ✅ Update status only
+        status.innerHTML =
+            "Refresh Count: " + refreshCount +
+            " | Last Refresh: " + new Date().toLocaleTimeString();
+    }
+
+    // ✅ First run
+    backgroundRefresh();
+
+    // ✅ Every 40 seconds
+    setInterval(backgroundRefresh, 40000);
+
+    // ✅ When tab becomes active
+    document.addEventListener("visibilitychange", function(){
+        if(!document.hidden){
+            backgroundRefresh();
+        }
+    });
+
+});
+</script>
+    <!-- <script>
     document.addEventListener("DOMContentLoaded", function(){
 
         let refreshCount = 0;
@@ -90,7 +131,12 @@
         });
 
     });
-    </script>
+    </script> -->
+
+
+
+
+    
 
 </body>
 </html>
