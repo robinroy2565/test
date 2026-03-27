@@ -1,142 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Background Auto Refresh - Susangati.in</title>
+  <title>Auto Reload</title>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        #status {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #2a4d8f;
-        }
-        table {
-            border-collapse: collapse;
-            width: 60%;
-            margin-bottom: 20px;
-        }
-        table, th, td {
-            border: 1px solid #333;
-        }
-        th, td {
-            padding: 8px;
-            text-align: center;
-        }
-    </style>
+  <script>
+    let timeLeft = 40;
+    let reloadCount = 0;
+
+    // Countdown every 1 second
+    setInterval(function () {
+      timeLeft--;
+      document.getElementById("countdown").innerText = timeLeft;
+
+      if (timeLeft <= 0) {
+        reloadCount++;
+        localStorage.setItem("reloadCount", reloadCount);
+        location.reload(); // 🔄 reload same page
+      }
+    }, 1000);
+
+    // Restore reload count after refresh
+    window.onload = function () {
+      reloadCount = Number(localStorage.getItem("reloadCount")) || 0;
+      document.getElementById("reloadCount").innerText = reloadCount;
+    };
+  </script>
+
 </head>
 
 <body>
 
-    <div id="status">Refresh Count: 0 | Last Refresh: Not yet refreshed</div>
-
-    <h2>Daily Time Table</h2>
-    <table>
-        <tr><th>Time</th><th>Activity</th></tr>
-        <tr><td>09:00 AM</td><td>Morning Session</td></tr>
-        <tr><td>12:00 PM</td><td>Lunch Break</td></tr>
-        <tr><td>02:00 PM</td><td>Afternoon Session</td></tr>
-        <tr><td>05:00 PM</td><td>Closing Time</td></tr>
-    </table>
-
-    <!-- Hidden iframe -->
-    <iframe id="hiddenFrame"
-            width="1"
-            height="1"
-            style="border:none; opacity:0;"
-            loading="eager">
-    </iframe>
-<script>
-document.addEventListener("DOMContentLoaded", function(){
-
-    let refreshCount = 0;
-    let status = document.getElementById("status");
-
-    function backgroundRefresh(){
-        refreshCount++;
-
-        let url = "https://susangati.in?time=" + Date.now();
-
-        // ✅ SILENT BACKGROUND CALL (NO UI CHANGE)
-        fetch(url)
-        .then(res => res.text())
-        .then(() => {
-            console.log("Background refresh success");
-        })
-        .catch(err => {
-            console.error("Refresh error:", err);
-        });
-
-        // ✅ Update status only
-        status.innerHTML =
-            "Refresh Count: " + refreshCount +
-            " | Last Refresh: " + new Date().toLocaleTimeString();
-    }
-
-    // ✅ First run
-    backgroundRefresh();
-
-    // ✅ Every 40 seconds
-    setInterval(backgroundRefresh, 40000);
-
-    // ✅ When tab becomes active
-    document.addEventListener("visibilitychange", function(){
-        if(!document.hidden){
-            backgroundRefresh();
-        }
-    });
-
-});
-</script>
-    <!-- <script>
-    document.addEventListener("DOMContentLoaded", function(){
-
-        let refreshCount = 0;
-        let iframe = document.getElementById("hiddenFrame");
-        let status = document.getElementById("status");
-
-        if(!iframe){
-            console.error("❌ iframe not found");
-            return;
-        }
-
-        function backgroundRefresh(){
-            refreshCount++;
-
-            let url = "https://susangati.in?time=" + Date.now();
-
-            // iframe reload
-            iframe.src = url;
-
-            // update UI
-            status.innerHTML =
-                "Refresh Count: " + refreshCount +
-                " | Last Refresh: " + new Date().toLocaleTimeString();
-        }
-
-        // ✅ First load
-        backgroundRefresh();
-
-        // ✅ Every 30 sec
-        setInterval(backgroundRefresh, 30000);
-
-        // ✅ When tab becomes active again
-        document.addEventListener("visibilitychange", function(){
-            if(!document.hidden){
-                backgroundRefresh();
-            }
-        });
-
-    });
-    </script> -->
-
-
-
-
-    
+  <h2>🔄 Page will reload every <span id="countdown">40</span> seconds</h2>
+  <h3>🔢 Total Reloads: <span id="reloadCount">0</span></h3>
 
 </body>
 </html>
