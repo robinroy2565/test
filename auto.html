@@ -1,37 +1,171 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Auto Reload</title>
+<meta charset="UTF-8">
+<title>Advanced Auto Refresh Tracker</title>
 
-  <script>
-    let timeLeft = 40;
-    let reloadCount = 0;
+<style>
+body {
+  font-family: Arial;
+  margin: 0;
+  background: #f5f6fa;
+}
 
-    // Countdown every 1 second
-    setInterval(function () {
-      timeLeft--;
-      document.getElementById("countdown").innerText = timeLeft;
+.top {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: #1e272e;
+  color: #fff;
+  padding: 12px;
+  font-size: 16px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+}
 
-      if (timeLeft <= 0) {
-        reloadCount++;
-        localStorage.setItem("reloadCount", reloadCount);
-        location.reload(); // 🔄 reload same page
-      }
-    }, 1000);
+.top span {
+  margin: 5px 10px;
+}
 
-    // Restore reload count after refresh
-    window.onload = function () {
-      reloadCount = Number(localStorage.getItem("reloadCount")) || 0;
-      document.getElementById("reloadCount").innerText = reloadCount;
-    };
-  </script>
+button {
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
 
+.start { background: #2ecc71; color: #fff; }
+.stop { background: #e74c3c; color: #fff; }
+.reset { background: #f39c12; color: #fff; }
+
+input {
+  width: 60px;
+  padding: 3px;
+  text-align: center;
+}
+
+iframe {
+  margin-top: 80px;
+  width: 100%;
+  height: 90vh;
+  border: none;
+}
+</style>
 </head>
 
 <body>
 
-  <h2>🔄 Page will reload every <span id="countdown">40</span> seconds</h2>
-  <h3>🔢 Total Reloads: <span id="reloadCount">0</span></h3>
+<div class="top">
+  ⏳ Timer: <span id="timer">40</span>s
+
+  ⏱ Set:
+  <input type="number" id="setTime" value="40">
+
+  🔄 Session: <span id="sessionCount">0</span>
+  📊 Total: <span id="totalCount">0</span>
+
+  📅 Today: <span id="todayCount">0</span>
+
+  🕒 Last: <span id="lastTime">-</span>
+
+  <button class="start" onclick="start()">Start</button>
+  <button class="stop" onclick="stop()">Stop</button>
+  <button class="reset" onclick="reset()">Reset</button>
+</div>
+
+<iframe id="frame" src="https://susangati.in/"></iframe>
+
+<script>
+let timer = 40;
+let interval;
+let running = true;
+
+let sessionCount = 0;
+let totalCount = Number(localStorage.getItem("totalCount") || 0);
+let todayKey = new Date().toDateString();
+let todayData = JSON.parse(localStorage.getItem("todayData") || "{}");
+
+if (!todayData.date || todayData.date !== todayKey) {
+  todayData = { date: todayKey, count: 0 };
+}
+
+updateUI();
+
+// ================= START =================
+function start() {
+  if (interval) return;
+  running = true;
+  runTimer();
+}
+
+// ================= STOP =================
+function stop() {
+  running = false;
+  clearInterval(interval);
+  interval = null;
+}
+
+// ================= RESET =================
+function reset() {
+  sessionCount = 0;
+  totalCount = 0;
+  todayData.count = 0;
+
+  localStorage.setItem("totalCount", 0);
+  localStorage.setItem("todayData", JSON.stringify(todayData));
+
+  updateUI();
+}
+
+// ================= TIMER =================
+function runTimer() {
+  interval = setInterval(() => {
+
+    if (!running) return;
+
+    timer--;
+    document.getElementById("timer").innerText = timer;
+
+    if (timer <= 0) {
+      timer = Number(document.getElementById("setTime").value) || 40;
+
+      refreshPage();
+    }
+
+  }, 1000);
+}
+
+// ================= REFRESH =================
+function refreshPage() {
+  sessionCount++;
+  totalCount++;
+  todayData.count++;
+
+  localStorage.setItem("totalCount", totalCount);
+  localStorage.setItem("todayData", JSON.stringify(todayData));
+
+  document.getElementById("frame").src =
+    "https://susangati.in/?t=" + new Date().getTime();
+
+  document.getElementById("lastTime").innerText =
+    new Date().toLocaleTimeString();
+
+  updateUI();
+}
+
+// ================= UI UPDATE =================
+function updateUI() {
+  document.getElementById("sessionCount").innerText = sessionCount;
+  document.getElementById("totalCount").innerText = totalCount;
+  document.getElementById("todayCount").innerText = todayData.count;
+}
+
+// ================= INIT =================
+runTimer();
+
+</script>
 
 </body>
 </html>
