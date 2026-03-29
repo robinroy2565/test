@@ -1,17 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Auto Reload</title>
+<meta charset="UTF-8">
+<title>Auto Refresh Tracker</title>
 
-  <script>
-    setInterval(function () {
-      window.location.href = "https://susangati.in/";
-    }, 40000);
-  </script>
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
 
+.top {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: #222;
+  color: #fff;
+  padding: 15px;
+  font-size: 18px;
+}
+
+iframe {
+  margin-top: 70px;
+  width: 100%;
+  height: 90vh;
+  border: none;
+}
+</style>
 </head>
 
 <body>
-  <h2>Redirecting to website every 40 seconds...</h2>
+
+<div class="top">
+  ⏳ Refresh in: <span id="timer">40</span> sec |
+  🔄 Total Opens: <span id="count">0</span>
+</div>
+
+<iframe id="frame" src="https://susangati.in/"></iframe>
+
+<script>
+let time = 40;
+let count = 0;
+
+const timerEl = document.getElementById("timer");
+const countEl = document.getElementById("count");
+const frame = document.getElementById("frame");
+
+setInterval(() => {
+
+  time--;
+  timerEl.innerText = time;
+
+  if (time <= 0) {
+    time = 40;
+    count++;
+
+    countEl.innerText = count;
+
+    // reload iframe
+    frame.src = "https://susangati.in/?t=" + new Date().getTime();
+  }
+
+}, 1000);
+</script>
+
 </body>
 </html>
